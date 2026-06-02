@@ -78,10 +78,10 @@ function handleDeleteConfirm() {
   });
 }
 
-function downloadCardPdf() {
+async function downloadCardPdf() {
   if (!card.value) return;
   try {
-    downloadPdf(card.value);
+    await downloadPdf(card.value);
     const updated = {
       ...card.value,
       lastGeneratedAt: new Date().toISOString(),

@@ -159,7 +159,7 @@ const onSave = handleSubmit(async (formValues) => {
   router.push({ name: 'card-detail', params: { id: props.id } });
 });
 
-function downloadCardPdf() {
+async function downloadCardPdf() {
   if (!card.value) return;
   try {
     const tempCard = buildCourseCard({
@@ -191,7 +191,7 @@ function downloadCardPdf() {
     tempCard.createdAt = card.value.createdAt;
     tempCard.lastGeneratedAt = new Date().toISOString();
 
-    downloadPdf(tempCard);
+    await downloadPdf(tempCard);
     cardsStore.upsert(tempCard);
 
     notifications.show('PDF succesvol gedownload.');

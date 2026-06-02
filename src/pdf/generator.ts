@@ -6,8 +6,11 @@ import vfs from 'virtual:pdfmake-vfs';
 
 // Configure pdfmake to use our custom VFS font files
 (pdfMake as any).vfs = vfs;
+if (typeof (pdfMake as any).addVirtualFileSystem === 'function') {
+  (pdfMake as any).addVirtualFileSystem(vfs);
+}
 
-pdfMake.fonts = {
+const fontConfig = {
   Carlito: {
     normal: 'Carlito-Regular.ttf',
     bold: 'Carlito-Bold.ttf',
@@ -16,7 +19,12 @@ pdfMake.fonts = {
   },
 };
 
-export function downloadPdf(card: CourseCard): void {
+pdfMake.fonts = fontConfig;
+if (typeof (pdfMake as any).setFonts === 'function') {
+  (pdfMake as any).setFonts(fontConfig);
+}
+
+export function downloadPdf(card: CourseCard): Promise<void> {
   const docDefinition = renderExamCoverPdfDefinition(card);
 
   // Set default font to Carlito
@@ -33,5 +41,5 @@ export function downloadPdf(card: CourseCard): void {
     examChance: card.examChance,
   });
 
-  pdfMake.createPdf(docDefinition).download(filename);
+  return pdfMake.createPdf(docDefinition).download(filename);
 }

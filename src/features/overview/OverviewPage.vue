@@ -81,9 +81,9 @@ function formatUpdated(iso: string): string {
   }
 }
 
-function downloadCardPdf(card: CourseCard) {
+async function downloadCardPdf(card: CourseCard) {
   try {
-    downloadPdf(card);
+    await downloadPdf(card);
     cardsStore.upsert({
       ...card,
       lastGeneratedAt: new Date().toISOString(),
