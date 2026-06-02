@@ -1,5 +1,10 @@
 import type { AcademicYear } from '@/domain/types';
 
-// Bump this once per year by editing source.
-// No runtime switcher — the bundled seed in public/data/ is built per year.
-export const ACTIVE_ACADEMIC_YEAR: AcademicYear = '2025-26';
+// The ONLY hardcoded academiejaar in the codebase: tells the seed loader
+// which bundled JSON to fetch (`public/data/programmes.seed.<year>.json`).
+// Bumped once per year by an explicit maintainer commit.
+//
+// Everywhere else (overview chip, settings, wizard, new card stamping) reads
+// the academic year from the loaded seed file via `useProgrammesStore().loadedYear`,
+// so the value visible to the user always reflects the data actually loaded.
+export const ACTIVE_SEED_YEAR: AcademicYear = '2025-26';

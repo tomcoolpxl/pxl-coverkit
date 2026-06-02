@@ -9,7 +9,6 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useCardsStore } from '@/stores/cards';
 import { useWizardStore, type WizardDraft, draftToFormFields } from '@/stores/wizard';
 import { buildBaselineFor } from '@/domain/cardFactory';
-import { ACTIVE_ACADEMIC_YEAR } from '@/app/activeAcademicYear';
 
 const settings = useSettingsStore();
 const programmes = useProgrammesStore();
@@ -89,10 +88,14 @@ const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetify
 const examChanceOptions = ['S1', 'S2', 'EK1', 'EK2', 'HE'];
 const submitError = ref<string | null>(null);
 
-const onSave = handleSubmit((draftValues) => {
+const onSave = handleSubmit(async (draftValues) => {
   submitError.value = null;
   if (!wizard.programmeCode) {
     submitError.value = 'Geen opleiding geselecteerd.';
+    return;
+  }
+  if (!programmes.loadedYear) {
+    submitError.value = 'Geen academiejaar geladen — studiegidsdata ontbreekt.';
     return;
   }
   const draft: WizardDraft = {
@@ -112,7 +115,12 @@ const onSave = handleSubmit((draftValues) => {
   wizard.saveDraft(draft);
   try {
     const card = cards.create({
-      fields: draftToFormFields(draft, wizard.programmeCode, wizard.seedEntryId),
+      fields: draftToFormFields(
+        draft,
+        wizard.programmeCode,
+        wizard.seedEntryId,
+        programmes.loadedYear,
+      ),
       seedEntry: seedEntry.value,
       settings: {
         defaultMaxScore: settings.defaultMaxScore,
@@ -120,8 +128,8 @@ const onSave = handleSubmit((draftValues) => {
       },
     });
     wizard.markClean();
+    await router.push({ name: 'overview', query: { created: card.id } });
     wizard.reset();
-    router.push({ name: 'overview', query: { created: card.id } });
   } catch (err) {
     submitError.value = err instanceof Error ? err.message : 'Onbekende fout bij opslaan.';
   }
@@ -145,8 +153,10 @@ const sourceLabel = computed(() =>
     <h2 class="text-h5 mb-2">Controleer en bewaar</h2>
     <p class="text-body-2 text-medium-emphasis mb-4">
       Bron: <strong>{{ sourceLabel }}</strong> · Opleiding:
-      <strong>{{ wizard.programmeCode }}</strong> · Academiejaar:
-      <strong>{{ ACTIVE_ACADEMIC_YEAR }}</strong>
+      <strong>{{ wizard.programmeCode }}</strong>
+      <template v-if="programmes.loadedYear">
+        · Academiejaar: <strong>{{ programmes.loadedYear }}</strong>
+      </template>
     </p>
 
     <v-alert v-if="submitError" type="error" variant="tonal" class="mb-4">

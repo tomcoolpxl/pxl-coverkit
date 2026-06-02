@@ -10,7 +10,6 @@ import {
   parseImport,
   serializeExport,
 } from '@/data/importExport';
-import { ACTIVE_ACADEMIC_YEAR } from '@/app/activeAcademicYear';
 import packageJson from '../../../package.json';
 
 const settings = useSettingsStore();
@@ -71,11 +70,13 @@ async function onImportFile(event: Event) {
 
     <v-card class="mb-6 pa-6" variant="outlined">
       <h2 class="text-h6 mb-2">Actief academiejaar</h2>
-      <p class="text-body-1 mb-1">
-        <strong>{{ ACTIVE_ACADEMIC_YEAR }}</strong>
+      <p v-if="programmes.loadedYear" class="text-body-1 mb-1">
+        <strong>{{ programmes.loadedYear }}</strong>
       </p>
+      <p v-else class="text-body-1 mb-1 text-medium-emphasis">—</p>
       <p class="text-caption text-medium-emphasis">
-        Vast in code; wordt één keer per jaar door een onderhouder vervangen.
+        Komt uit de bundelde studiegids-seed; wordt één keer per jaar door een onderhouder
+        vervangen.
       </p>
       <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis mt-3">
         Studiegidsdata wordt geladen…

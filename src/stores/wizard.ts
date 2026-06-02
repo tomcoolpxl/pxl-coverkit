@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { ACTIVE_ACADEMIC_YEAR } from '@/app/activeAcademicYear';
 import type { CardFormFields } from '@/domain/cardFactory';
+import type { AcademicYear } from '@/domain/types';
 
 export type WizardStep = 'programme' | 'source' | 'review';
 
@@ -45,6 +45,14 @@ export const useWizardStore = defineStore('wizard', {
     sourceSelected: (state) => state.manual || state.seedEntryId !== null,
     canAdvanceFromProgramme: (state) => state.programmeCode !== null,
     canAdvanceFromSource: (state) => state.manual || state.seedEntryId !== null,
+    canGotoStep: (state) => (target: WizardStep) => {
+      if (target === 'programme') return true;
+      if (target === 'source') return state.programmeCode !== null;
+      if (target === 'review') {
+        return state.programmeCode !== null && (state.manual || state.seedEntryId !== null);
+      }
+      return false;
+    },
   },
   actions: {
     reset() {
@@ -109,13 +117,14 @@ export function draftToFormFields(
   draft: WizardDraft,
   programmeCode: string,
   seedEntryId: string | null,
+  academicYear: AcademicYear,
 ): CardFormFields {
   return {
     programmeCode,
     seedEntryId,
     courseCode: draft.courseCode,
     courseName: draft.courseName,
-    academicYear: ACTIVE_ACADEMIC_YEAR,
+    academicYear,
     examChance: draft.examChance,
     language: 'nl',
     examDate: draft.examDate,

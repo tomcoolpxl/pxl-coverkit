@@ -72,8 +72,8 @@ A persistent top app bar holds the PXL wordmark, programme/year filter chips, an
 
 - Responsive grid of cards (1 / 2 / 3 columns by breakpoint).
 - Each card shows: programme chip, course code + name, academic year, exam date, exam chance, "updated" timestamp, and a row of icon actions: Download PDF, Actualize, Edit, Delete.
-- Sticky filter bar above the grid: programme select, academic year select, free-text search across code/name.
-- Empty state explains seed-vs-manual creation and points to import.
+- Sticky filter bar above the grid: programme select and free-text search across code/name. (No academic-year filter — the app only ships one active year at a time.)
+- Empty state has a single CTA ("Nieuw voorblad"); import lives only in Settings as a local-data tool.
 - Keyboard: each card is a single focusable region, `Enter` opens detail, action icons are reachable via `Tab` with visible focus.
 
 ```
@@ -112,9 +112,11 @@ Two-column layout on desktop, single column on mobile. Left column: form section
 
 Vuetify dialog requiring the user to type the course code (or press a clearly-labelled "Delete cover" button after a 2-second delay disabling the button). No accidental destructive default.
 
-### 3.8 Import / export
+### 3.8 Settings page (active year + import / export)
 
-Settings page. Export downloads a versioned JSON file (`pxl-coverkit-export-YYYYMMDD.json`). Import shows a diff-style preview ("X cards will be replaced, Y will be added") and requires explicit confirm. Schema version mismatches block import with a clear message; future migrations will be additive functions.
+The Settings page surfaces a read-only "Actief academiejaar" block — the year is read from the loaded seed file (`programmes.loadedYear`) and accompanied by a caption explaining that it ships with the app and is bumped once per year by an explicit maintainer commit (see §4.5). No runtime year switcher and no "import seed data" affordance: studiegids data is part of the bundle.
+
+Import / export below it is scoped to **local data only** (the user's own cards + lecturer preferences) — a back-up / cross-browser-move tool. Export downloads a versioned JSON file (`pxl-coverkit-export-YYYYMMDD.json`). Import shows a diff-style preview ("X cards will be replaced, Y will be added") and requires explicit confirm. Schema version mismatches block import with a clear message; future migrations will be additive functions.
 
 ### 3.9 Feedback patterns
 
@@ -200,7 +202,7 @@ A `migrations.ts` module owns `schemaVersion` upgrades; the persisted state is f
 
 ### 4.5 Seed loading
 
-Seed files are bundled in `public/data/`. At boot, `programmes store` fetches the file for the active academic year (`settings.activeAcademicYear`) and exposes `programmes` and `seedEntries` as readonly arrays. Missing seed file is non-fatal: manual creation still works.
+Seed files are bundled in `public/data/`. At boot, the `programmes` store fetches the file for the year named by the single hardcoded constant `src/app/activeAcademicYear.ts → ACTIVE_SEED_YEAR` and exposes `programmes` and `seedEntries` as readonly arrays. The actual year displayed in the UI (overview chip, settings, wizard review header, new-card stamping) is read from `programmes.loadedYear` — the constant only tells the loader which bundle to fetch. Missing seed file is non-fatal: manual creation still works. Bumping the active year is a one-line maintainer commit each summer.
 
 ### 4.6 Routing
 
@@ -269,5 +271,5 @@ Visual regression of the rendered PDF is a deliberate Phase 4 follow-up (REQUIRE
 - **Reusable lecturer presets.** REQUIREMENTS leaves this open. Plan: a `lecturers` store seeded from observed values, exposed as autocomplete suggestions in the form; promoted to dedicated UI post-MVP.
 - **Allowed-resources presets.** Same pattern as lecturer presets, gated behind the same decision.
 - **Exam chance vocabulary.** Need a confirmed list (`S1`, `S2`, `EK1`, `EK2`, `HE`, ...) and their Dutch display labels for the picker.
-- **Active academic year switch.** Decide whether switching years in settings should also offer to actualize all cards in bulk, or only swap the available seed catalogue.
+- ~~**Active academic year switch.**~~ Resolved 2026-06-02: no runtime switcher. The active year is the one hardcoded into `ACTIVE_SEED_YEAR` and bumped by a maintainer commit; the Actualize dialog (§3.5) is the per-card path for moving existing cards to a new year.
 - **Safari support.** Out of scope for MVP; revisit once Chrome/Edge/Firefox builds are stable.

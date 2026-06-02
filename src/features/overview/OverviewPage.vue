@@ -4,7 +4,6 @@ import { useCardsStore } from '@/stores/cards';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useWizardStore } from '@/stores/wizard';
 import { filterCards, uniqueProgrammeCodes } from '@/domain/filters';
-import { ACTIVE_ACADEMIC_YEAR } from '@/app/activeAcademicYear';
 import type { CourseCard } from '@/domain/types';
 
 const cards = useCardsStore();
@@ -64,8 +63,8 @@ function formatUpdated(iso: string): string {
   <div>
     <div class="d-flex flex-wrap align-center mb-4 ga-3">
       <h1 class="text-h4 mr-2">Overzicht</h1>
-      <v-chip size="small" variant="tonal" color="primary">
-        Actief academiejaar {{ ACTIVE_ACADEMIC_YEAR }}
+      <v-chip v-if="programmes.loadedYear" size="small" variant="tonal" color="primary">
+        Actief academiejaar {{ programmes.loadedYear }}
       </v-chip>
       <v-spacer />
       <v-btn color="primary" prepend-icon="mdi-plus" :to="{ name: 'card-new' }" @click="startWizard">

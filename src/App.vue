@@ -2,12 +2,12 @@
 import { onMounted } from 'vue';
 import AppShell from './ui/AppShell.vue';
 import { useProgrammesStore } from './stores/programmes';
-import { ACTIVE_ACADEMIC_YEAR } from './app/activeAcademicYear';
+import { ACTIVE_SEED_YEAR } from './app/activeAcademicYear';
 
 const programmes = useProgrammesStore();
 
 onMounted(async () => {
-  await programmes.loadForYear(ACTIVE_ACADEMIC_YEAR);
+  await programmes.loadForYear(ACTIVE_SEED_YEAR);
 });
 </script>
 

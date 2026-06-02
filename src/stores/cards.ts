@@ -34,7 +34,7 @@ export const useCardsStore = defineStore('cards', {
     },
     create(input: CreateCardInput): CourseCard {
       const card = buildCourseCard(input);
-      this.cards.push(card);
+      this.cards = [...this.cards, card];
       return card;
     },
     remove(id: string) {

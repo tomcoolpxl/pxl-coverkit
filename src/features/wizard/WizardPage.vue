@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { useWizardStore } from '@/stores/wizard';
+import { useWizardStore, type WizardStep } from '@/stores/wizard';
 import WizardProgrammeStep from './WizardProgrammeStep.vue';
 import WizardSourceStep from './WizardSourceStep.vue';
 import WizardReviewStep from './WizardReviewStep.vue';
@@ -20,6 +20,10 @@ const stepIndex = computed(() => {
       return 0;
   }
 });
+
+function gotoStep(step: WizardStep) {
+  if (wizard.canGotoStep(step)) wizard.goto(step);
+}
 
 function confirmLeave(): boolean {
   if (!wizard.dirty) return true;
@@ -56,11 +60,29 @@ onBeforeUnmount(() => {
   <v-card variant="outlined" class="pa-6">
     <v-stepper :model-value="stepIndex + 1" alt-labels class="mb-4 elevation-0">
       <v-stepper-header>
-        <v-stepper-item :value="1" title="Opleiding" :complete="stepIndex > 0" />
+        <v-stepper-item
+          :value="1"
+          title="Opleiding"
+          :complete="stepIndex > 0"
+          :editable="wizard.canGotoStep('programme')"
+          @click="gotoStep('programme')"
+        />
         <v-divider />
-        <v-stepper-item :value="2" title="Bron" :complete="stepIndex > 1" />
+        <v-stepper-item
+          :value="2"
+          title="Bron"
+          :complete="stepIndex > 1"
+          :editable="wizard.canGotoStep('source')"
+          @click="gotoStep('source')"
+        />
         <v-divider />
-        <v-stepper-item :value="3" title="Controleren" :complete="false" />
+        <v-stepper-item
+          :value="3"
+          title="Controleren"
+          :complete="false"
+          :editable="wizard.canGotoStep('review')"
+          @click="gotoStep('review')"
+        />
       </v-stepper-header>
     </v-stepper>
 

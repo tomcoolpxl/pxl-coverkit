@@ -199,7 +199,7 @@ The yearly refresh process is documented in Phase 6.
   1. Run `python scripts/scrape_studiegids_tree.py --year YYYY-YY` to produce `seed-data/raw/studiegids-tree.YYYY-YY.json`.
   2. Run `python scripts/build_programmes_seed.py` to produce `seed-data/programmes.seed.YYYY-YY.json`.
   3. Copy the new seed file into `public/data/` (or wire the build to do it).
-  4. Bump `settings.activeAcademicYear` default in code if the academic year tick is intentional.
+  4. Bump `ACTIVE_SEED_YEAR` in `src/app/activeAcademicYear.ts` if the academic year tick is intentional — that constant is the single source of truth for which seed bundle the app loads.
   5. Commit directly to `main` with the message `seed: refresh YYYY-YY`.
 - A `package.json` script `npm run seeds:refresh:<year>` wraps the two Python steps for convenience.
 
