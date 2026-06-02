@@ -41,6 +41,7 @@ const settings = { defaultMaxScore: 20, defaultDurationMinutes: 90 };
 describe('cards store create()', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    useCardsStore().clear();
   });
 
   it('appends a new card and returns it', () => {
