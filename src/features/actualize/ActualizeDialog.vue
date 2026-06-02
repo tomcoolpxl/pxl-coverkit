@@ -10,12 +10,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'confirm', data: {
-    academicYear: string;
-    examDate: string;
-    startTime: string;
-    durationMinutes: number;
-  }): void;
+  (
+    e: 'confirm',
+    data: {
+      academicYear: string;
+      examDate: string;
+      startTime: string;
+      durationMinutes: number;
+    },
+  ): void;
 }>();
 
 const academicYear = ref('');
@@ -29,7 +32,7 @@ const isOpen = computed({
   },
   set(val) {
     emit('update:modelValue', val);
-  }
+  },
 });
 
 watch(
@@ -41,7 +44,7 @@ watch(
       startTime.value = props.card.startTime;
       durationMinutes.value = props.card.durationMinutes;
     }
-  }
+  },
 );
 
 const isValid = computed(() => {
@@ -70,7 +73,8 @@ function handleSave() {
       </v-card-title>
       <v-card-text class="pa-4">
         <p class="mb-4 text-body-2 text-medium-emphasis">
-          Verplaats het voorblad naar het volgende academiejaar. De overige velden (zoals lectoren, hulpmiddelen en score) blijven behouden.
+          Verplaats het voorblad naar het volgende academiejaar. De overige velden (zoals lectoren,
+          hulpmiddelen en score) blijven behouden.
         </p>
 
         <v-row dense>
@@ -126,12 +130,7 @@ function handleSave() {
       <v-card-actions class="px-4 pb-4">
         <v-spacer />
         <v-btn variant="text" @click="isOpen = false">Annuleren</v-btn>
-        <v-btn
-          color="primary"
-          variant="elevated"
-          :disabled="!isValid"
-          @click="handleSave"
-        >
+        <v-btn color="primary" variant="elevated" :disabled="!isValid" @click="handleSave">
           Actualiseren
         </v-btn>
       </v-card-actions>

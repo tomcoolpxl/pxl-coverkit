@@ -23,7 +23,7 @@ const isOpen = computed({
   },
   set(val) {
     emit('update:modelValue', val);
-  }
+  },
 });
 
 watch(
@@ -49,7 +49,7 @@ watch(
         intervalId = null;
       }
     }
-  }
+  },
 );
 
 const isMatched = computed(() => {
@@ -89,7 +89,8 @@ function handleConfirm() {
         </p>
 
         <p class="text-body-2 text-medium-emphasis mb-4">
-          Typ de vakcode <strong>{{ card.courseCode }}</strong> ter bevestiging, of wacht 2 seconden om de knop vrij te geven.
+          Typ de vakcode <strong>{{ card.courseCode }}</strong> ter bevestiging, of wacht 2 seconden
+          om de knop vrij te geven.
         </p>
 
         <v-text-field
@@ -105,12 +106,7 @@ function handleConfirm() {
       <v-card-actions class="px-4 pb-4">
         <v-spacer />
         <v-btn variant="text" @click="isOpen = false">Annuleren</v-btn>
-        <v-btn
-          color="error"
-          variant="elevated"
-          :disabled="!canSubmit"
-          @click="handleConfirm"
-        >
+        <v-btn color="error" variant="elevated" :disabled="!canSubmit" @click="handleConfirm">
           {{ buttonLabel }}
         </v-btn>
       </v-card-actions>

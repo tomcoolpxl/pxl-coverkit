@@ -102,8 +102,8 @@ function confirmImport() {
         {{ programmes.error }}
       </p>
       <p v-else class="text-body-2 text-medium-emphasis mt-3">
-        {{ programmes.programmes.length }} opleiding(en), {{ programmes.seedEntries.length }} OLOD(s)
-        geladen.
+        {{ programmes.programmes.length }} opleiding(en),
+        {{ programmes.seedEntries.length }} OLOD(s) geladen.
       </p>
     </v-card>
 
@@ -153,12 +153,11 @@ function confirmImport() {
     <!-- Confirm Import Dialog -->
     <v-dialog v-model="showConfirmImportDialog" max-width="500">
       <v-card>
-        <v-card-title class="text-h6">
-          Import bevestigen
-        </v-card-title>
+        <v-card-title class="text-h6"> Import bevestigen </v-card-title>
         <v-card-text>
           <p class="mb-4">
-            Weet je zeker dat je de lokale gegevens wilt vervangen door de geïmporteerde gegevens? Dit overschrijft je huidige instellingen en voorbladen.
+            Weet je zeker dat je de lokale gegevens wilt vervangen door de geïmporteerde gegevens?
+            Dit overschrijft je huidige instellingen en voorbladen.
           </p>
           <v-table density="compact" class="mb-4">
             <tbody>

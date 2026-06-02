@@ -13,7 +13,7 @@ const props = withDefaults(
     multiple: false,
     label: 'Lector',
     errorMessages: undefined,
-  }
+  },
 );
 
 const emit = defineEmits<{
@@ -30,7 +30,7 @@ const value = computed({
   },
   set(newVal) {
     emit('update:modelValue', newVal);
-  }
+  },
 });
 </script>
 

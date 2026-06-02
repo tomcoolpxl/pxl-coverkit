@@ -245,9 +245,7 @@
               "label": "Aanvullende olods - 1 IOT"
             }
           ],
-          "olodNames": [
-            "41IOC1010 Werkplekleren 2 (s1)"
-          ]
+          "olodNames": ["41IOC1010 Werkplekleren 2 (s1)"]
         },
         {
           "selectionPath": [
@@ -408,10 +406,7 @@
               "label": "Aanvullende olod's - 1 PRO"
             }
           ],
-          "olodNames": [
-            "41PRC1070 Data Essentials (5sp)",
-            "41PRC1080 Data Analysis & SQL (4sp)"
-          ]
+          "olodNames": ["41PRC1070 Data Essentials (5sp)", "41PRC1080 Data Analysis & SQL (4sp)"]
         },
         {
           "selectionPath": [
@@ -1288,9 +1283,7 @@
               "label": "Aanvullende olod's - 1 TIN"
             }
           ],
-          "olodNames": [
-            "41TIN1340 Project"
-          ]
+          "olodNames": ["41TIN1340 Project"]
         },
         {
           "selectionPath": [
@@ -1316,9 +1309,7 @@
               "label": "Aanvullende olod's Graduaat - TS1"
             }
           ],
-          "olodNames": [
-            "41TIH1070 Communication Skills 1 - Engels"
-          ]
+          "olodNames": ["41TIH1070 Communication Skills 1 - Engels"]
         },
         {
           "selectionPath": [
@@ -1406,9 +1397,7 @@
               "label": "Aanvullende olod's Graduaat - TS2"
             }
           ],
-          "olodNames": [
-            "42TIH1080 Communication Skills 2 - Engels"
-          ]
+          "olodNames": ["42TIH1080 Communication Skills 2 - Engels"]
         },
         {
           "selectionPath": [
@@ -1616,10 +1605,7 @@
               "label": "Aanvullende olod's Graduaat - TS3"
             }
           ],
-          "olodNames": [
-            "43TIH1050 Fullstack .NET",
-            "43TIH1070 X-Talent (s1)"
-          ]
+          "olodNames": ["43TIH1050 Fullstack .NET", "43TIH1070 X-Talent (s1)"]
         },
         {
           "selectionPath": [
@@ -1645,10 +1631,7 @@
               "label": "Excellentieprogramma - 3 TIN"
             }
           ],
-          "olodNames": [
-            "43TIQ1140 PXL Honours: IT Project",
-            "43TIQ1150 PXL Honours: Unity and VR"
-          ]
+          "olodNames": ["43TIQ1140 PXL Honours: IT Project", "43TIQ1150 PXL Honours: Unity and VR"]
         },
         {
           "selectionPath": [

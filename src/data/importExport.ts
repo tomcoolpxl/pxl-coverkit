@@ -3,7 +3,10 @@ import { CURRENT_SCHEMA_VERSION, type ExportedState } from '@/domain/types';
 import { migrateImported } from './migrations';
 
 export class ImportError extends Error {
-  constructor(message: string, readonly cause?: unknown) {
+  constructor(
+    message: string,
+    readonly cause?: unknown,
+  ) {
     super(message);
     this.name = 'ImportError';
   }

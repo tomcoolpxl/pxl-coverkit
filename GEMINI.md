@@ -33,3 +33,9 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
 - `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.
 - Do not combine academic years in one output file; generate and replace one academic-year seed file at a time.
+
+## PDF Generation Utilities
+
+- The PDF templates use `pdfmake` with custom base64 VFS font and image maps to allow offline browser-side rendering.
+- A custom Vite build-time plugin in `vite.config.ts` dynamically packs the Carlito font files (`src/pdf/fonts/`) into `virtual:pdfmake-vfs`.
+- Large image assets (logos, screenshots) are stored in `src/pdf/template-nl-blackboard-v1/assets.ts` as base64-encoded strings.

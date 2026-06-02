@@ -245,9 +245,7 @@
               "label": "Aanvullende olods - 1 IOT"
             }
           ],
-          "olodNames": [
-            "41IOC1010 Werkplekleren 2 (s1)"
-          ]
+          "olodNames": ["41IOC1010 Werkplekleren 2 (s1)"]
         },
         {
           "selectionPath": [
@@ -408,10 +406,7 @@
               "label": "Aanvullende Olod's - 1PRO"
             }
           ],
-          "olodNames": [
-            "41PRC1070 Data Essentials (5sp)",
-            "41PRC1080 Data Analysis & SQL (4sp)"
-          ]
+          "olodNames": ["41PRC1070 Data Essentials (5sp)", "41PRC1080 Data Analysis & SQL (4sp)"]
         },
         {
           "selectionPath": [
@@ -1204,9 +1199,7 @@
               "label": "Aanvullende olod's Graduaat - TS1"
             }
           ],
-          "olodNames": [
-            "41TIH1070 Communication Skills 1 - Engels"
-          ]
+          "olodNames": ["41TIH1070 Communication Skills 1 - Engels"]
         },
         {
           "selectionPath": [
@@ -1293,9 +1286,7 @@
               "label": "Aanvullende olod's - 2 TIN"
             }
           ],
-          "olodNames": [
-            "42TIC1430 I-Talent International TS2"
-          ]
+          "olodNames": ["42TIC1430 I-Talent International TS2"]
         },
         {
           "selectionPath": [
@@ -1534,11 +1525,7 @@
               "label": "Aanvullende olod's Graduaat - TS3"
             }
           ],
-          "olodNames": [
-            "43TIH1040 I-Talent",
-            "43TIH1050 Fullstack .NET",
-            "43TIH1070 I-Talent (s1)"
-          ]
+          "olodNames": ["43TIH1040 I-Talent", "43TIH1050 Fullstack .NET", "43TIH1070 I-Talent (s1)"]
         },
         {
           "selectionPath": [
@@ -1564,10 +1551,7 @@
               "label": "Excellentieprogramma - 3 TIN"
             }
           ],
-          "olodNames": [
-            "43TIQ1140 PXL Honours: IT Project",
-            "43TIQ1150 PXL Honours: Unity and VR"
-          ]
+          "olodNames": ["43TIQ1140 PXL Honours: IT Project", "43TIQ1150 PXL Honours: Unity and VR"]
         },
         {
           "selectionPath": [
@@ -2007,9 +1991,7 @@
               "label": "Aanvullende olod's voor HBO5 - 3 TIW"
             }
           ],
-          "olodNames": [
-            "43TIH1060 Fullstack .NET"
-          ]
+          "olodNames": ["43TIH1060 Fullstack .NET"]
         }
       ]
     }

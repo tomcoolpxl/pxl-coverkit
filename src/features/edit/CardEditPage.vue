@@ -11,6 +11,7 @@ import { useNotificationStore } from '@/stores/notifications';
 import { buildCourseCard } from '@/domain/cardFactory';
 import { endTime } from '@/domain/examTime';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
+import { downloadPdf } from '@/pdf/generator';
 
 const props = defineProps<{ id: string }>();
 
@@ -158,6 +159,47 @@ const onSave = handleSubmit(async (formValues) => {
   router.push({ name: 'card-detail', params: { id: props.id } });
 });
 
+function downloadCardPdf() {
+  if (!card.value) return;
+  try {
+    const tempCard = buildCourseCard({
+      fields: {
+        programmeCode: card.value.programmeCode,
+        seedEntryId: card.value.seedEntryId,
+        courseCode: values.courseCode,
+        courseName: values.courseName,
+        academicYear: card.value.academicYear,
+        examChance: values.examChance,
+        language: 'nl',
+        examDate: values.examDate,
+        startTime: values.startTime,
+        durationMinutes: Number(values.durationMinutes),
+        vaklector: values.vaklector,
+        lecturers: values.lecturers,
+        roomPlaceCode: values.roomPlaceCode || null,
+        maxScore: Number(values.maxScore),
+        allowedResources: values.allowedResources,
+        templateId: values.templateId,
+      },
+      seedEntry: seedEntry.value,
+      settings: {
+        defaultMaxScore: settings.defaultMaxScore,
+        defaultDurationMinutes: settings.defaultDurationMinutes,
+      },
+      id: () => props.id,
+    });
+    tempCard.createdAt = card.value.createdAt;
+    tempCard.lastGeneratedAt = new Date().toISOString();
+
+    downloadPdf(tempCard);
+    cardsStore.upsert(tempCard);
+
+    notifications.show('PDF succesvol gedownload.');
+  } catch (err: any) {
+    notifications.show(`Fout bij downloaden van PDF: ${err.message || err}`);
+  }
+}
+
 function confirmLeave(): boolean {
   if (isSaved.value || !isDirty.value) return true;
   return window.confirm('Je hebt onopgeslagen wijzigingen. Weet je zeker dat je wilt weggaan?');
@@ -182,7 +224,20 @@ onBeforeRouteLeave(() => {
   return confirmLeave();
 });
 
-const dutchMonths = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+const dutchMonths = [
+  'jan',
+  'feb',
+  'mrt',
+  'apr',
+  'mei',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'okt',
+  'nov',
+  'dec',
+];
 function formatExamDate(iso?: string): string {
   if (!iso) return '—';
   try {
@@ -342,9 +397,7 @@ function formatExamDate(iso?: string): string {
 
             <!-- expansion-panel 2: Lecturers -->
             <v-expansion-panel value="2">
-              <v-expansion-panel-title class="font-weight-bold">
-                Lectoren
-              </v-expansion-panel-title>
+              <v-expansion-panel-title class="font-weight-bold"> Lectoren </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <v-row class="mt-2">
                   <v-col cols="12" md="6">
@@ -430,12 +483,18 @@ function formatExamDate(iso?: string): string {
 
             <v-card variant="outlined" class="pa-4 mb-4">
               <div class="d-flex align-center mb-2 ga-2">
-                <v-chip size="small" color="primary" variant="tonal">{{ card.programmeCode }}</v-chip>
+                <v-chip size="small" color="primary" variant="tonal">{{
+                  card.programmeCode
+                }}</v-chip>
                 <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
                 <v-spacer />
-                <v-chip size="x-small" variant="tonal" color="secondary">{{ values.examChance || '—' }}</v-chip>
+                <v-chip size="x-small" variant="tonal" color="secondary">{{
+                  values.examChance || '—'
+                }}</v-chip>
               </div>
-              <div class="text-body-2 text-medium-emphasis">{{ values.courseCode || 'Vakcode' }}</div>
+              <div class="text-body-2 text-medium-emphasis">
+                {{ values.courseCode || 'Vakcode' }}
+              </div>
               <h3 class="text-h6 mb-1 text-truncate">{{ values.courseName || 'Vaknaam' }}</h3>
               <div class="text-body-2 mb-2">
                 <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>
@@ -448,21 +507,16 @@ function formatExamDate(iso?: string): string {
 
             <v-card class="pa-4" variant="flat" style="background-color: rgba(174, 154, 100, 0.05)">
               <div class="d-flex flex-column ga-2">
-                <v-tooltip text="Beschikbaar vanaf Phase 4" location="top">
-                  <template #activator="{ props: tipProps }">
-                    <span v-bind="tipProps" class="w-100">
-                      <v-btn
-                        color="secondary"
-                        variant="outlined"
-                        prepend-icon="mdi-file-pdf-box"
-                        disabled
-                        class="w-100"
-                      >
-                        PDF genereren
-                      </v-btn>
-                    </span>
-                  </template>
-                </v-tooltip>
+                <v-btn
+                  color="secondary"
+                  variant="outlined"
+                  prepend-icon="mdi-file-pdf-box"
+                  :disabled="!meta.valid"
+                  class="w-100"
+                  @click="downloadCardPdf"
+                >
+                  PDF genereren
+                </v-btn>
 
                 <v-btn
                   color="primary"
@@ -474,7 +528,10 @@ function formatExamDate(iso?: string): string {
                   Opslaan
                 </v-btn>
 
-                <p v-if="Object.keys(errors).length" class="text-caption text-error text-center mt-1 mb-0">
+                <p
+                  v-if="Object.keys(errors).length"
+                  class="text-caption text-error text-center mt-1 mb-0"
+                >
                   {{ Object.keys(errors).length }} veld(en) bevatten fouten.
                 </p>
               </div>

@@ -31,8 +31,8 @@ watch(() => activeProgrammes.value.length, autoAdvanceIfSingle);
   <div>
     <h2 class="text-h5 mb-2">Kies een opleiding</h2>
     <p class="text-body-2 text-medium-emphasis mb-4">
-      Kies de opleiding waarvoor je een voorblad wil aanmaken. Bij één beschikbare opleiding springen
-      we automatisch naar de volgende stap.
+      Kies de opleiding waarvoor je een voorblad wil aanmaken. Bij één beschikbare opleiding
+      springen we automatisch naar de volgende stap.
     </p>
 
     <v-alert v-if="programmes.loading" type="info" variant="tonal" class="mb-3">
@@ -41,7 +41,11 @@ watch(() => activeProgrammes.value.length, autoAdvanceIfSingle);
     <v-alert v-if="programmes.error" type="warning" variant="tonal" class="mb-3">
       {{ programmes.error }}
     </v-alert>
-    <v-alert v-if="!programmes.loading && activeProgrammes.length === 0" type="info" variant="tonal">
+    <v-alert
+      v-if="!programmes.loading && activeProgrammes.length === 0"
+      type="info"
+      variant="tonal"
+    >
       Geen actieve opleidingen gevonden in de geladen seed.
     </v-alert>
 

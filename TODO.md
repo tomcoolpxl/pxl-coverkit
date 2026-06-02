@@ -4,23 +4,23 @@ Live work tracking for the current phase. Items move to `DONE.md` only after the
 
 ## Tasks
 
-- [ ] Add Carlito font (OFL) under `src/pdf/fonts/`
-  - [ ] Implement a small build-time Vite plugin to generate a custom `vfs_fonts` blob
-  - [ ] Configure pdfmake to use the custom VFS font blob
-  - [ ] Update `vite.config.ts` to include `pdfmake/build/pdfmake` and `pdfmake/build/vfs_fonts` in `optimizeDeps.include`
-- [ ] Add required PXL assets (logo, marks) under `src/assets/pdf/`
-  - [ ] Import them as base64 in `pdf/template-nl-blackboard-v1/assets.ts`
-- [ ] Implement the `pdf/template-nl-blackboard-v1/` module:
-  - [ ] `tokens.ts` — sizes, spacing, colours
-  - [ ] `definition.ts` — exports `renderExamCoverPdfDefinition(data, template)` returning `TDocumentDefinitions`
-  - [ ] `assets.ts` — bundled base64 image assets
-- [ ] Cover all visible elements listed in `REQUIREMENTS.md` §"Reference output" in a two-page A4 portrait layout
-- [ ] Wire `domain/filename.ts` into the download flow to produce the predictable filename
-- [ ] Enable the "Download PDF" buttons on:
-  - [ ] Card overview row
-  - [ ] Card detail view
-  - [ ] Full update view
-- [ ] Add snapshot tests for the document definition on seeded and manual card fixtures
+- [x] Add Carlito font (OFL) under `src/pdf/fonts/`
+  - [x] Implement a small build-time Vite plugin to generate a custom `vfs_fonts` blob
+  - [x] Configure pdfmake to use the custom VFS font blob
+  - [x] Update `vite.config.ts` to include `pdfmake/build/pdfmake` and `pdfmake/build/vfs_fonts` in `optimizeDeps.include`
+- [x] Add required PXL assets (logo, marks) under `src/assets/pdf/`
+  - [x] Import them as base64 in `pdf/template-nl-blackboard-v1/assets.ts`
+- [x] Implement the `pdf/template-nl-blackboard-v1/` module:
+  - [x] `tokens.ts` — sizes, spacing, colours
+  - [x] `definition.ts` — exports `renderExamCoverPdfDefinition(data, template)` returning `TDocumentDefinitions`
+  - [x] `assets.ts` — bundled base64 image assets
+- [x] Cover all visible elements listed in `REQUIREMENTS.md` §"Reference output" in a two-page A4 portrait layout
+- [x] Wire `domain/filename.ts` into the download flow to produce the predictable filename
+- [x] Enable the "Download PDF" buttons on:
+  - [x] Card overview row
+  - [x] Card detail view
+  - [x] Full update view
+- [x] Add snapshot tests for the document definition on seeded and manual card fixtures
 
 ## Verification Gate
 

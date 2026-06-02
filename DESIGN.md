@@ -10,21 +10,21 @@ This document captures the architecture, tech stack, and UX/UI direction agreed 
 
 ## 2. Tech stack
 
-| Concern              | Choice                                                                                  |
-| -------------------- | --------------------------------------------------------------------------------------- |
-| Framework            | Vue 3 (`<script setup>` SFCs)                                                           |
-| Language             | TypeScript, strict mode                                                                 |
-| Build                | Vite                                                                                    |
-| UI library           | Vuetify 3 (Material 3 baseline, themed for PXL)                                         |
-| Routing              | `vue-router` in hash mode (`/#/...`) for friction-free GitHub Pages hosting             |
-| State                | Pinia stores                                                                            |
-| Persistence          | `pinia-plugin-persistedstate` with a custom storage object wrapping `localStorage` (IndexedDB-ready) |
-| Forms / validation   | `vee-validate` with `zod` schemas (same schemas reused by the storage and import layer) |
-| PDF                  | `pdfmake` with custom VFS (Carlito font, Arial-metric-compatible)                       |
-| Date / time          | Native `Intl` + small helpers; no heavy date library                                    |
-| Testing              | Vitest + Vue Test Utils, snapshot tests for pdfmake doc definitions                     |
-| Lint / format        | ESLint (vue/typescript-recommended) + Prettier                                          |
-| CI / deploy          | GitHub Actions, `actions/deploy-pages` (checkout-free deploy job per GEMINI.md rule)    |
+| Concern            | Choice                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Framework          | Vue 3 (`<script setup>` SFCs)                                                                        |
+| Language           | TypeScript, strict mode                                                                              |
+| Build              | Vite                                                                                                 |
+| UI library         | Vuetify 3 (Material 3 baseline, themed for PXL)                                                      |
+| Routing            | `vue-router` in hash mode (`/#/...`) for friction-free GitHub Pages hosting                          |
+| State              | Pinia stores                                                                                         |
+| Persistence        | `pinia-plugin-persistedstate` with a custom storage object wrapping `localStorage` (IndexedDB-ready) |
+| Forms / validation | `vee-validate` with `zod` schemas (same schemas reused by the storage and import layer)              |
+| PDF                | `pdfmake` with custom VFS (Carlito font, Arial-metric-compatible)                                    |
+| Date / time        | Native `Intl` + small helpers; no heavy date library                                                 |
+| Testing            | Vitest + Vue Test Utils, snapshot tests for pdfmake doc definitions                                  |
+| Lint / format      | ESLint (vue/typescript-recommended) + Prettier                                                       |
+| CI / deploy        | GitHub Actions, `actions/deploy-pages` (checkout-free deploy job per GEMINI.md rule)                 |
 
 Vite `base` is configured from an env var so project-site vs. user-site hosting are both supported.
 
@@ -241,13 +241,13 @@ Error messages are Dutch (matching the output language) and field-specific (REQU
 
 ## 8. Testing strategy
 
-| Layer    | What is tested                                                                    | Tool                      |
-| -------- | --------------------------------------------------------------------------------- | ------------------------- |
-| Domain   | overrides precedence, academic year math, time/duration, filename, zod schemas    | Vitest                    |
-| PDF      | `renderExamCoverPdfDefinition` snapshot for representative cards                  | Vitest + snapshot         |
-| Storage  | `localStorage` round-trip, migration v1→vN                                        | Vitest with `jsdom`       |
-| Stores   | cards store mutations, actualize logic                                            | Vitest + Pinia testing    |
-| Forms    | a few focused component tests (wizard transitions, validation surfacing)          | Vue Test Utils            |
+| Layer   | What is tested                                                                 | Tool                   |
+| ------- | ------------------------------------------------------------------------------ | ---------------------- |
+| Domain  | overrides precedence, academic year math, time/duration, filename, zod schemas | Vitest                 |
+| PDF     | `renderExamCoverPdfDefinition` snapshot for representative cards               | Vitest + snapshot      |
+| Storage | `localStorage` round-trip, migration v1→vN                                     | Vitest with `jsdom`    |
+| Stores  | cards store mutations, actualize logic                                         | Vitest + Pinia testing |
+| Forms   | a few focused component tests (wizard transitions, validation surfacing)       | Vue Test Utils         |
 
 Visual regression of the rendered PDF is a deliberate Phase 4 follow-up (REQUIREMENTS §Testing).
 

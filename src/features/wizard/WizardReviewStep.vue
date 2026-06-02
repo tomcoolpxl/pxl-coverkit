@@ -18,7 +18,9 @@ const wizard = useWizardStore();
 const router = useRouter();
 
 const seedEntry = computed(() =>
-  wizard.seedEntryId ? programmes.seedEntries.find((e) => e.id === wizard.seedEntryId) ?? null : null,
+  wizard.seedEntryId
+    ? (programmes.seedEntries.find((e) => e.id === wizard.seedEntryId) ?? null)
+    : null,
 );
 
 function buildInitialDraft(): WizardDraft {
@@ -145,7 +147,7 @@ onMounted(() => {
 });
 
 const sourceLabel = computed(() =>
-  wizard.manual ? 'Handmatige invoer' : seedEntry.value?.label ?? 'Onbekende bron',
+  wizard.manual ? 'Handmatige invoer' : (seedEntry.value?.label ?? 'Onbekende bron'),
 );
 </script>
 

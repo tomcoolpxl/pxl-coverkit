@@ -58,9 +58,7 @@ describe('programmesSeedFileSchema', () => {
       generatedAt: '2026-06-02T15:08:08.222107+00:00',
       academicYear: '2025-26',
       source: { type: 'studiegids' },
-      programmes: [
-        { id: 'programme-4-pbtin', code: 'PBTIN', name: 'PBTIN', active: true },
-      ],
+      programmes: [{ id: 'programme-4-pbtin', code: 'PBTIN', name: 'PBTIN', active: true }],
       seedEntries: [],
     });
     expect(ok.success).toBe(true);

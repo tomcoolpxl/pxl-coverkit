@@ -33,9 +33,24 @@ function makeCard(overrides: Partial<CourseCard>): CourseCard {
 
 describe('filterCards', () => {
   const cards: CourseCard[] = [
-    makeCard({ programmeCode: 'PBTIN', academicYear: '2025-26', courseCode: '42TIN2260', courseName: 'Automation I' }),
-    makeCard({ programmeCode: 'PBTIN', academicYear: '2026-27', courseCode: '42TIN1370', courseName: 'Cloud Essentials' }),
-    makeCard({ programmeCode: 'GRDVO', academicYear: '2025-26', courseCode: '41DVO1010', courseName: 'Web Essentials' }),
+    makeCard({
+      programmeCode: 'PBTIN',
+      academicYear: '2025-26',
+      courseCode: '42TIN2260',
+      courseName: 'Automation I',
+    }),
+    makeCard({
+      programmeCode: 'PBTIN',
+      academicYear: '2026-27',
+      courseCode: '42TIN1370',
+      courseName: 'Cloud Essentials',
+    }),
+    makeCard({
+      programmeCode: 'GRDVO',
+      academicYear: '2025-26',
+      courseCode: '41DVO1010',
+      courseName: 'Web Essentials',
+    }),
   ];
 
   it('returns all cards when no criteria are passed', () => {

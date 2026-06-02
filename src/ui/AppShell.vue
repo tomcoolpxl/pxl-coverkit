@@ -16,7 +16,12 @@ const notifications = useNotificationStore();
     <v-btn variant="text" color="white" :to="{ name: 'settings' }" prepend-icon="mdi-cog">
       Instellingen
     </v-btn>
-    <v-btn variant="text" color="white" :to="{ name: 'about' }" prepend-icon="mdi-information-outline">
+    <v-btn
+      variant="text"
+      color="white"
+      :to="{ name: 'about' }"
+      prepend-icon="mdi-information-outline"
+    >
       Over
     </v-btn>
   </v-app-bar>
@@ -48,12 +53,7 @@ const notifications = useNotificationStore();
       >
         Herstellen
       </v-btn>
-      <v-btn
-        variant="text"
-        icon="mdi-close"
-        size="small"
-        @click="notifications.hide"
-      />
+      <v-btn variant="text" icon="mdi-close" size="small" @click="notifications.hide" />
     </template>
   </v-snackbar>
 </template>

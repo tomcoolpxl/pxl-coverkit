@@ -8,6 +8,7 @@ import { filterCards, uniqueProgrammeCodes } from '@/domain/filters';
 import type { CourseCard, AcademicYear } from '@/domain/types';
 import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
 import DeleteDialog from '@/features/delete/DeleteDialog.vue';
+import { downloadPdf } from '@/pdf/generator';
 
 const cardsStore = useCardsStore();
 const programmes = useProgrammesStore();
@@ -49,7 +50,20 @@ function startWizard() {
   wizard.reset();
 }
 
-const dutchMonths = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+const dutchMonths = [
+  'jan',
+  'feb',
+  'mrt',
+  'apr',
+  'mei',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'okt',
+  'nov',
+  'dec',
+];
 
 function formatExamDate(iso: string): string {
   if (!iso) return '—';
@@ -64,6 +78,19 @@ function formatUpdated(iso: string): string {
     return new Intl.DateTimeFormat('nl-BE', { dateStyle: 'short' }).format(new Date(iso));
   } catch {
     return iso.slice(0, 10);
+  }
+}
+
+function downloadCardPdf(card: CourseCard) {
+  try {
+    downloadPdf(card);
+    cardsStore.upsert({
+      ...card,
+      lastGeneratedAt: new Date().toISOString(),
+    });
+    notifications.show('PDF succesvol gedownload.');
+  } catch (err: any) {
+    notifications.show(`Fout bij downloaden van PDF: ${err.message || err}`);
   }
 }
 
@@ -132,7 +159,12 @@ function handleDeleteConfirm() {
         Actief academiejaar {{ programmes.loadedYear }}
       </v-chip>
       <v-spacer />
-      <v-btn color="primary" prepend-icon="mdi-plus" :to="{ name: 'card-new' }" @click="startWizard">
+      <v-btn
+        color="primary"
+        prepend-icon="mdi-plus"
+        :to="{ name: 'card-new' }"
+        @click="startWizard"
+      >
         Nieuw voorblad
       </v-btn>
     </div>
@@ -182,11 +214,14 @@ function handleDeleteConfirm() {
     <v-card v-if="isEmptyOverall" variant="outlined" class="pa-8 text-center">
       <v-icon size="48" color="primary" class="mb-4">mdi-file-document-outline</v-icon>
       <h2 class="text-h5 mb-2">Nog geen voorbladen</h2>
-      <p class="text-body-1 mb-4">
-        Maak een nieuw voorblad uit de bundelde studiegidsdata.
-      </p>
+      <p class="text-body-1 mb-4">Maak een nieuw voorblad uit de bundelde studiegidsdata.</p>
       <div class="d-flex justify-center">
-        <v-btn color="primary" prepend-icon="mdi-plus" :to="{ name: 'card-new' }" @click="startWizard">
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-plus"
+          :to="{ name: 'card-new' }"
+          @click="startWizard"
+        >
           Nieuw voorblad
         </v-btn>
       </div>
@@ -199,13 +234,7 @@ function handleDeleteConfirm() {
     </v-card>
 
     <v-row v-else dense>
-      <v-col
-        v-for="card in filtered"
-        :key="card.id"
-        cols="12"
-        sm="6"
-        lg="4"
-      >
+      <v-col v-for="card in filtered" :key="card.id" cols="12" sm="6" lg="4">
         <v-card
           variant="outlined"
           class="pa-4 h-100 d-flex flex-column clickable-card"
@@ -233,10 +262,16 @@ function handleDeleteConfirm() {
               Bijgewerkt {{ formatUpdated(card.updatedAt) }}
             </span>
             <div class="d-flex ga-1">
-              <v-tooltip text="Beschikbaar vanaf Phase 4" location="top">
+              <v-tooltip text="Download PDF" location="top">
                 <template #activator="{ props: tipProps }">
                   <span v-bind="tipProps">
-                    <v-btn icon="mdi-file-pdf-box" size="small" variant="text" disabled @click.stop.prevent />
+                    <v-btn
+                      icon="mdi-file-pdf-box"
+                      size="small"
+                      variant="text"
+                      color="primary"
+                      @click.stop.prevent="downloadCardPdf(card)"
+                    />
                   </span>
                 </template>
               </v-tooltip>
@@ -290,11 +325,7 @@ function handleDeleteConfirm() {
       @confirm="handleActualizeConfirm"
     />
 
-    <DeleteDialog
-      v-model="showDelete"
-      :card="activeCardForDelete"
-      @confirm="handleDeleteConfirm"
-    />
+    <DeleteDialog v-model="showDelete" :card="activeCardForDelete" @confirm="handleDeleteConfirm" />
   </div>
 </template>
 
@@ -303,7 +334,9 @@ function handleDeleteConfirm() {
   background-color: rgba(174, 154, 100, 0.05);
 }
 .clickable-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .clickable-card:hover {
   transform: translateY(-2px);

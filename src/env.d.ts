@@ -13,3 +13,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare module 'virtual:pdfmake-vfs' {
+  const vfs: Record<string, string>;
+  export default vfs;
+}

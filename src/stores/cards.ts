@@ -90,7 +90,7 @@ const MOCK_CARDS: CourseCard[] = [
     lastGeneratedAt: null,
     source: 'manual',
     overrides: [],
-  }
+  },
 ];
 
 export const useCardsStore = defineStore('cards', {
@@ -100,7 +100,7 @@ export const useCardsStore = defineStore('cards', {
     byId:
       (state) =>
       (id: string): CourseCard | undefined =>
-          state.cards.find((c) => c.id === id),
+        state.cards.find((c) => c.id === id),
   },
   actions: {
     replaceAll(next: CourseCard[]) {

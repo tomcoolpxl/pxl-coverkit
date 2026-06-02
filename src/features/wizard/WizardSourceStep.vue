@@ -18,9 +18,7 @@ const programmeSeedEntries = computed(() => {
 const filteredSeedEntries = computed(() => {
   const needle = searchText.value.trim().toLowerCase();
   if (!needle) return programmeSeedEntries.value;
-  return programmeSeedEntries.value.filter((entry) =>
-    entry.label.toLowerCase().includes(needle),
-  );
+  return programmeSeedEntries.value.filter((entry) => entry.label.toLowerCase().includes(needle));
 });
 
 const breadcrumbsForSelection = computed(() => {
@@ -65,10 +63,7 @@ function backStep() {
       class="mb-2"
     />
 
-    <p
-      v-if="breadcrumbsForSelection.length > 0"
-      class="text-caption text-medium-emphasis mb-2"
-    >
+    <p v-if="breadcrumbsForSelection.length > 0" class="text-caption text-medium-emphasis mb-2">
       <span v-for="(crumb, i) in breadcrumbsForSelection" :key="crumb.key">
         <span>{{ crumb.label }}</span>
         <span v-if="i < breadcrumbsForSelection.length - 1"> › </span>
@@ -76,12 +71,7 @@ function backStep() {
     </p>
 
     <v-card variant="outlined" class="mb-3" max-height="50vh" style="overflow-y: auto">
-      <v-alert
-        v-if="filteredSeedEntries.length === 0"
-        type="info"
-        variant="tonal"
-        class="ma-3"
-      >
+      <v-alert v-if="filteredSeedEntries.length === 0" type="info" variant="tonal" class="ma-3">
         Geen OLOD's gevonden voor de huidige zoekopdracht.
       </v-alert>
       <v-list v-else density="comfortable">
@@ -95,10 +85,7 @@ function backStep() {
         >
           <template #subtitle>
             <span v-if="entry.selectionContext">
-              <span
-                v-for="(ctx, i) in Object.entries(entry.selectionContext)"
-                :key="ctx[0]"
-              >
+              <span v-for="(ctx, i) in Object.entries(entry.selectionContext)" :key="ctx[0]">
                 <span>{{ ctx[1].label }}</span>
                 <span v-if="i < Object.entries(entry.selectionContext).length - 1"> › </span>
               </span>

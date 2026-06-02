@@ -1,7 +1,9 @@
 import type { ExportedState } from '@/domain/types';
 import { CURRENT_SCHEMA_VERSION } from '@/domain/types';
 
-export type RawImported = ExportedState | (Omit<ExportedState, 'schemaVersion'> & { schemaVersion: number });
+export type RawImported =
+  | ExportedState
+  | (Omit<ExportedState, 'schemaVersion'> & { schemaVersion: number });
 
 export class MigrationError extends Error {
   constructor(message: string) {

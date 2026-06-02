@@ -61,12 +61,9 @@ describe('mergeOverridable precedence', () => {
 
   it('seed wins over defaults; overrides win over seed', () => {
     const seedDerived = buildOverridableFromSeed(seed);
-    const merged = mergeOverridable(
-      defaults,
-      seedDerived,
-      { vaklector: 'Override Lector' },
-      ['vaklector'],
-    );
+    const merged = mergeOverridable(defaults, seedDerived, { vaklector: 'Override Lector' }, [
+      'vaklector',
+    ]);
     expect(merged.durationMinutes).toBe(120); // from seed
     expect(merged.vaklector).toBe('Override Lector'); // overridden
     expect(merged.courseName).toBe('Automation I'); // from seed

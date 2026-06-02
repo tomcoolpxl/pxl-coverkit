@@ -6,6 +6,7 @@ import { useNotificationStore } from '@/stores/notifications';
 import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
 import DeleteDialog from '@/features/delete/DeleteDialog.vue';
 import type { AcademicYear } from '@/domain/types';
+import { downloadPdf } from '@/pdf/generator';
 
 const props = defineProps<{ id: string }>();
 
@@ -76,35 +77,40 @@ function handleDeleteConfirm() {
     cardsStore.upsert(original);
   });
 }
+
+function downloadCardPdf() {
+  if (!card.value) return;
+  try {
+    downloadPdf(card.value);
+    const updated = {
+      ...card.value,
+      lastGeneratedAt: new Date().toISOString(),
+    };
+    cardsStore.upsert(updated);
+    notifications.show('PDF succesvol gedownload.');
+  } catch (err: any) {
+    notifications.show(`Fout bij downloaden van PDF: ${err.message || err}`);
+  }
+}
 </script>
 
 <template>
   <div>
     <!-- Back Navigation and Actions Header -->
     <div class="d-flex flex-wrap align-center justify-space-between mb-6 ga-3">
-      <v-btn
-        variant="text"
-        prepend-icon="mdi-arrow-left"
-        :to="{ name: 'overview' }"
-      >
+      <v-btn variant="text" prepend-icon="mdi-arrow-left" :to="{ name: 'overview' }">
         Terug naar overzicht
       </v-btn>
 
       <div class="d-flex ga-2" v-if="card">
-        <v-tooltip text="Beschikbaar vanaf Phase 4" location="bottom">
-          <template #activator="{ props: tipProps }">
-            <span v-bind="tipProps">
-              <v-btn
-                color="secondary"
-                prepend-icon="mdi-file-pdf-box"
-                variant="outlined"
-                disabled
-              >
-                Download PDF
-              </v-btn>
-            </span>
-          </template>
-        </v-tooltip>
+        <v-btn
+          color="secondary"
+          prepend-icon="mdi-file-pdf-box"
+          variant="outlined"
+          @click="downloadCardPdf"
+        >
+          Download PDF
+        </v-btn>
 
         <v-btn
           color="primary"
@@ -176,7 +182,9 @@ function handleDeleteConfirm() {
             </v-col>
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Uurregeling</div>
-              <div class="text-body-1">{{ card.startTime }} – {{ card.endTime || '—' }} ({{ card.durationMinutes }} min)</div>
+              <div class="text-body-1">
+                {{ card.startTime }} – {{ card.endTime || '—' }} ({{ card.durationMinutes }} min)
+              </div>
             </v-col>
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Lokaal</div>
@@ -197,12 +205,7 @@ function handleDeleteConfirm() {
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Alle Lectoren</div>
               <div class="d-flex flex-wrap ga-1 mt-1">
-                <v-chip
-                  v-for="l in card.lecturers"
-                  :key="l"
-                  size="small"
-                  variant="outlined"
-                >
+                <v-chip v-for="l in card.lecturers" :key="l" size="small" variant="outlined">
                   {{ l }}
                 </v-chip>
               </div>
@@ -236,7 +239,9 @@ function handleDeleteConfirm() {
                 :color="card.source === 'seeded' ? 'success' : 'warning'"
                 variant="tonal"
               >
-                {{ card.source === 'seeded' ? 'Studiegids (Gesynchroniseerd)' : 'Handmatige invoer' }}
+                {{
+                  card.source === 'seeded' ? 'Studiegids (Gesynchroniseerd)' : 'Handmatige invoer'
+                }}
               </v-chip>
             </div>
           </div>
@@ -249,7 +254,9 @@ function handleDeleteConfirm() {
             <div class="text-body-2">{{ formatExamDate(card.updatedAt) }}</div>
           </div>
           <div v-if="card.overrides.length > 0">
-            <div class="text-caption text-medium-emphasis mb-1">Aangepaste velden t.o.v. origineel</div>
+            <div class="text-caption text-medium-emphasis mb-1">
+              Aangepaste velden t.o.v. origineel
+            </div>
             <div class="d-flex flex-wrap ga-1">
               <v-chip
                 v-for="over in card.overrides"
@@ -273,9 +280,7 @@ function handleDeleteConfirm() {
       <p class="text-body-2 text-medium-emphasis mb-4">
         Het gevraagde voorblad bestaat niet of is verwijderd.
       </p>
-      <v-btn color="primary" :to="{ name: 'overview' }">
-        Terug naar overzicht
-      </v-btn>
+      <v-btn color="primary" :to="{ name: 'overview' }"> Terug naar overzicht </v-btn>
     </v-card>
 
     <!-- Dialogs -->
@@ -285,10 +290,6 @@ function handleDeleteConfirm() {
       @confirm="handleActualizeConfirm"
     />
 
-    <DeleteDialog
-      v-model="showDelete"
-      :card="card || null"
-      @confirm="handleDeleteConfirm"
-    />
+    <DeleteDialog v-model="showDelete" :card="card || null" @confirm="handleDeleteConfirm" />
   </div>
 </template>

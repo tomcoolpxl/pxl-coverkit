@@ -14,6 +14,7 @@ Per `GEMINI.md`: this file holds only verified work. Items land here after their
 Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `npm run build`.
 
 ### Project plumbing
+
 - `package.json` with `start`, `dev`, `build`, `preview`, `test`, `test:watch`, `typecheck`, `lint`, `format` scripts.
 - `vite.config.ts` with `@vitejs/plugin-vue`, `vite-plugin-vuetify` (autoImport), `@` alias, `VITE_BASE_PATH` env-driven base.
 - `vitest.config.ts` with `jsdom` environment and matching `@` alias.
@@ -23,6 +24,7 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 - `.gitignore` extended for Node, Vite, ESLint, and coverage artifacts.
 
 ### Domain layer (pure TS + Vitest)
+
 - `src/domain/types.ts` — `Programme`, `SeedEntry`, `CourseCard`, `AppSettings`, `ProgrammesSeedFile`, `ExportedState`, plus `CURRENT_SCHEMA_VERSION = 1`.
 - `src/domain/schema.ts` — zod schemas with Dutch error messages for every required field listed in `REQUIREMENTS.md` §"Validation and error handling".
 - `src/domain/academicYear.ts` — `parseAcademicYear`, `nextAcademicYear`, `shortAcademicYear`, `formatAcademicYear`.
@@ -32,12 +34,14 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 - Vitest specs for each module (41 tests passing).
 
 ### Data layer
+
 - `src/data/storage.ts` — `KeyValueStorage` interface + `localStorageAdapter` with in-memory fallback.
 - `src/data/seed.ts` — `loadProgrammesSeed` fetches `public/data/programmes.seed.<year>.json`, validates with zod, throws `SeedLoadError`.
 - `src/data/importExport.ts` — `buildExportPayload`, `serializeExport`, `parseImport`, `exportFilename`; surfaces `ImportError` with Dutch messages.
 - `src/data/migrations.ts` — `migrateImported` stub for `schemaVersion = 1`.
 
 ### Stores (Pinia)
+
 - `src/stores/settings.ts` — active academic year, default template/score/exam-chance/duration; persists.
 - `src/stores/programmes.ts` — loads seed for active year on boot; not persisted.
 - `src/stores/cards.ts` — CRUD methods; persists.
@@ -45,6 +49,7 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 - `src/app/pinia.ts` wires `pinia-plugin-persistedstate` with the custom `localStorageAdapter` under prefix `pxl-coverkit:v1:`.
 
 ### App shell + routing + pages
+
 - `src/main.ts`, `src/App.vue` mount Vuetify + Pinia + Router; load seed on boot.
 - `src/app/vuetify.ts` — PXL theme tokens (Gold `#AE9A64`, Rich Black `#030203`, Background `#FAF8F3`).
 - `src/app/router.ts` — hash mode; routes `/`, `/cards/new`, `/cards/:id`, `/cards/:id/edit`, `/settings`, `/about`.
@@ -55,15 +60,19 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 - Placeholder views for wizard, card detail, and card edit.
 
 ### Seed bundling
+
 - `public/data/programmes.seed.2025-26.json` and `public/data/programmes.seed.2026-27.json` copied from `seed-data/`; served at runtime.
 
 ### CI / deploy
+
 - `.github/workflows/pages.yml` — `build` job (Node 22, npm ci, `VITE_BASE_PATH=/${repo}/`) and **checkout-free** `deploy` job using `actions/deploy-pages@v4`.
 
 ### State files
+
 - `IMPLEMENTATION_PHASE1.md` frozen blueprint, `TODO.md` refreshed against current phase, `DONE.md` (this file).
 
 ### Verification results
+
 - `npm test` — 41 tests across 6 files passing.
 - `npm run typecheck` — clean (vue-tsc --noEmit).
 - `npm run build` — 318 modules, 2 s, no warnings.
@@ -76,36 +85,44 @@ Still requires a real browser to fully clear the gate: manual import/export roun
 Verified on 2026-06-02 via `npm test` (69 tests), `npm run typecheck`, `npm run build`, and `npm start` (HTTP 200 on root + seed JSON).
 
 ### Domain layer additions
+
 - `src/domain/cardFactory.ts` — `buildCourseCard()` builds a `CourseCard` from form fields + optional seed + settings; computes `endTime`, tracks `overrides[]` against the seed-or-defaults baseline, tags `source` (`seeded` vs `manual`), copies the lecturers array. Pure; no Vue/Pinia/DOM imports.
 - `src/domain/filters.ts` — `filterCards()`, `uniqueProgrammeCodes()`, `uniqueAcademicYears()` for the overview filter bar.
 
 ### Store changes
+
 - `cards.ts` — `create()` action wraps `buildCourseCard()` and persists via the existing array. Phase 1's `replaceAll/upsert/remove/clear` left untouched.
 - `wizard.ts` — full step machine (`programme` → `source` → `review`) with `next()`/`back()` guarded by `canAdvanceFromProgramme` / `canAdvanceFromSource`. `setProgramme()` clears stale source/draft state. `saveDraft()` + `markClean()` support the dirty navigation guard. `draftToFormFields()` helper bridges the wizard draft to `CardFormFields`.
 
 ### Wizard UI
+
 - `src/features/wizard/WizardPage.vue` — Vuetify stepper host with `onBeforeRouteLeave` confirm guard and a `beforeunload` listener, both keyed off `wizard.dirty`.
 - `WizardProgrammeStep.vue` — programme list with auto-advance when exactly one active programme is loaded.
 - `WizardSourceStep.vue` — searchable seed-entry list scoped to the chosen programme, `selectionContext` breadcrumbs under the search box, plus a "Handmatige invoer" alternative.
 - `WizardReviewStep.vue` — review form prefilled from `defaults < seed < draft`, `vee-validate` with `@vee-validate/zod` for inline Dutch validation, Save disabled until `meta.valid`, success route back to overview.
 
 ### Overview UI
+
 - `OverviewPage.vue` — responsive 1/2/3 column card grid, sticky filter bar (programme / academic year / free-text search), programme + year selects populated from current cards, empty-state for no cards and a separate empty-state for over-filtered views, and per-tile disabled action row (PDF tooltip "Beschikbaar vanaf Phase 4"; Edit/Actualize/Delete tooltip "Beschikbaar vanaf Phase 3").
 
 ### Tooling
+
 - `vee-validate@4.15.1` + `@vee-validate/zod@4.15.1` added as runtime dependencies.
 
 ### Tests added
+
 - `src/domain/cardFactory.test.ts` (6 tests) — endTime + timestamps, override tracking, manual vs seeded source, lecturers array copying.
 - `src/domain/filters.test.ts` (9 tests) — programme/year/search filters individually and combined, empty-criteria pass-through, unique lists sorted.
 - `src/stores/wizard.test.ts` (10 tests) — step transitions, guard behaviour, programme-change clearing source, back/reset/markClean semantics.
 - `src/stores/cards.test.ts` (3 tests) — `create()` appends, override-on-edit, manual-card source flag.
 
 ### State files
+
 - `IMPLEMENTATION_PHASE2.md` frozen blueprint.
 - `TODO.md` refreshed against Phase 2 (only the manual browser walkthrough remains).
 
 ### Phase 2 rework after user review (2026-06-02)
+
 - New constant `src/app/activeAcademicYear.ts` exporting `ACTIVE_SEED_YEAR: AcademicYear = '2025-26'` — the **only** hardcoded academiejaar in the codebase. It tells the seed loader which bundled JSON to fetch; everything user-facing reads the year from the loaded seed instead.
 - `AppSettings` no longer carries `activeAcademicYear`; `appSettingsSchema`, `useSettingsStore`, `buildExportPayload`, `parseImport`, and the related tests updated to the new shape.
 - `App.vue` is the sole importer of the constant (used to bootstrap `programmes.loadForYear(...)`). All other UI consumers — `OverviewPage.vue` chip, `SettingsPage.vue` read-only display, `WizardReviewStep.vue` step header, new-card stamping via `draftToFormFields` — read `useProgrammesStore().loadedYear` so the displayed/stamped year always reflects what the seed actually loaded.
@@ -124,10 +141,12 @@ Verified on 2026-06-02 via `npm test` (69 tests), `npm run typecheck`, `npm run 
 Verified on 2026-06-02 via `npm test` (77 tests), `npm run typecheck`, `npm run build`, and `npm start` (Vite dev server boots and responds).
 
 ### Stores
+
 - `src/stores/lecturers.ts` — new store tracking unique lecturer names used on cards. Exposes `observeLecturer`, `observeLecturers`, `replaceAll`, and `clear` actions.
 - `src/stores/notifications.ts` — new store for global toast and undo capabilities, supporting standard temporary notification and undo action hooks.
 
 ### UI components & page features
+
 - `src/ui/LecturerAutocomplete.vue` — custom autocomplete wrapper using `v-combobox` that pulls observed names from `lecturers` store and allows typing new ones.
 - `src/features/actualize/ActualizeDialog.vue` — dialog to roll a card to the next academic year. Prefills the year, prompts for the new date, allows start time/duration overrides, and computes the end time.
 - `src/features/delete/DeleteDialog.vue` — delete dialog requiring the user to type the course code to confirm or wait a 2-second delay countdown before enabling the button.
@@ -138,7 +157,37 @@ Verified on 2026-06-02 via `npm test` (77 tests), `npm run typecheck`, `npm run 
 - `OverviewPage.vue` — card grid tiles are now clickable to view details, and edit/actualize/delete buttons trigger their respective modals.
 
 ### State & verification
+
 - `IMPLEMENTATION_PHASE3.md` frozen blueprint created.
 - `TODO.md` refreshed for the next phase.
 - Verification results: `npm test` 77/77 tests passing, `npm run typecheck` clean, `npm run build` clean, dev server runs without errors.
 
+## Phase 4 — PDF generation
+
+Verified on 2026-06-02 via `npm test` (79 tests, including 2 snapshot tests), `npm run typecheck`, and `npm run build` (successful compilation of the offline generator chunk).
+
+### PDF Assets and Fonts
+
+- Downloaded the Carlito font files (OFL) under `src/pdf/fonts/`.
+- Implemented a custom Vite build-time plugin in `vite.config.ts` to convert TTF files to a base64 font mapping and serve it via a virtual module `virtual:pdfmake-vfs`.
+- Configured `pdfmake` with the custom VFS font mapping and registered the `Carlito` font family (regular, bold, italics, bolditalics) inside `src/pdf/generator.ts`.
+- Updated `vite.config.ts` to include `pdfmake/build/pdfmake` and `pdfmake/build/vfs_fonts` in `optimizeDeps.include`.
+- Extracted official PXL logos and Blackboard screenshots from the baseline PDF and saved them to `src/assets/pdf/`.
+- Encoded PNG assets as base64 strings in `src/pdf/template-nl-blackboard-v1/assets.ts` for standalone, bundle-safe loading.
+
+### Document Template & Definition
+
+- `src/pdf/template-nl-blackboard-v1/tokens.ts` — configured sizing, spacing, and PXL color tokens.
+- `src/pdf/template-nl-blackboard-v1/definition.ts` — implemented the `renderExamCoverPdfDefinition(data)` function returning a `TDocumentDefinitions` object. It covers all required visual elements on page 1 (Header table, Title line, Student table, Exam data table, Blackboard warning/instructions, and 8-box confirmation box next to the Blackboard screenshot) and page 2 (Blackboard procedure instructions list).
+- `src/pdf/generator.ts` — coordinates `pdfmake` compilation, wires `domain/filename.ts` to generate predictable filenames, and triggers download.
+
+### UI Integration
+
+- Enabled the "Download PDF" button in the card grid overview (`OverviewPage.vue`), updating `lastGeneratedAt` on successful generation.
+- Enabled the "Download PDF" button in the card detail page (`CardDetailPage.vue`), updating `lastGeneratedAt`.
+- Enabled the "PDF genereren" button in the card edit page (`CardEditPage.vue`), updating `lastGeneratedAt` and form values, with inline Zod validation guards.
+
+### Testing and Validation
+
+- Created `src/pdf/template-nl-blackboard-v1/definition.test.ts` verifying document definitions against snapshots for seeded and manual cards (79/79 tests green).
+- Verified production build compile results.

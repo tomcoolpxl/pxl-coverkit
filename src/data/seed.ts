@@ -9,7 +9,10 @@ function seedUrl(year: AcademicYear): string {
 }
 
 export class SeedLoadError extends Error {
-  constructor(message: string, readonly cause?: unknown) {
+  constructor(
+    message: string,
+    readonly cause?: unknown,
+  ) {
     super(message);
     this.name = 'SeedLoadError';
   }
