@@ -9,6 +9,7 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useCardsStore } from '@/stores/cards';
 import { useWizardStore, type WizardDraft, draftToFormFields } from '@/stores/wizard';
 import { buildBaselineFor } from '@/domain/cardFactory';
+import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
 
 const settings = useSettingsStore();
 const programmes = useProgrammesStore();
@@ -79,8 +80,8 @@ const [examChance, examChanceProps] = defineField('examChance', vuetifyConfig);
 const [examDate, examDateProps] = defineField('examDate', vuetifyConfig);
 const [startTime, startTimeProps] = defineField('startTime', vuetifyConfig);
 const [durationMinutes, durationMinutesProps] = defineField('durationMinutes', vuetifyConfig);
-const [vaklector, vaklectorProps] = defineField('vaklector', vuetifyConfig);
-const [lecturers, lecturersProps] = defineField('lecturers', vuetifyConfig);
+const [vaklector] = defineField('vaklector', vuetifyConfig);
+const [lecturers] = defineField('lecturers', vuetifyConfig);
 const [allowedResources, allowedResourcesProps] = defineField('allowedResources', vuetifyConfig);
 const [maxScore, maxScoreProps] = defineField('maxScore', vuetifyConfig);
 const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetifyConfig);
@@ -249,24 +250,18 @@ const sourceLabel = computed(() =>
         </v-col>
 
         <v-col cols="12" md="6">
-          <v-text-field
+          <LecturerAutocomplete
             v-model="vaklector"
-            v-bind="vaklectorProps"
+            :error-messages="errors.vaklector"
             label="Vaklector"
-            density="comfortable"
-            variant="outlined"
           />
         </v-col>
         <v-col cols="12" md="6">
-          <v-combobox
+          <LecturerAutocomplete
             v-model="lecturers"
-            v-bind="lecturersProps"
+            :error-messages="errors.lecturers"
             label="Lectoren (Enter per naam)"
             multiple
-            chips
-            closable-chips
-            density="comfortable"
-            variant="outlined"
           />
         </v-col>
 

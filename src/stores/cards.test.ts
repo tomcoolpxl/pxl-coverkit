@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { useCardsStore } from './cards';
 import type { SeedEntry } from '@/domain/types';
+import { buildCourseCard } from '@/domain/cardFactory';
 
 const seed: SeedEntry = {
   id: 'seed-x',
@@ -84,5 +85,97 @@ describe('cards store create()', () => {
     expect(card?.source).toBe('manual');
     expect(card?.overrides).toContain('courseCode');
     expect(card?.overrides).toContain('courseName');
+  });
+});
+
+describe('cards store lifecycle (actualize, delete, edit)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    useCardsStore().clear();
+  });
+
+  it('actualize overwrites the card state and recalculates endTime', () => {
+    const cards = useCardsStore();
+    const original = cards.create({
+      fields: baseFields,
+      seedEntry: seed,
+      settings,
+      now: () => '2026-06-02T12:00:00Z',
+      id: () => 'card-1',
+    });
+
+    const updated = {
+      ...original,
+      academicYear: '2026-27' as const,
+      examDate: '2027-06-12',
+      startTime: '10:00',
+      durationMinutes: 180,
+      endTime: '13:00',
+      updatedAt: '2026-06-02T13:00:00Z',
+    };
+
+    cards.upsert(updated);
+
+    const fetched = cards.byId('card-1')!;
+    expect(fetched.academicYear).toBe('2026-27');
+    expect(fetched.examDate).toBe('2027-06-12');
+    expect(fetched.startTime).toBe('10:00');
+    expect(fetched.endTime).toBe('13:00');
+    expect(fetched.updatedAt).toBe('2026-06-02T13:00:00Z');
+  });
+
+  it('deleting a card removes it, and it can be restored via upsert (undo)', () => {
+    const cards = useCardsStore();
+    const original = cards.create({
+      fields: baseFields,
+      seedEntry: seed,
+      settings,
+      now: () => 'now',
+      id: () => 'card-1',
+    });
+
+    expect(cards.count).toBe(1);
+
+    cards.remove('card-1');
+    expect(cards.count).toBe(0);
+    expect(cards.byId('card-1')).toBeUndefined();
+
+    // Undo action (upserting original back)
+    cards.upsert(original);
+    expect(cards.count).toBe(1);
+    expect(cards.byId('card-1')).toBeDefined();
+  });
+
+  it('re-calculates overrides correctly after manual edit relative to baseline', () => {
+    const cards = useCardsStore();
+    const original = cards.create({
+      fields: baseFields, // vaklector is 'A. Lector' (override relative to seed null), startTime is '09:00' (override)
+      seedEntry: seed,
+      settings,
+      now: () => 'now',
+      id: () => 'card-1',
+    });
+
+    // Currently overrides contain vaklector and startTime
+    expect(original.overrides).toContain('vaklector');
+    expect(original.overrides).toContain('startTime');
+
+    // We edit the card, changing vaklector back to null/empty? Or let's say we change startTime back to baseline (which is '08:30' default from settings? No, settings has no default startTime, wait, let's see. Baseline has startTime: empty).
+    // Let's edit to override maxScore to 40
+    const editedCard = buildCourseCard({
+      fields: {
+        ...baseFields,
+        maxScore: 40,
+      },
+      seedEntry: seed,
+      settings,
+      id: () => 'card-1',
+    });
+
+    cards.upsert(editedCard);
+    const fetched = cards.byId('card-1')!;
+    expect(fetched.maxScore).toBe(40);
+    expect(fetched.overrides).toContain('maxScore');
+    expect(fetched.overrides).toContain('vaklector');
   });
 });

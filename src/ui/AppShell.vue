@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import packageJson from '../../package.json';
+import { useNotificationStore } from '@/stores/notifications';
 
 const appVersion = computed(() => packageJson.version);
+const notifications = useNotificationStore();
 </script>
 
 <template>
@@ -29,4 +31,29 @@ const appVersion = computed(() => packageJson.version);
     <span>PXL Cover Kit · v{{ appVersion }}</span>
     <router-link :to="{ name: 'about' }" class="text-secondary">Over &amp; licenties</router-link>
   </v-footer>
+
+  <!-- Global Notification Snackbar -->
+  <v-snackbar
+    v-model="notifications.visible"
+    :timeout="notifications.timeout"
+    location="bottom right"
+  >
+    {{ notifications.message }}
+    <template #actions>
+      <v-btn
+        v-if="notifications.undoCallback"
+        color="primary"
+        variant="text"
+        @click="notifications.triggerUndo"
+      >
+        Herstellen
+      </v-btn>
+      <v-btn
+        variant="text"
+        icon="mdi-close"
+        size="small"
+        @click="notifications.hide"
+      />
+    </template>
+  </v-snackbar>
 </template>

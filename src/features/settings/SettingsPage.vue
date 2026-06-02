@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useCardsStore } from '@/stores/cards';
 import { useProgrammesStore } from '@/stores/programmes';
+import { useLecturersStore } from '@/stores/lecturers';
 import {
   buildExportPayload,
   exportFilename,
@@ -15,9 +16,12 @@ import packageJson from '../../../package.json';
 const settings = useSettingsStore();
 const cards = useCardsStore();
 const programmes = useProgrammesStore();
+const lecturersStore = useLecturersStore();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const status = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
+const showConfirmImportDialog = ref(false);
+const pendingImport = ref<any>(null);
 
 const cardCount = computed(() => cards.count);
 
@@ -25,6 +29,7 @@ function triggerExport() {
   const payload = buildExportPayload({
     settings: settings.asExportable(),
     cards: cards.cards,
+    lecturers: lecturersStore.lecturers,
   });
   const json = serializeExport(payload);
   const blob = new Blob([json], { type: 'application/json' });
@@ -51,16 +56,28 @@ async function onImportFile(event: Event) {
   try {
     const text = await file.text();
     const parsed = parseImport(text);
-    settings.replaceWith(parsed.settings);
-    cards.replaceAll(parsed.cards);
-    status.value = {
-      kind: 'success',
-      message: `Import voltooid: ${parsed.cards.length} voorblad(en) geladen.`,
-    };
+    pendingImport.value = parsed;
+    showConfirmImportDialog.value = true;
   } catch (err) {
     const message = err instanceof ImportError ? err.message : 'Onbekende importfout.';
     status.value = { kind: 'error', message };
   }
+}
+
+function confirmImport() {
+  if (!pendingImport.value) return;
+  const parsed = pendingImport.value;
+  settings.replaceWith(parsed.settings);
+  cards.replaceAll(parsed.cards);
+  if (parsed.lecturers) {
+    lecturersStore.replaceAll(parsed.lecturers);
+  }
+  status.value = {
+    kind: 'success',
+    message: `Import voltooid: ${parsed.cards.length} voorblad(en) geladen.`,
+  };
+  pendingImport.value = null;
+  showConfirmImportDialog.value = false;
 }
 </script>
 
@@ -132,5 +149,41 @@ async function onImportFile(event: Event) {
         <router-link :to="{ name: 'about' }">Over-pagina</router-link>.
       </p>
     </v-card>
+
+    <!-- Confirm Import Dialog -->
+    <v-dialog v-model="showConfirmImportDialog" max-width="500">
+      <v-card>
+        <v-card-title class="text-h6">
+          Import bevestigen
+        </v-card-title>
+        <v-card-text>
+          <p class="mb-4">
+            Weet je zeker dat je de lokale gegevens wilt vervangen door de geïmporteerde gegevens? Dit overschrijft je huidige instellingen en voorbladen.
+          </p>
+          <v-table density="compact" class="mb-4">
+            <tbody>
+              <tr>
+                <td><strong>Huidige voorbladen:</strong></td>
+                <td>{{ cards.cards.length }}</td>
+              </tr>
+              <tr>
+                <td><strong>Te importeren voorbladen:</strong></td>
+                <td>{{ pendingImport?.cards.length ?? 0 }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+          <p class="text-caption text-error">
+            Waarschuwing: Deze actie kan niet ongedaan worden gemaakt.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="showConfirmImportDialog = false">Annuleren</v-btn>
+          <v-btn color="error" variant="elevated" @click="confirmImport">
+            Ja, vervang lokale data
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>

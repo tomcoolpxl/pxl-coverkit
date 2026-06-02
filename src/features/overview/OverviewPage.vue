@@ -3,18 +3,27 @@ import { computed, ref } from 'vue';
 import { useCardsStore } from '@/stores/cards';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useWizardStore } from '@/stores/wizard';
+import { useNotificationStore } from '@/stores/notifications';
 import { filterCards, uniqueProgrammeCodes } from '@/domain/filters';
-import type { CourseCard } from '@/domain/types';
+import type { CourseCard, AcademicYear } from '@/domain/types';
+import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
+import DeleteDialog from '@/features/delete/DeleteDialog.vue';
 
-const cards = useCardsStore();
+const cardsStore = useCardsStore();
 const programmes = useProgrammesStore();
 const wizard = useWizardStore();
+const notifications = useNotificationStore();
 
 const programmeFilter = ref<string | null>(null);
 const searchText = ref('');
 
+const showActualize = ref(false);
+const activeCardForActualize = ref<CourseCard | null>(null);
+const showDelete = ref(false);
+const activeCardForDelete = ref<CourseCard | null>(null);
+
 const programmeOptions = computed(() => {
-  const codes = uniqueProgrammeCodes(cards.cards);
+  const codes = uniqueProgrammeCodes(cardsStore.cards);
   return codes.map((code) => {
     const programme = programmes.programmes.find((p) => p.code === code);
     return { code, title: programme ? `${code} — ${programme.name}` : code };
@@ -22,13 +31,13 @@ const programmeOptions = computed(() => {
 });
 
 const filtered = computed<CourseCard[]>(() =>
-  filterCards(cards.cards, {
+  filterCards(cardsStore.cards, {
     programmeCode: programmeFilter.value,
     search: searchText.value,
   }),
 );
 
-const isEmptyOverall = computed(() => cards.cards.length === 0);
+const isEmptyOverall = computed(() => cardsStore.cards.length === 0);
 const isEmptyFiltered = computed(() => !isEmptyOverall.value && filtered.value.length === 0);
 
 function clearFilters() {
@@ -56,6 +65,62 @@ function formatUpdated(iso: string): string {
   } catch {
     return iso.slice(0, 10);
   }
+}
+
+function openActualize(card: CourseCard) {
+  activeCardForActualize.value = card;
+  showActualize.value = true;
+}
+
+function openDelete(card: CourseCard) {
+  activeCardForDelete.value = card;
+  showDelete.value = true;
+}
+
+function handleActualizeConfirm(data: {
+  academicYear: string;
+  examDate: string;
+  startTime: string;
+  durationMinutes: number;
+}) {
+  if (!activeCardForActualize.value) return;
+  const card = activeCardForActualize.value;
+  const original = { ...card };
+
+  // Calculate endTime helper
+  const [hours, mins] = data.startTime.split(':').map(Number);
+  const totalMins = hours * 60 + mins + data.durationMinutes;
+  const endHours = Math.floor(totalMins / 60) % 24;
+  const endMins = totalMins % 60;
+  const endTime = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+
+  const updated = {
+    ...card,
+    academicYear: data.academicYear as AcademicYear,
+    examDate: data.examDate,
+    startTime: data.startTime,
+    durationMinutes: data.durationMinutes,
+    endTime,
+    updatedAt: new Date().toISOString(),
+  };
+
+  cardsStore.upsert(updated);
+  notifications.showUndo(`Voorblad geactualiseerd naar ${data.academicYear}`, () => {
+    cardsStore.upsert(original);
+  });
+  activeCardForActualize.value = null;
+}
+
+function handleDeleteConfirm() {
+  if (!activeCardForDelete.value) return;
+  const card = activeCardForDelete.value;
+  const original = { ...card };
+
+  cardsStore.remove(card.id);
+  notifications.showUndo('Voorblad verwijderd.', () => {
+    cardsStore.upsert(original);
+  });
+  activeCardForDelete.value = null;
 }
 </script>
 
@@ -110,7 +175,7 @@ function formatUpdated(iso: string): string {
         </v-btn>
       </div>
       <p class="text-caption text-medium-emphasis mt-2 mb-0">
-        {{ filtered.length }} van {{ cards.cards.length }} voorblad(en) getoond.
+        {{ filtered.length }} van {{ cardsStore.cards.length }} voorblad(en) getoond.
       </p>
     </v-card>
 
@@ -141,7 +206,12 @@ function formatUpdated(iso: string): string {
         sm="6"
         lg="4"
       >
-        <v-card variant="outlined" class="pa-4 h-100 d-flex flex-column">
+        <v-card
+          variant="outlined"
+          class="pa-4 h-100 d-flex flex-column clickable-card"
+          hover
+          :to="{ name: 'card-detail', params: { id: card.id } }"
+        >
           <div class="d-flex align-center mb-2 ga-2">
             <v-chip size="small" color="primary" variant="tonal">{{ card.programmeCode }}</v-chip>
             <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
@@ -166,28 +236,44 @@ function formatUpdated(iso: string): string {
               <v-tooltip text="Beschikbaar vanaf Phase 4" location="top">
                 <template #activator="{ props: tipProps }">
                   <span v-bind="tipProps">
-                    <v-btn icon="mdi-file-pdf-box" size="small" variant="text" disabled />
+                    <v-btn icon="mdi-file-pdf-box" size="small" variant="text" disabled @click.stop.prevent />
                   </span>
                 </template>
               </v-tooltip>
-              <v-tooltip text="Beschikbaar vanaf Phase 3" location="top">
+              <v-tooltip text="Actualiseren" location="top">
                 <template #activator="{ props: tipProps }">
                   <span v-bind="tipProps">
-                    <v-btn icon="mdi-autorenew" size="small" variant="text" disabled />
+                    <v-btn
+                      icon="mdi-autorenew"
+                      size="small"
+                      variant="text"
+                      @click.stop.prevent="openActualize(card)"
+                    />
                   </span>
                 </template>
               </v-tooltip>
-              <v-tooltip text="Beschikbaar vanaf Phase 3" location="top">
+              <v-tooltip text="Bewerken" location="top">
                 <template #activator="{ props: tipProps }">
                   <span v-bind="tipProps">
-                    <v-btn icon="mdi-pencil" size="small" variant="text" disabled />
+                    <v-btn
+                      icon="mdi-pencil"
+                      size="small"
+                      variant="text"
+                      :to="{ name: 'card-edit', params: { id: card.id } }"
+                      @click.stop
+                    />
                   </span>
                 </template>
               </v-tooltip>
-              <v-tooltip text="Beschikbaar vanaf Phase 3" location="top">
+              <v-tooltip text="Verwijderen" location="top">
                 <template #activator="{ props: tipProps }">
                   <span v-bind="tipProps">
-                    <v-btn icon="mdi-delete-outline" size="small" variant="text" disabled />
+                    <v-btn
+                      icon="mdi-delete-outline"
+                      size="small"
+                      variant="text"
+                      @click.stop.prevent="openDelete(card)"
+                    />
                   </span>
                 </template>
               </v-tooltip>
@@ -196,11 +282,32 @@ function formatUpdated(iso: string): string {
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Dialogs -->
+    <ActualizeDialog
+      v-model="showActualize"
+      :card="activeCardForActualize"
+      @confirm="handleActualizeConfirm"
+    />
+
+    <DeleteDialog
+      v-model="showDelete"
+      :card="activeCardForDelete"
+      @confirm="handleDeleteConfirm"
+    />
   </div>
 </template>
 
 <style scoped>
 .filter-bar {
   background-color: rgba(174, 154, 100, 0.05);
+}
+.clickable-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.clickable-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 }
 </style>

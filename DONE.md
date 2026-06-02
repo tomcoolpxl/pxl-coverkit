@@ -118,3 +118,27 @@ Verified on 2026-06-02 via `npm test` (69 tests), `npm run typecheck`, `npm run 
 - `DESIGN.md` updated: §3.3 drops the year filter from the overview; §3.8 documents Settings as read-only year display + local-data import/export; §4.5 names `ACTIVE_SEED_YEAR` as the bundle pointer and `programmes.loadedYear` as the UI source; §11 resolves the "Active academic year switch" open question.
 - `IMPLEMENTATION_PLAN.md` Phase 6 seed-refresh runbook now points maintainers at `ACTIVE_SEED_YEAR` instead of the removed `settings.activeAcademicYear` field.
 - Verification after rework: `npm test` 69/69 across 10 files, `npm run typecheck` clean, `npm run build` clean (~2.3 s), `npm start` HTTP 200 on root and seed JSON.
+
+## Phase 3 — Edit, actualize, delete
+
+Verified on 2026-06-02 via `npm test` (77 tests), `npm run typecheck`, `npm run build`, and `npm start` (Vite dev server boots and responds).
+
+### Stores
+- `src/stores/lecturers.ts` — new store tracking unique lecturer names used on cards. Exposes `observeLecturer`, `observeLecturers`, `replaceAll`, and `clear` actions.
+- `src/stores/notifications.ts` — new store for global toast and undo capabilities, supporting standard temporary notification and undo action hooks.
+
+### UI components & page features
+- `src/ui/LecturerAutocomplete.vue` — custom autocomplete wrapper using `v-combobox` that pulls observed names from `lecturers` store and allows typing new ones.
+- `src/features/actualize/ActualizeDialog.vue` — dialog to roll a card to the next academic year. Prefills the year, prompts for the new date, allows start time/duration overrides, and computes the end time.
+- `src/features/delete/DeleteDialog.vue` — delete dialog requiring the user to type the course code to confirm or wait a 2-second delay countdown before enabling the button.
+- `src/features/detail/CardDetailPage.vue` — detail route (`/cards/:id`) showing a complete styled view of the cover details, and actions bar (Actualize, Edit, Delete, disabled PDF download with Phase 4 tooltip).
+- `src/features/edit/CardEditPage.vue` — full update view (`/cards/:id/edit`) in a two-column desktop layout. Form sections use `v-expansion-panels` on the left, and a live-updating summary card mirroring the overview grid layout along with actions is sticky on the right.
+- `App.vue` — hooks up initial observed lecturers seeding on mount from all existing cards in storage.
+- `SettingsPage.vue` — imports and exports the `lecturers` array along with the backup JSON file, and includes an explicit confirmation dialog before overwriting local data.
+- `OverviewPage.vue` — card grid tiles are now clickable to view details, and edit/actualize/delete buttons trigger their respective modals.
+
+### State & verification
+- `IMPLEMENTATION_PHASE3.md` frozen blueprint created.
+- `TODO.md` refreshed for the next phase.
+- Verification results: `npm test` 77/77 tests passing, `npm run typecheck` clean, `npm run build` clean, dev server runs without errors.
+

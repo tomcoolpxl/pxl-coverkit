@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { buildCourseCard, type CardFormFields } from '@/domain/cardFactory';
 import type { AppSettings, CourseCard, SeedEntry } from '@/domain/types';
+import { useLecturersStore } from './lecturers';
 
 interface CardsState {
   cards: CourseCard[];
@@ -99,7 +100,7 @@ export const useCardsStore = defineStore('cards', {
     byId:
       (state) =>
       (id: string): CourseCard | undefined =>
-        state.cards.find((c) => c.id === id),
+          state.cards.find((c) => c.id === id),
   },
   actions: {
     replaceAll(next: CourseCard[]) {
@@ -107,12 +108,23 @@ export const useCardsStore = defineStore('cards', {
     },
     upsert(card: CourseCard) {
       const i = this.cards.findIndex((c) => c.id === card.id);
-      if (i === -1) this.cards.push(card);
-      else this.cards[i] = card;
+      if (i === -1) {
+        this.cards = [...this.cards, card];
+      } else {
+        const next = [...this.cards];
+        next[i] = card;
+        this.cards = next;
+      }
+      const lecturersStore = useLecturersStore();
+      if (card.vaklector) lecturersStore.observeLecturer(card.vaklector);
+      if (card.lecturers) lecturersStore.observeLecturers(card.lecturers);
     },
     create(input: CreateCardInput): CourseCard {
       const card = buildCourseCard(input);
       this.cards = [...this.cards, card];
+      const lecturersStore = useLecturersStore();
+      if (card.vaklector) lecturersStore.observeLecturer(card.vaklector);
+      if (card.lecturers) lecturersStore.observeLecturers(card.lecturers);
       return card;
     },
     remove(id: string) {
