@@ -18,7 +18,7 @@ This document captures the architecture, tech stack, and UX/UI direction agreed 
 | UI library           | Vuetify 3 (Material 3 baseline, themed for PXL)                                         |
 | Routing              | `vue-router` in hash mode (`/#/...`) for friction-free GitHub Pages hosting             |
 | State                | Pinia stores                                                                            |
-| Persistence          | `localStorage` via a thin `StorageAdapter` interface (IndexedDB-ready)                  |
+| Persistence          | `pinia-plugin-persistedstate` with a custom storage object wrapping `localStorage` (IndexedDB-ready) |
 | Forms / validation   | `vee-validate` with `zod` schemas (same schemas reused by the storage and import layer) |
 | PDF                  | `pdfmake` with custom VFS (Carlito font, Arial-metric-compatible)                       |
 | Date / time          | Native `Intl` + small helpers; no heavy date library                                    |
@@ -182,15 +182,17 @@ Render is a one-way pipeline: a `CourseCardData` object is built up by merging d
 
 ### 4.3 Storage adapter
 
+`pinia-plugin-persistedstate` is wired with a single custom storage object that conforms to the `{ getItem, setItem, removeItem }` shape and currently delegates to `localStorage` under the key prefix `pxl-coverkit:v1:`. Swapping to IndexedDB later means replacing that storage object only; stores stay untouched.
+
 ```ts
-interface StorageAdapter {
-  load(): Promise<PersistedState | null>;
-  save(state: PersistedState): Promise<void>;
-  clear(): Promise<void>;
+interface KeyValueStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
 }
 ```
 
-The `localStorage` implementation serialises the entire `PersistedState` under one key (`pxl-coverkit:v1`). A future `IndexedDBAdapter` swaps in without store changes. Each Pinia store reads/writes through the adapter via a single composable (`usePersistence`), debounced ~250 ms.
+A `migrations.ts` module owns `schemaVersion` upgrades; the persisted state is funnelled through it on hydrate before stores see the data.
 
 ### 4.4 Override precedence
 
