@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""Transform raw studiegids scrape output into app-facing seed JSON.
-
-This keeps the raw scrape result as an audit/source artifact and emits a flat
-seed-entry file that the future app can filter by programme, modeltraject,
-trajectschijf, and deeltraject.
-
-Example:
-  python scripts/build_programmes_seed.py \
-    --input pbtin-2025-26.raw.json \
-    --output public/data/programmes.seed.json
-"""
+"""Build one single-year seed file from a raw studiegids tree crawl."""
 
 from __future__ import annotations
 
@@ -17,6 +7,9 @@ import argparse
 import json
 import re
 import sys
+import time
+import unicodedata
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -25,142 +18,128 @@ class SeedBuildError(RuntimeError):
     pass
 
 
+@dataclass
+class BuildProgress:
+    input_path: Path
+    output_path: Path
+    enabled: bool = True
+
+    def __post_init__(self) -> None:
+        self.started_at = time.monotonic()
+
+    def log(self, message: str) -> None:
+        if not self.enabled:
+            return
+        elapsed = time.monotonic() - self.started_at
+        print(f"[seed-build +{elapsed:6.1f}s] {message}", file=sys.stderr, flush=True)
+
+
+def normalize_space(text: str) -> str:
+    return " ".join(str(text).split())
+
+
 def normalize_fragment(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
+    ascii_text = unicodedata.normalize("NFKD", normalize_space(text)).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]+", "-", ascii_text.casefold()).strip("-")
 
 
-def parse_olod_name(full_name: str) -> tuple[str, str]:
-    match = re.match(r"^([0-9A-Z]+)\s+(.+)$", full_name.strip())
-    if not match:
-        raise SeedBuildError(f"Could not split OLOD code and name from {full_name!r}")
-    return match.group(1), match.group(2)
+def load_raw_document(path: Path) -> dict[str, object]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise SeedBuildError(f"Raw crawl file not found: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise SeedBuildError(f"Raw crawl file is not valid JSON: {path}: {exc}") from exc
+
+    if not isinstance(data, dict):
+        raise SeedBuildError("Raw crawl JSON root must be an object.")
+    if not isinstance(data.get("programmeTrees"), list):
+        raise SeedBuildError("Raw crawl JSON is missing programmeTrees.")
+    return data
 
 
-def build_entry_id(
-    programme_code: str,
-    course_code: str,
-    modeltraject_value: str | None,
-    trajectschijf_value: str | None,
-    deeltraject_value: str | None,
-) -> str:
+def build_programme_id(department_value: str, programme_code: str) -> str:
+    return f"programme-{normalize_fragment(department_value)}-{normalize_fragment(programme_code)}"
+
+
+def build_seed_entry_id(programme_code: str, label: str, selection_path: list[dict[str, str]]) -> str:
     parts = [
         "seed",
         normalize_fragment(programme_code),
-        normalize_fragment(course_code),
+        normalize_fragment(label) or "unknown",
     ]
-    if modeltraject_value:
-        parts.append(f"m{normalize_fragment(modeltraject_value)}")
-    if trajectschijf_value:
-        parts.append(f"t{normalize_fragment(trajectschijf_value)}")
-    if deeltraject_value:
-        parts.append(f"d{normalize_fragment(deeltraject_value)}")
+    for step in selection_path:
+        parts.append(f"{normalize_fragment(step['key'])}-{normalize_fragment(step['value'])}")
     return "-".join(parts)
 
 
-def build_selection_context(
-    *,
-    departement: dict[str, str] | None,
-    modeltraject: dict[str, str] | None,
-    trajectschijf: dict[str, str] | None,
-    deeltraject: dict[str, str] | None,
-) -> dict[str, dict[str, str]]:
-    context: dict[str, dict[str, str]] = {}
-    if departement and departement.get("value"):
-        context["departement"] = {
-            "value": departement["value"],
-            "label": departement["label"],
-        }
-    if modeltraject and modeltraject.get("value"):
-        context["modeltraject"] = {
-            "value": modeltraject["value"],
-            "label": modeltraject["label"],
-        }
-    if trajectschijf and trajectschijf.get("value"):
-        context["trajectschijf"] = {
-            "value": trajectschijf["value"],
-            "label": trajectschijf["label"],
-        }
-    if deeltraject and deeltraject.get("value"):
-        context["deeltraject"] = {
-            "value": deeltraject["value"],
-            "label": deeltraject["label"],
-        }
-    return context
-
-
-def build_seed_document(raw_data: dict[str, object], default_max_score: int) -> dict[str, object]:
-    programme = raw_data.get("opleiding")
-    if not isinstance(programme, dict):
-        raise SeedBuildError("Input JSON is missing the opleiding object.")
-
-    programme_code = programme.get("value")
-    programme_name = programme.get("label")
-    if not isinstance(programme_code, str) or not isinstance(programme_name, str):
-        raise SeedBuildError("The opleiding object must contain string value and label fields.")
-
-    modeltraject = raw_data.get("modeltraject")
-    if modeltraject is not None and not isinstance(modeltraject, dict):
-        raise SeedBuildError("The modeltraject field must be an object when present.")
-
-    departement = raw_data.get("departement")
-    if departement is not None and not isinstance(departement, dict):
-        raise SeedBuildError("The departement field must be an object when present.")
-
-    trajectschijven = raw_data.get("trajectschijven")
-    if not isinstance(trajectschijven, list):
-        raise SeedBuildError("Input JSON is missing the trajectschijven list.")
-
-    generated_at = datetime.now(timezone.utc).isoformat()
-    source_url = raw_data.get("source_url")
-    acadjaar = raw_data.get("acadjaar")
-
-    seed_entries: list[dict[str, object]] = []
+def build_programmes(raw_document: dict[str, object]) -> list[dict[str, object]]:
+    programmes: list[dict[str, object]] = []
     seen_ids: set[str] = set()
-    for trajectschijf in trajectschijven:
-        if not isinstance(trajectschijf, dict):
-            raise SeedBuildError("Each trajectschijf entry must be an object.")
-
-        trajectschijf_ref = {
-            "value": str(trajectschijf.get("value") or ""),
-            "label": str(trajectschijf.get("label") or ""),
-        }
-        deeltrajecten = trajectschijf.get("deeltrajecten")
-        if not isinstance(deeltrajecten, list):
-            raise SeedBuildError("Each trajectschijf must contain a deeltrajecten list.")
-
-        for deeltraject in deeltrajecten:
-            if not isinstance(deeltraject, dict):
-                raise SeedBuildError("Each deeltraject entry must be an object.")
-            deeltraject_ref = {
-                "value": str(deeltraject.get("value") or ""),
-                "label": str(deeltraject.get("label") or ""),
+    for tree in raw_document["programmeTrees"]:
+        department = tree["department"]
+        programme = tree["programme"]
+        programme_id = build_programme_id(department["value"], programme["value"])
+        if programme_id in seen_ids:
+            raise SeedBuildError(f"Duplicate programme id generated: {programme_id}")
+        seen_ids.add(programme_id)
+        programmes.append(
+            {
+                "id": programme_id,
+                "code": programme["value"],
+                "name": programme["label"],
+                "active": True,
+                "department": {
+                    "value": department["value"],
+                    "label": department["label"],
+                },
+                "selectionFlow": tree["selectionFlow"],
             }
-            olod_names = deeltraject.get("olod_names")
-            if not isinstance(olod_names, list):
-                raise SeedBuildError("Each deeltraject must contain an olod_names list.")
+        )
 
-            for olod_name in olod_names:
-                if not isinstance(olod_name, str):
-                    raise SeedBuildError("Each OLOD name must be a string.")
-                course_code, course_name = parse_olod_name(olod_name)
-                entry_id = build_entry_id(
-                    programme_code,
-                    course_code,
-                    modeltraject.get("value") if isinstance(modeltraject, dict) else None,
-                    trajectschijf_ref["value"],
-                    deeltraject_ref["value"],
-                )
+    programmes.sort(key=lambda item: (item["department"]["label"], item["code"]))
+    return programmes
+
+
+def build_seed_entries(
+    raw_document: dict[str, object],
+    *,
+    default_max_score: int,
+) -> list[dict[str, object]]:
+    entries: list[dict[str, object]] = []
+    seen_ids: set[str] = set()
+    generated_at = datetime.now(timezone.utc).isoformat()
+    acadjaar = str(raw_document["acadjaar"])
+    source_url = str(raw_document.get("sourceUrl") or "")
+
+    for tree in raw_document["programmeTrees"]:
+        department = tree["department"]
+        programme = tree["programme"]
+        programme_id = build_programme_id(department["value"], programme["value"])
+        for branch in tree["branches"]:
+            selection_context = {
+                "departement": {
+                    "value": department["value"],
+                    "label": f"{department['value']} {department['label']}",
+                }
+            }
+            for step in branch["selectionPath"]:
+                selection_context[step["key"]] = {
+                    "value": step["value"],
+                    "label": f"{step['value']} {step['label']}",
+                }
+
+            for label in branch["olodNames"]:
+                entry_id = build_seed_entry_id(programme["value"], label, branch["selectionPath"])
                 if entry_id in seen_ids:
                     raise SeedBuildError(f"Duplicate seed entry id generated: {entry_id}")
                 seen_ids.add(entry_id)
-
-                seed_entries.append(
+                entries.append(
                     {
                         "id": entry_id,
-                        "entryType": "olod",
-                        "programmeCode": programme_code,
-                        "courseCode": course_code,
-                        "courseName": course_name,
+                        "programmeId": programme_id,
+                        "programmeCode": programme["value"],
+                        "label": normalize_space(label),
                         "defaultVaklector": None,
                         "defaultLecturers": [],
                         "defaultStartTime": None,
@@ -169,12 +148,7 @@ def build_seed_document(raw_data: dict[str, object], default_max_score: int) -> 
                         "defaultMaxScore": default_max_score,
                         "active": True,
                         "sourceLastUpdated": generated_at,
-                        "selectionContext": build_selection_context(
-                            departement=departement if isinstance(departement, dict) else None,
-                            modeltraject=modeltraject if isinstance(modeltraject, dict) else None,
-                            trajectschijf=trajectschijf_ref,
-                            deeltraject=deeltraject_ref,
-                        ),
+                        "selectionContext": selection_context,
                         "source": {
                             "type": "studiegids",
                             "acadjaar": acadjaar,
@@ -183,31 +157,45 @@ def build_seed_document(raw_data: dict[str, object], default_max_score: int) -> 
                     }
                 )
 
+    entries.sort(key=lambda item: (item["programmeCode"], item["label"], item["id"]))
+    return entries
+
+
+def build_seed_document(
+    raw_document: dict[str, object],
+    *,
+    input_path: Path,
+    default_max_score: int,
+) -> dict[str, object]:
     return {
-        "version": 1,
-        "generatedAt": generated_at,
+        "version": 2,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "academicYear": str(raw_document["acadjaar"]),
         "source": {
             "type": "studiegids",
-            "acadjaar": acadjaar,
-            "url": source_url,
+            "generator": "scripts/build_programmes_seed.py",
+            "rawInput": str(input_path),
+            "url": str(raw_document.get("sourceUrl") or ""),
         },
-        "programmes": [
-            {
-                "id": f"programme-{normalize_fragment(programme_code)}",
-                "code": programme_code,
-                "name": programme_name,
-                "active": True,
-                "selectionFlow": ["modeltraject", "trajectschijf", "deeltraject"],
-            }
-        ],
-        "seedEntries": seed_entries,
+        "programmes": build_programmes(raw_document),
+        "seedEntries": build_seed_entries(raw_document, default_max_score=default_max_score),
     }
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, type=Path, help="Raw scrape JSON file from scrape_studiegids_olods.py.")
-    parser.add_argument("--output", required=True, type=Path, help="App-facing seed JSON file to write.")
+    parser.add_argument(
+        "--input",
+        required=True,
+        type=Path,
+        help="Raw crawl JSON from scripts/scrape_studiegids_tree.py for exactly one academic year.",
+    )
+    parser.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Single-year seed JSON output path.",
+    )
     parser.add_argument(
         "--default-max-score",
         type=int,
@@ -219,28 +207,27 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    progress = BuildProgress(input_path=args.input, output_path=args.output)
     try:
-        raw_data = json.loads(args.input.read_text(encoding="utf-8"))
-        if not isinstance(raw_data, dict):
-            raise SeedBuildError("Input JSON root must be an object.")
-        seed_document = build_seed_document(raw_data, args.default_max_score)
-    except OSError as exc:
-        print(f"error: could not read input file: {exc}", file=sys.stderr)
-        return 1
-    except json.JSONDecodeError as exc:
-        print(f"error: could not parse input JSON: {exc}", file=sys.stderr)
-        return 1
-    except SeedBuildError as exc:
+        progress.log(f"loading raw crawl from {args.input}")
+        raw_document = load_raw_document(args.input)
+        progress.log(
+            f"loaded academic year {raw_document['acadjaar']} with {len(raw_document['programmeTrees'])} programme tree(s)"
+        )
+        document = build_seed_document(
+            raw_document,
+            input_path=args.input,
+            default_max_score=args.default_max_score,
+        )
+        progress.log(
+            f"built {len(document['programmes'])} programme(s) and {len(document['seedEntries'])} seed entries"
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        progress.log(f"wrote seed file to {args.output}")
+    except (OSError, SeedBuildError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
-
-    try:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(seed_document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    except OSError as exc:
-        print(f"error: could not write output file: {exc}", file=sys.stderr)
-        return 1
-
     return 0
 
 

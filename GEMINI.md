@@ -25,7 +25,8 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 
 ## Seed Data Utilities
 
-- `scripts/scrape_studiegids_olods.py` scrapes the public PXL studiegids ASP.NET postback flow into JSON for seed-data preparation.
-- Current validated path: `PXL-Digital -> Professionele bachelor in de toegepaste informatica -> Toegepaste Informatica -> Trajectschijf -> Deeltraject`.
-- Use `requests` for the scraper transport; the endpoint rejected the earlier `urllib` client during validation.
-- `scripts/build_programmes_seed.py` converts the raw scrape JSON into the flat runtime seed format documented in `SEED_DATA_FORMAT.md`.
+- `scripts/scrape_studiegids_tree.py` crawls the public PXL studiegids tree for one academic year and outputs one raw JSON snapshot.
+- The crawler is validated against both `2025-26` and `2026-27` entry pages, and the known PBTIN path works through `Modeltraject -> Trajectschijf -> Deeltraject`.
+- Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
+- `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.
+- Do not combine academic years in one output file; generate and replace one academic-year seed file at a time.

@@ -12,6 +12,8 @@ import argparse
 import json
 import re
 import sys
+import time
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -37,6 +39,73 @@ KNOWN_CONTROL_KEYS = {
 
 class CrawlError(RuntimeError):
     pass
+
+
+@dataclass
+class CrawlProgress:
+    acadjaar: str
+    enabled: bool = True
+
+    def __post_init__(self) -> None:
+        self.started_at = time.monotonic()
+        self.department_total = 0
+        self.programme_total = 0
+        self.department_index = 0
+        self.programme_index = 0
+        self.current_programme_branches = 0
+
+    def log(self, message: str) -> None:
+        if not self.enabled:
+            return
+        elapsed = time.monotonic() - self.started_at
+        print(f"[{self.acadjaar} +{elapsed:7.1f}s] {message}", file=sys.stderr, flush=True)
+
+    def set_scope(self, *, department_total: int, programme_total: int) -> None:
+        self.department_total = department_total
+        self.programme_total = programme_total
+        self.log(
+            f"starting crawl across {department_total} department(s) and {programme_total} programme(s)"
+        )
+
+    def start_department(self, department: dict[str, str], programme_count: int) -> None:
+        self.department_index += 1
+        self.log(
+            f"department {self.department_index}/{self.department_total}: "
+            f"{department['value']} {department['label']} ({programme_count} programme(s))"
+        )
+
+    def start_programme(self, department: dict[str, str], programme: dict[str, str]) -> None:
+        self.programme_index += 1
+        self.current_programme_branches = 0
+        self.log(
+            f"programme {self.programme_index}/{self.programme_total}: "
+            f"{department['label']} -> {programme['value']} {programme['label']}"
+        )
+
+    def branch_options(self, selection_path: list[dict[str, str]], prompt_label: str, option_count: int) -> None:
+        path_label = " > ".join(step["label"] for step in selection_path) or "root"
+        self.log(
+            f"branch depth {len(selection_path)} at {path_label}: "
+            f"{prompt_label} has {option_count} option(s)"
+        )
+
+    def branch_leaf(self, selection_path: list[dict[str, str]], olod_count: int) -> None:
+        self.current_programme_branches += 1
+        if self.current_programme_branches == 1 or self.current_programme_branches % 25 == 0:
+            path_label = " > ".join(step["label"] for step in selection_path) or "root"
+            self.log(
+                f"resolved branch {self.current_programme_branches} for current programme: "
+                f"{path_label} ({olod_count} OLOD name(s))"
+            )
+
+    def finish_programme(self, programme: dict[str, str], *, branch_count: int, olod_count: int) -> None:
+        self.log(
+            f"finished {programme['value']} {programme['label']}: "
+            f"{branch_count} branch(es), {olod_count} OLOD name(s)"
+        )
+
+    def finish(self, *, programme_tree_count: int) -> None:
+        self.log(f"crawl complete: wrote {programme_tree_count} programme tree(s)")
 
 
 def camel_to_snake(value: str) -> str:
@@ -120,13 +189,16 @@ def crawl_branches(
     page_html: str,
     state: dict[str, str],
     selection_path: list[dict[str, str]],
+    progress: CrawlProgress,
 ) -> list[dict[str, object]]:
     control_name = next_unresolved_control(page_html, state)
     if control_name is None:
+        olod_names = extract_olod_names(page_html)
+        progress.branch_leaf(selection_path, len(olod_names))
         return [
             {
                 "selectionPath": selection_path,
-                "olodNames": extract_olod_names(page_html),
+                "olodNames": olod_names,
             }
         ]
 
@@ -134,12 +206,16 @@ def crawl_branches(
     branches: list[dict[str, object]] = []
     options = non_placeholder_options(page_html, control_name)
     if not options:
+        olod_names = extract_olod_names(page_html)
+        progress.branch_leaf(selection_path, len(olod_names))
         return [
             {
                 "selectionPath": selection_path,
-                "olodNames": extract_olod_names(page_html),
+                "olodNames": olod_names,
             }
         ]
+
+    progress.branch_options(selection_path, prompt_label, len(options))
 
     for option in options:
         next_state = {**state, control_name: option["value"]}
@@ -153,7 +229,7 @@ def crawl_branches(
                 "label": option["label"],
             }
         ]
-        branches.extend(crawl_branches(client, next_page, next_state, next_path))
+        branches.extend(crawl_branches(client, next_page, next_state, next_path, progress))
     return branches
 
 
@@ -179,8 +255,10 @@ def scrape_tree(
     department_labels: set[str],
     programme_codes: set[str],
     programme_labels: set[str],
+    show_progress: bool,
 ) -> dict[str, object]:
     client = StudiegidsClient(acadjaar)
+    progress = CrawlProgress(acadjaar=acadjaar, enabled=show_progress)
     landing_page = client.get()
     departments = filter_options(
         non_placeholder_options(landing_page, DEPARTMENT_CONTROL),
@@ -190,7 +268,8 @@ def scrape_tree(
     if not departments:
         raise CrawlError("No matching departments were found.")
 
-    programme_trees: list[dict[str, object]] = []
+    department_programmes: list[tuple[dict[str, str], list[dict[str, str]], str]] = []
+    total_programmes = 0
     for department in departments:
         department_state = {DEPARTMENT_CONTROL: department["value"]}
         department_page = client.postback(landing_page, DEPARTMENT_CONTROL, department_state)
@@ -199,10 +278,22 @@ def scrape_tree(
             wanted_values=programme_codes,
             wanted_labels=programme_labels,
         )
+        total_programmes += len(programmes)
+        department_programmes.append((department, programmes, department_page))
+
+    progress.set_scope(department_total=len(department_programmes), programme_total=total_programmes)
+
+    programme_trees: list[dict[str, object]] = []
+    for department, programmes, department_page in department_programmes:
+        progress.start_department(department, len(programmes))
+        department_state = {DEPARTMENT_CONTROL: department["value"]}
         for programme in programmes:
+            progress.start_programme(department, programme)
             programme_state = {**department_state, OPLEIDING_CONTROL: programme["value"]}
             programme_page = client.postback(department_page, OPLEIDING_CONTROL, programme_state)
-            branches = crawl_branches(client, programme_page, programme_state, [])
+            branches = crawl_branches(client, programme_page, programme_state, [], progress)
+            olod_count = sum(len(branch["olodNames"]) for branch in branches)
+            progress.finish_programme(programme, branch_count=len(branches), olod_count=olod_count)
             programme_trees.append(
                 {
                     "department": department,
@@ -211,6 +302,8 @@ def scrape_tree(
                     "branches": branches,
                 }
             )
+
+    progress.finish(programme_tree_count=len(programme_trees))
 
     return {
         "version": 1,
@@ -248,6 +341,11 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="Limit the scrape to one or more visible opleiding labels.",
     )
+    parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Disable stderr progress output.",
+    )
     parser.add_argument("--output", type=Path, help="Optional JSON output path. Defaults to stdout.")
     return parser.parse_args()
 
@@ -261,6 +359,7 @@ def main() -> int:
             department_labels=set(args.departement_label),
             programme_codes=set(args.opleiding_code),
             programme_labels=set(args.opleiding_label),
+            show_progress=not args.quiet,
         )
     except CrawlError as exc:
         print(f"error: {exc}", file=sys.stderr)

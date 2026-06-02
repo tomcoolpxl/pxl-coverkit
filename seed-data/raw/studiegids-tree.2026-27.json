@@ -1,0 +1,2066 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-02T15:08:50.378526+00:00",
+  "acadjaar": "2026-27",
+  "sourceUrl": "https://studiegids.pxl.be/?acadjaar=2026-27",
+  "programmeTrees": [
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "GRDVO",
+        "label": "Graduaat in de digitale vormgeving"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3425",
+              "label": "Digitale vormgeving"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10297",
+              "label": "1 DVO"
+            }
+          ],
+          "olodNames": [
+            "41DVO1010 Web Essentials",
+            "41DVO1020 Graphic Skills 1",
+            "41DVO1040 UI Design 1",
+            "41DVO1050 IT-organisation",
+            "41DVO1060 Communication Skills 1",
+            "41DVO1070 Werkplekleren 1",
+            "41DVO1090 Data Essentials",
+            "41DVO1110 UX Design 1",
+            "41DVO1120 Communication Skills 2",
+            "41DVO1130 Werkplekleren 2",
+            "41DVO1140 Scripting",
+            "41DVO2050 Graphic Skills 2",
+            "41DVO2060 Digital Branding",
+            "41DVO2010 KeuzeOLOD 1",
+            "41DVO2020 KeuzeOLOD 2",
+            "41DVO2030 Web Advanced",
+            "41DVO2040 Backend"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3425",
+              "label": "Digitale vormgeving"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10298",
+              "label": "2 DVO"
+            }
+          ],
+          "olodNames": [
+            "42DVO1030 Motion Design",
+            "42DVO1040 UX Design 2",
+            "42DVO1050 Project Management",
+            "42DVO1080 Interaction Design",
+            "42DVO1090 Graduaatsproef",
+            "42DVO2030 UI Design 2",
+            "42DVO2040 Digital Marketing",
+            "42DVO2090 Data Visualisation - Design",
+            "42DVO2100 Werkplekleren 3 - Design",
+            "42DVO2110 CMS - Design",
+            "42DVO2120 Werkplekleren 4 - Design",
+            "42DVO2010 Web Expert 1",
+            "42DVO2020 Web Expert 2",
+            "42DVO2050 Data Visualisation - Web",
+            "42DVO2060 Werkplekleren 3 - Web",
+            "42DVO2070 CMS - Web",
+            "42DVO2080 Werkplekleren 4 - Web"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3425",
+              "label": "Digitale vormgeving"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10299",
+              "label": "Aanvullende Olod's - 2 DVO"
+            }
+          ],
+          "olodNames": [
+            "42DVC1010 Werkplekleren 3 (s2) - design",
+            "42DVC1020 Werkplekleren 4 (s1) - design",
+            "42DVC1030 Graduaatsproef (s1)",
+            "42DVC1040 Werkplekleren 4 (s2)",
+            "42DVC1050 Werkplekleren 4 (s1)",
+            "42DVC1060 Werkplekleren 3 (s2) - web",
+            "42DVC1070 Werkplekleren 4 (s1) - web"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "GRIOT",
+        "label": "Graduaat in het Internet of Things"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3437",
+              "label": "Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10334",
+              "label": "1 IOT"
+            }
+          ],
+          "olodNames": [
+            "41IOT1010 Elektronica 1",
+            "41IOT1020 IOT-systemen: kennismaking",
+            "41IOT1030 Communicatie en organisatie",
+            "41IOT1040 Programmeerstructuren",
+            "41IOT1050 Project installatie",
+            "41IOT1060 Werkplekleren 1",
+            "41IOT1070 Elektronica 2",
+            "41IOT1080 IOT-sensoren en verlichting",
+            "41IOT1090 Netwerken 1",
+            "41IOT1100 Configureren 1",
+            "41IOT1110 Project configuratie",
+            "41IOT1120 Werkplekleren 2"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3437",
+              "label": "Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10336",
+              "label": "Aanvullende olods - 1 IOT"
+            }
+          ],
+          "olodNames": [
+            "41IOC1010 Werkplekleren 2 (s1)"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3437",
+              "label": "Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10335",
+              "label": "2 IOT"
+            }
+          ],
+          "olodNames": [
+            "42IOT1010 Elektronische systemen",
+            "42IOT1020 IOT-toepassingen 1",
+            "42IOT1030 Netwerken 2",
+            "42IOT1040 Configureren 2",
+            "42IOT1050 Project integratie",
+            "42IOT1060 Werkplekleren 3",
+            "42IOT1070 IOT-toepassingen 2",
+            "42IOT1080 Professionele vaardigheden",
+            "42IOT1090 Graduaatsproef",
+            "42IOT1100 Werkplekleren 4"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3437",
+              "label": "Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10337",
+              "label": "Aanvullende olods - 2 IOT"
+            }
+          ],
+          "olodNames": [
+            "42IOC1010 Werkplekleren 3 (s2)",
+            "42IOC1020 Werkplekleren 4 (s1)",
+            "42IOC1030 Graduaatproef (s1)"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "GRPRO",
+        "label": "Graduaat in het programmeren"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3445",
+              "label": "Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10370",
+              "label": "1 PRO"
+            }
+          ],
+          "olodNames": [
+            "41PRO1010 Web Essentials",
+            "41PRO1020 C# Essentials",
+            "41PRO1030 Data Essentials",
+            "41PRO1050 Communication skills 1",
+            "41PRO1060 Werkplekleren 1",
+            "41PRO1070 Web Advanced",
+            "41PRO1080 C# Advanced",
+            "41PRO1090 Data Advanced",
+            "41PRO1100 Communication skills 2",
+            "41PRO1110 Werkplekleren 2",
+            "41PRO1120 IT-organisation",
+            "41PRO1140 Software Testing"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3445",
+              "label": "Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10369",
+              "label": "Aanvullende olod's - 1 PRO"
+            }
+          ],
+          "olodNames": [
+            "41PRC1070 Data Essentials (5sp)",
+            "41PRC1080 Data Analysis & SQL (4sp)"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3445",
+              "label": "Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10371",
+              "label": "2 PRO"
+            }
+          ],
+          "olodNames": [
+            "42PRO1010 C# Mobile",
+            "42PRO1020 C# Web 1",
+            "42PRO1030 Data Expert",
+            "42PRO1040 Project management",
+            "42PRO1050 Werkplekleren 3",
+            "42PRO1060 C# Web 2",
+            "42PRO1070 Security & privacy",
+            "42PRO1080 Graduaatsproef",
+            "42PRO1090 Werkplekleren 4"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3445",
+              "label": "Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10372",
+              "label": "Aanvullende olod's - 2 PRO"
+            }
+          ],
+          "olodNames": [
+            "42PRC1010 Werkplekleren 3 (s2)",
+            "42PRC1050 Werkplekleren 4 (s1)",
+            "42PRC1060 Graduaatsproef (s1)"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3446",
+              "label": "Programmeren start februari"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11075",
+              "label": "1 PRO start februari"
+            }
+          ],
+          "olodNames": [
+            "41PRF1010 C# Essentials",
+            "41PRF1020 Data Essentials",
+            "41PRF1030 IT- organisation",
+            "41PRF1040 Communication skills 1"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3446",
+              "label": "Programmeren start februari"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11076",
+              "label": "2 PRO start februari"
+            }
+          ],
+          "olodNames": [
+            "41PRO1010 Web Essentials",
+            "41PRO1060 Werkplekleren 1",
+            "41PRO1070 Web Advanced",
+            "41PRO1090 Data Advanced",
+            "41PRO1100 Communication skills 2",
+            "41PRO1110 Werkplekleren 2",
+            "41PRO1140 Software Testing",
+            "42PRF1000 C# Advanced"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3446",
+              "label": "Programmeren start februari"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11077",
+              "label": "3 PRO start februari"
+            }
+          ],
+          "olodNames": [
+            "42PRO1010 C# Mobile",
+            "42PRO1020 C# Web 1",
+            "42PRO1030 Data Expert",
+            "42PRO1040 Project management",
+            "42PRO1050 Werkplekleren 3",
+            "42PRO1060 C# Web 2",
+            "42PRO1070 Security & privacy",
+            "42PRO1080 Graduaatsproef",
+            "42PRO1090 Werkplekleren 4"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "GRSNE",
+        "label": "Graduaat in het systeem- en netwerkbeheer"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3449",
+              "label": "Graduaat in het systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10381",
+              "label": "1 SNE"
+            }
+          ],
+          "olodNames": [
+            "41SNE1010 Networks 1",
+            "41SNE1020 Windows Essentials",
+            "41SNE1030 Linux Essentials",
+            "41SNE1050 Communication Skills 1",
+            "41SNE1060 Werkplekleren 1",
+            "41SNE1070 Networks 2",
+            "41SNE1080 Windows Advanced",
+            "41SNE1090 Linux Advanced",
+            "41SNE1100 Communication Skills 2",
+            "41SNE1110 Werkplekleren 2",
+            "41SNE1120 IT Organisation 1",
+            "41SNE1130 IT Organisation 2"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3449",
+              "label": "Graduaat in het systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10382",
+              "label": "2 SNE"
+            }
+          ],
+          "olodNames": [
+            "42SNE1010 Enterprise Networks 1",
+            "42SNE1020 Virtualization",
+            "42SNE1030 Scripting & Automation",
+            "42SNE1040 Security Essentials",
+            "42SNE1050 Werkplekleren 3",
+            "42SNE1060 Enterprise Networks 2",
+            "42SNE1070 Security Advanced",
+            "42SNE1080 Graduaatsproef",
+            "42SNE1090 Werkplekleren 4"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3449",
+              "label": "Graduaat in het systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10383",
+              "label": "Aanvullende olod's - 2 SNE"
+            }
+          ],
+          "olodNames": [
+            "42SNC1020 Werkplekleren 3 (s2)",
+            "42SNC1030 Werkplekleren 4 (s1)",
+            "42SNC1040 Graduaatproef (s1)"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PGABA",
+        "label": "Postgraduaat AI Business Architect"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3604",
+              "label": "PG AI Business Architect"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10953",
+              "label": "1 PGABA"
+            }
+          ],
+          "olodNames": [
+            "41ABA1000 AI Fundamentals",
+            "41ABA1010 AI Tools for Business",
+            "41ABA1020 AI cases"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PGATA",
+        "label": "Postgraduaat AI Technology Architect"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3609",
+              "label": "PG AI Technical Architect"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10959",
+              "label": "1 PGATA"
+            }
+          ],
+          "olodNames": [
+            "41ATA1000 AI Fundamentals",
+            "41ATA1010 AI Technology",
+            "41ATA1020 AI cases"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PGCYS",
+        "label": "Postgraduaat Cybersecurity"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3699",
+              "label": "PG cybersecurity"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11191",
+              "label": "1 PGCYS"
+            }
+          ],
+          "olodNames": [
+            "41CYS1000 Cybersecurity fundamentals",
+            "41CYS1010 Cases & integratieproject",
+            "41CYS1020 Business & governance",
+            "41CYS1030 Operations & technology"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PBEAI",
+        "label": "Professionele bachelor in de elektronica-ICT"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3520",
+              "label": "Elektronica-ICT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10591",
+              "label": "1 EAI"
+            }
+          ],
+          "olodNames": [
+            "41EAI1020 Analog electronics 2",
+            "41EAI1040 Microcontrollers",
+            "41EAI1060 Mechatronics",
+            "41EAI1080 C programming",
+            "41EAI1100 Networked devices",
+            "41EAI1130 Digital electronics",
+            "41EAI1270 Analog electronics 1",
+            "41EAI1280 Electric fundamentals",
+            "41EAI1290 Industrial system",
+            "41EAI1300 Hardware production",
+            "41EAI1310 Communication skills 1",
+            "41EAI1320 PCB design"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3520",
+              "label": "Elektronica-ICT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11195",
+              "label": "Aanvullende olod's - 1EAI"
+            }
+          ],
+          "olodNames": [
+            "41EAI1030 Digitale technieken",
+            "41EAI1070 Webtechnologie",
+            "41EAI1090 C programmeren 2"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3520",
+              "label": "Elektronica-ICT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10592",
+              "label": "2 EAI"
+            }
+          ],
+          "olodNames": [
+            "42EAI1010 Elektronische systemen 1",
+            "42EAI1020 Elektronische systemen 2",
+            "42EAI1030 C++ programmeren",
+            "42EAI1040 Embedded Systemen",
+            "42EAI1050 System on Chip",
+            "42EAI1060 Building automation",
+            "42EAI1070 IoT technologie",
+            "42EAI1080 Network Programming",
+            "42EAI1100 Project onderzoek",
+            "42EAI1120 Audio Processing",
+            "42EAI1130 Project engineering",
+            "42EAI1140 Hardware Accelerated Computing"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3520",
+              "label": "Elektronica-ICT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10593",
+              "label": "3 EAI"
+            }
+          ],
+          "olodNames": [
+            "43EAI1010 Digitale communicatie",
+            "43EAI1020 Industrial automation",
+            "43EAI1030 Smart systems",
+            "43EAI1040 Image Processing",
+            "43EAI1050 Embedded Operating System",
+            "43EAI1070 Professional Innovation",
+            "43EAI1090 Project X",
+            "43EAI1100 Project embedded",
+            "43EAI1110 Stage en bachelorproef"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3520",
+              "label": "Elektronica-ICT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10594",
+              "label": "Aanvullende olod's - 3EAI"
+            }
+          ],
+          "olodNames": [
+            "43EAC1020 Stage en bachelorproef",
+            "43EAC1030 Professional Skills",
+            "43EAC1040 Professional Skills (S2)"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3522",
+              "label": "UITDOVEND Vervolgtraject PB Elektronica-ICT na GR in het Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10596",
+              "label": "2 EAI"
+            }
+          ],
+          "olodNames": [
+            "41EAH1040 PCB ontwerp",
+            "42EAI1010 Elektronische systemen 1",
+            "42EAI1030 C++ programmeren",
+            "42EAI1040 Embedded Systemen",
+            "42EAI1050 System on Chip",
+            "42EAI1120 Audio Processing",
+            "43EAI1020 Industrial automation"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3522",
+              "label": "UITDOVEND Vervolgtraject PB Elektronica-ICT na GR in het Internet of Things"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11196",
+              "label": "3 EAI"
+            }
+          ],
+          "olodNames": [
+            "43EAI1010 Digitale communicatie",
+            "43EAI1030 Smart systems",
+            "43EAI1040 Image Processing",
+            "43EAI1050 Embedded Operating System",
+            "43EAI1110 Stage en bachelorproef"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PBTIN",
+        "label": "Professionele bachelor in de toegepaste informatica"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3581",
+              "label": "(UITDOVEND) Vervolgtraject PB Toegepaste informatica afstudeerrichting Applicatie-ontwikkeling na GR Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11040",
+              "label": "2 TIN / Applicatie-ontwikkeling"
+            }
+          ],
+          "olodNames": [
+            "42TIN1360 Systems Advanced Linux",
+            "42TIN1370 Cloud Essentials",
+            "43AON3200 Bachelor Project",
+            "43TIH1040 I-Talent",
+            "43TIH1050 Fullstack .NET"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10843",
+              "label": "1 TIN"
+            }
+          ],
+          "olodNames": [
+            "41TIN1100 Web Essentials",
+            "41TIN1130 Java Essentials",
+            "41TIN1140 .Net Essentials",
+            "41TIN1180 IT Organisation & Management",
+            "41TIN1230 Networks Essentials",
+            "41TIN1280 Communication Skills 1",
+            "41TIN1300 IT Essentials",
+            "41TIN1320 Data Essentials",
+            "41TIN1330 Web Scripting",
+            "41TIN1350 Security Essentials",
+            "41TIN1360 AI Essentials",
+            "41TIN1370 Systems Essentials Linux",
+            "41TIN1380 Systems Essentials Windows",
+            "41TIN1390 Data Advanced"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "11115",
+              "label": "Aanvullende olod's - 1 TIN"
+            }
+          ],
+          "olodNames": [
+            "41TIN1340 Project"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10848",
+              "label": "Aanvullende olod's Graduaat - TS1"
+            }
+          ],
+          "olodNames": [
+            "41TIH1070 Communication Skills 1 - Engels"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10844",
+              "label": "2 TIN"
+            }
+          ],
+          "olodNames": [
+            "42TIN1220 .Net Advanced",
+            "42TIN1230 Java Advanced",
+            "42TIN1240 Communication Skills 2",
+            "42TIN1250 Project Management",
+            "42TIN1280 Software Analysis",
+            "42TIN1330 Security Advanced",
+            "42TIN1340 DevOps",
+            "42TIN1360 Systems Advanced Linux",
+            "42TIN1370 Cloud Essentials",
+            "32DMI4030 Marketing automation",
+            "42TIN1380 X-perience",
+            "42TIN1390 Ethical AI",
+            "42TIN2070 KeuzeOLOD 1",
+            "42TIN2080 KeuzeOLOD Research Project",
+            "42TIN2220 KeuzeOLOD 2",
+            "42TIN2230 KeuzeOLOD 3",
+            "42TIN2240 KeuzeOLOD 4",
+            "42TIN2150 Research Project AIN",
+            "42TIN2270 Machine Learning",
+            "42TIN2280 AI Algorithms and Computer Vision",
+            "42TIN2290 Web for AI",
+            "42TIN2110 Research Project AON",
+            "42TIN2310 .NET Expert",
+            "42TIN2320 Java Expert",
+            "42TIN2330 Web Advanced",
+            "42TIN2120 Research Project SWM",
+            "42TIN2160 eBusiness",
+            "42TIN2170 UX Design",
+            "42TIN2180 Software Quality Engineering",
+            "42TIN2300 Low-Code No-Code",
+            "42TIN2130 Research Project SNB",
+            "42TIN2200 Networks Advanced",
+            "42TIN2210 Cloud Advanced",
+            "42TIN2250 Systems Advanced II",
+            "42TIN2260 Automation I"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10849",
+              "label": "Aanvullende olod's Graduaat - TS2"
+            }
+          ],
+          "olodNames": [
+            "42TIH1080 Communication Skills 2 - Engels"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10845",
+              "label": "3 TIN / Applicatie - ontwikkeling"
+            }
+          ],
+          "olodNames": [
+            "43AON3190 IT Project",
+            "43AON3200 Bachelor Project",
+            "43TIN1170 X-Talent",
+            "43AON3130 Mobile Development",
+            "43AON3140 Web Expert",
+            "43AON3150 Software Engineering",
+            "43AON3220 Fullstack Java",
+            "43AON3230 Fullstack .NET"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10852",
+              "label": "3 TIN / Artificial intelligence"
+            }
+          ],
+          "olodNames": [
+            "43AIN3040 IT Project",
+            "43AIN3050 Bachelor Project",
+            "43TIN1170 X-Talent",
+            "43AIN3060 Big Data",
+            "43AIN3070 Neural Networks",
+            "43AIN3080 Smart Devices",
+            "43AIN3090 MLOps",
+            "43AIN3100 Cloud for AI",
+            "43AIN3110 Trends in AI"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10846",
+              "label": "3 TIN / Software - management"
+            }
+          ],
+          "olodNames": [
+            "43SWM3200 IT Project",
+            "43SWM3210 Bachelor Project",
+            "43TIN1170 X-Talent",
+            "43SWM3150 ITIL Service Management",
+            "43SWM3160 Enterprise Process Modeling",
+            "43SWM3170 Customer/Business Relationship Management",
+            "43SWM3230 Automated Software Testing",
+            "43SWM3240 Business Intelligence",
+            "43SWM3250 Entrepreneurship"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10847",
+              "label": "3 TIN / Systemen en netwerkbeheer"
+            }
+          ],
+          "olodNames": [
+            "43SNB3180 IT Project",
+            "43SNB3190 Bachelor Project",
+            "43TIN1170 X-Talent",
+            "43SNB3140 Networks Expert",
+            "43SNB3200 Cloud Expert",
+            "43SNB3210 Systems Expert",
+            "43SNB3220 Automation II",
+            "43SNB3230 Security Expert"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10851",
+              "label": "Aanvullende olod's - 3 TIN"
+            }
+          ],
+          "olodNames": [
+            "43AIC3010 Bachelor Project (s1)",
+            "43AOC3010 Bachelor Project (s1)",
+            "43SNC3010 Bachelor Project (s1)",
+            "43SWC3010 Bachelor Project (s1)",
+            "43TIC1330 International minor: Data science",
+            "43TIC1340 International minor: Artificial Intelligence",
+            "43TIC1360 I-Talent (s1)",
+            "43TIC1370 International Minor: UI/UX",
+            "43TIC1380 International Minor: Future Tech",
+            "43TIC1390 International Minor: IoT",
+            "43TIC1400 International Minor: PDP",
+            "43TIC1450 X-Talent (s1)",
+            "43TIN1110 I-Talent"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10853",
+              "label": "Aanvullende olod's Graduaat - TS3"
+            }
+          ],
+          "olodNames": [
+            "43TIH1050 Fullstack .NET",
+            "43TIH1070 X-Talent (s1)"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3577",
+              "label": "Toegepaste Informatica"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10850",
+              "label": "Excellentieprogramma - 3 TIN"
+            }
+          ],
+          "olodNames": [
+            "43TIQ1140 PXL Honours: IT Project",
+            "43TIQ1150 PXL Honours: Unity and VR"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3579",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Applicatie-ontwikkeling na GR Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10855",
+              "label": "1 TIN / Applicatie-ontwikkeling"
+            }
+          ],
+          "olodNames": [
+            "41TIN1130 Java Essentials",
+            "41TIN1230 Networks Essentials",
+            "41TIN1360 AI Essentials",
+            "41TIN1370 Systems Essentials Linux",
+            "41TIN1380 Systems Essentials Windows",
+            "42TIN1330 Security Advanced",
+            "42TIN1340 DevOps",
+            "42TIN1370 Cloud Essentials",
+            "43AON3140 Web Expert"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3579",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Applicatie-ontwikkeling na GR Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10856",
+              "label": "2 TIN / Applicatie-ontwikkeling"
+            }
+          ],
+          "olodNames": [
+            "42TIN1230 Java Advanced",
+            "42TIN1240 Communication Skills 2",
+            "42TIN1280 Software Analysis",
+            "42TIN1360 Systems Advanced Linux",
+            "43AON3130 Mobile Development",
+            "43AON3150 Software Engineering",
+            "42TIN2110 Research Project AON",
+            "42TIN2310 .NET Expert",
+            "42TIN2320 Java Expert"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3579",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Applicatie-ontwikkeling na GR Programmeren"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10857",
+              "label": "3 TIN / Applicatie-ontwikkeling"
+            }
+          ],
+          "olodNames": [
+            "43AON3190 IT Project",
+            "43TIN1170 X-Talent",
+            "43AON3220 Fullstack Java",
+            "43AON3230 Fullstack .NET"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3580",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Systemen en netwerkbeheer na GR Systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10859",
+              "label": "1 TIN / Systemen en netwerkbeheer"
+            }
+          ],
+          "olodNames": [
+            "41TIN1100 Web Essentials",
+            "41TIN1130 Java Essentials",
+            "41TIN1300 IT Essentials",
+            "41TIN1320 Data Essentials",
+            "41TIN1330 Web Scripting",
+            "42TIN1330 Security Advanced",
+            "42TIN2260 Automation I"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3580",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Systemen en netwerkbeheer na GR Systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10860",
+              "label": "2 TIN / Systemen en netwerkbeheer"
+            }
+          ],
+          "olodNames": [
+            "41TIN1360 AI Essentials",
+            "42TIN1230 Java Advanced",
+            "42TIN1240 Communication Skills 2",
+            "42TIN1340 DevOps",
+            "42TIN1360 Systems Advanced Linux",
+            "42TIN1370 Cloud Essentials",
+            "43SNB3220 Automation II",
+            "43SNB3230 Security Expert",
+            "42TIN2130 Research Project SNB",
+            "42TIN2210 Cloud Advanced",
+            "42TIN2250 Systems Advanced II"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3580",
+              "label": "Vervolgtraject PB Toegepaste informatica afstudeerrichting Systemen en netwerkbeheer na GR Systeem- en netwerkbeheer"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10858",
+              "label": "3 TIN / Systemen en netwerkbeheer"
+            }
+          ],
+          "olodNames": [
+            "43SNB3180 IT Project",
+            "43SNB3190 Bachelor Project",
+            "43TIN1170 X-Talent",
+            "43SNB3200 Cloud Expert",
+            "43SNB3210 Systems Expert"
+          ]
+        }
+      ]
+    },
+    {
+      "department": {
+        "value": "4",
+        "label": "PXL-Digital"
+      },
+      "programme": {
+        "value": "PBTIW",
+        "label": "Switch2IT"
+      },
+      "selectionFlow": [
+        {
+          "key": "modeltraject",
+          "label": "Modeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject"
+        },
+        {
+          "key": "trajectschijf",
+          "label": "Trajectschijf",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf"
+        },
+        {
+          "key": "deeltraject",
+          "label": "Deeltraject",
+          "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject"
+        }
+      ],
+      "branches": [
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3582",
+              "label": "Switch2IT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10861",
+              "label": "1 TIW"
+            }
+          ],
+          "olodNames": [
+            "41TIW1010 IT Essentials",
+            "41TIW1050 Java Essentials",
+            "41TIW1060 Web Essentials",
+            "41TIW1080 IT Organisation & Management",
+            "41TIW1130 Data Essentials",
+            "41TIW1150 Web Scripting",
+            "41TIW1170 Networks Essentials",
+            "41TIW1180 .NET Essentials",
+            "41TIW1200 Security Essentials",
+            "41TIW1210 Communication Skills 1",
+            "41TIW1220 AI Essentials",
+            "41TIW1230 Systems Essentials Linux",
+            "41TIW1240 Systems Essentials Windows",
+            "41TIW1250 Data Advanced"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3582",
+              "label": "Switch2IT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10864",
+              "label": "Aanvullende olod's voor HBO5 - 1 TIW"
+            }
+          ],
+          "olodNames": [
+            "41TIH1010 Communication skills 1 - Engels",
+            "41TIH1030 Communication skills 1 - Professionele communicatie"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3582",
+              "label": "Switch2IT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10862",
+              "label": "2 TIW"
+            }
+          ],
+          "olodNames": [
+            "42TIW1010 Java Advanced",
+            "42TIW1020 Security Advanced",
+            "42TIW1030 Software Analysis",
+            "42TIW1040 Project Management",
+            "42TIW1060 .NET Advanced",
+            "42TIW1070 Java Expert",
+            "42TIW1090 Communication Skills 2",
+            "42TIW1110 .NET Expert",
+            "42TIW1120 Web Advanced",
+            "42TIW1140 Research Project",
+            "42TIW1150 DevOps",
+            "42TIW1170 Systems Advanced Linux",
+            "42TIW1180 Cloud Essentials"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3582",
+              "label": "Switch2IT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10865",
+              "label": "Aanvullende olod's voor HBO5 - 2 TIW"
+            }
+          ],
+          "olodNames": [
+            "42TIH1030 Communication skills 2",
+            "42TIH1040 Communication skills 2 - Professionele communicatie"
+          ]
+        },
+        {
+          "selectionPath": [
+            {
+              "key": "modeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlOpleidingstraject",
+              "promptLabel": "Modeltraject",
+              "value": "3582",
+              "label": "Switch2IT"
+            },
+            {
+              "key": "trajectschijf",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlTrajectschijf",
+              "promptLabel": "Trajectschijf",
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "key": "deeltraject",
+              "controlName": "ctl00$ContentPlaceHolderPXL$ddlDeeltraject",
+              "promptLabel": "Deeltraject",
+              "value": "10863",
+              "label": "3 TIW"
+            }
+          ],
+          "olodNames": [
+            "43TIW1010 Web Expert",
+            "43TIW1020 Fullstack .NET",
+            "43TIW1030 Fullstack Java",
+            "43TIW1040 Mobile Development",
+            "43TIW1050 IT Project",
+            "43TIW1070 Software Engineering",
+            "43TIW1080 X-talent",
+            "43TIW1090 Bachelor Project"
+          ]
+        }
+      ]
+    }
+  ]
+}
