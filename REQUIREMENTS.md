@@ -1,78 +1,92 @@
-# Requirements for static exam cover PDF generator: PXL Cover Kit
+# Requirements for PXL Cover Kit
 
 ## Purpose
 
-Build a small static web application that generates the first pages of an exam submission PDF from reusable course and exam data.
+Build a static browser-based web application that generates the current Dutch two-page PXL-Digital Blackboard exam cover PDF from reusable local data.
 
-The application must replace manually editing a DOCX file and exporting it to PDF for each course and exam. It must run entirely in the browser, be hostable as static files on GitHub Pages, and generate a PDF that matches the institutional exam cover layout closely enough for submission.
+The application replaces the current manual workflow of editing DOCX files and exporting them to PDF for each course and exam. The app must run as a static website, generate PDFs entirely in the browser, and be suitable for hosting on GitHub Pages.
 
-The first target template is based on the current Dutch PXL-Digital exam cover for `42TIN2260 Automation I`, including the student information area, exam metadata, allowed resources, Blackboard submission instructions, confirmation-number boxes, and the second page of Blackboard/LockDown Browser instructions.
+For MVP, the target is the current modern two-page Dutch Blackboard cover family as used today. Historical or legacy cover formats are not part of the product definition.
 
-## Context from the current example files
+## Reference output
 
-The attached DOCX is the manually maintained source file. The attached PDF is the generated file that must be submitted.
+The normative reference for MVP is the current modern two-page Dutch Blackboard cover in the examples directory, with `42TIN2260 Automation I` as the baseline example.
 
-The current example contains these visible document elements:
+Required visible document elements for MVP:
 
-- Header with PXL-Digital branding, department text, programme, academic year and exam chance, and maximum score.
-- Course title line with course identifier and course name.
-- Student section with blank fields for name, first name, student number, class group, exam lecturer, and exam room/place code.
-- Exam data section with date, start and end time, lecturers, score distribution, time distribution, and allowed resources.
-- Blackboard exam instruction block on page 1.
-- Student-fillable Blackboard confirmation section for part I on page 1.
-- A second page with Blackboard/LockDown Browser procedure instructions for entering the room, starting the exam, taking the exam, and submitting the exam.
+- Header with PXL-Digital branding, programme, academic year, exam chance, and maximum score.
+- Course title line with course code and course name.
+- Student section with blank writable fields.
+- Exam data section with date, time range, lecturers, score text, duration text, and allowed resources.
+- Blackboard instruction block on page 1.
+- Blackboard confirmation-number area on page 1.
+- Blackboard procedure instructions on page 2.
+
+Acceptance for visual fidelity is based on acceptable layout drift relative to the current reference PDFs, as long as the result remains institutionally usable.
 
 ## Product scope
 
-### In scope
+### In scope for MVP
 
-- Static browser-only web application.
-- PDF generation in the browser using `pdfmake`.
-- No continuously running backend.
-- User-entered data persisted locally in the browser per user/device/browser profile.
-- Reusable course defaults.
-- Per-exam overrides.
-- Support for Dutch and English templates.
-- Support for multiple programmes, courses, lecturers, exam chances, exam modes, exam parts, and allowed-resource policies.
-- Initial data can be pre-seeded from a scraped source, but scraping/importing is treated as a separate pipeline from the PDF generator.
-- The application must allow generated PDFs to be downloaded by the user.
+- Static single-page web application.
+- Vue 3 user interface.
+- Vite-based build tooling using Node.js for local development and production builds only.
+- Browser-only PDF generation using `pdfmake`.
+- All user data stored locally in the browser.
+- Card-based overview of current course covers.
+- Create a course card from bundled programme-specific seed data.
+- Create a course card manually when no seed entry exists.
+- Override seeded values locally per card.
+- Remove a card with explicit confirmation.
+- Quick actualize flow for moving an existing card to the next academic cycle.
+- Full update view for editing all fields of a card.
+- Inline PDF preview inside the app.
+- PDF download from the browser.
+- Import and export of local app data as JSON.
+- Support for multiple programmes through bundled seed files.
+- Dutch output.
 
-### Out of scope for the first version
+### Out of scope for MVP
 
+- English output.
+- Legacy or historical cover layouts.
+- Multi-part Blackboard confirmation sections.
+- Multiple exam-mode families beyond the current modern two-page Blackboard cover.
 - Authentication.
 - Cloud sync.
 - Server-side storage.
 - Server-side PDF generation.
-- Live scraping from the static app when CORS, authentication, or institutional access makes that unreliable.
-- Final UI/UX design decisions.
+- Live scraping from the browser app.
 - Automatic submission to institutional platforms.
-- Editing arbitrary DOCX templates directly.
+- Final visual design decisions beyond the functional UI requirements in this document.
 
 ## Technical assumptions
 
-- The application is a static site and can be hosted on GitHub Pages.
-- All PDF generation happens client-side.
-- `pdfmake` is the primary PDF generation library.
-- The PDF is generated from a structured document-definition template, not by modifying the original DOCX.
-- Local browser storage is sufficient for MVP user preferences, course defaults, and exam instances.
-- The current DOCX/PDF should be treated as the reference output, but not as the runtime template format.
-- Institutional logos, screenshots, and fixed instruction images must be included as static assets or embedded as base64 data, subject to institutional rules.
+- The delivered app is a static site that can be hosted on GitHub Pages.
+- The project uses Vue 3 with Vite as the default implementation stack.
+- Vite build output is deployed as static files.
+- If deployed as a project site on GitHub Pages, Vite must be configured with the correct repository base path.
+- All PDF generation happens client-side through `pdfmake` document definitions.
+- Inline preview can be implemented using pdfmake browser APIs such as data URL or Blob output rendered in an iframe or similar embedded viewer.
+- The app bundles dependencies at build time rather than loading remote runtime scripts from a CDN.
+- Institutional assets currently used in the cover may be stored in the repository because they are already acceptable for public use.
+- If the exact institutional font cannot be redistributed, the app may use an open-source alternative or Arial-compatible fallback and document the difference.
+- Node.js is required for local development and builds, but not for production hosting.
 
 ## Users and roles
 
 ### Primary user
 
-A lecturer who teaches multiple courses and must generate exam cover PDFs repeatedly.
+A lecturer who repeatedly needs to maintain current exam covers and generate updated PDFs with minimal repeated data entry.
 
 ### Secondary users
 
-- Other lecturers who need the same type of exam cover.
-- Co-lecturers who share a course but may need different defaults.
-- Future maintainers who update institutional text, language variants, or template rules.
+- Other lecturers managing their own local course cards.
+- Future maintainers who update seed data, template text, or PDF rendering logic.
 
-No separate role-based permissions are required in the MVP because the app runs locally in each user's browser without shared server-side state.
+No role-based permissions are required for MVP because all data is local to one browser profile.
 
-## Domain model
+## Core domain concepts
 
 ### Programme
 
@@ -81,272 +95,188 @@ Represents an education programme such as `PBTIN`.
 Required fields:
 
 - `id`: stable internal identifier.
-- `code`: visible programme code, for example `PBTIN`.
-- `name`: optional display name.
-- `department`: default department text, for example `PXL-Digital`.
-- `institution`: default institution text, for example `Hogeschool PXL`.
+- `code`: visible programme code.
+- `name`: display name.
 - `active`: boolean.
 
-### Academic year
+### Programme seed entry
 
-Represents an academic year such as `2025-2026`.
-
-Required fields:
-
-- `value`: display value, for example `2025-2026`.
-- `startYear`: numeric start year.
-- `endYear`: numeric end year.
-- `active`: boolean.
-
-### Exam chance
-
-Represents the exam period/chance.
-
-Required values for MVP:
-
-- `S1`: semester 1.
-- `S2`: semester 2.
-- `EK2`: second exam chance.
-
-Required fields:
-
-- `code`: `S1`, `S2`, or `EK2`.
-- `labelNl`: Dutch label.
-- `labelEn`: English label.
-- `sortOrder`: ordering value.
-
-### Lecturer
-
-Represents a lecturer who can appear as vaklector and/or lector.
+Represents a bundled course or OLOD entry that can be used to create a card.
 
 Required fields:
 
 - `id`: stable internal identifier.
-- `displayName`: full display name.
-- `email`: optional.
-- `defaultRole`: optional, for example `vaklector`, `lector`, or `co-lector`.
+- `programmeCode`: owning programme code.
+- `courseCode`: visible course code.
+- `courseName`: visible course name.
+- `defaultVaklector`: optional default vaklector.
+- `defaultLecturers`: optional default lecturers.
+- `defaultStartTime`: optional default start time.
+- `defaultDurationMinutes`: optional default duration.
+- `defaultAllowedResources`: optional default allowed resources text.
+- `defaultMaxScore`: default score, normally `20`.
 - `active`: boolean.
-
-### Course
-
-Represents a course from the user's course overview.
-
-Required fields:
-
-- `id`: stable internal identifier.
-- `code`: course identifier, for example `42TIN2260`.
-- `name`: course name, for example `Automation I`.
-- `programmeCodes`: one or more programme codes.
-- `academicYears`: academic years in which this course exists, if known.
-- `defaultLanguage`: `nl` or `en`.
-- `defaultLecturers`: one or more lecturer ids or names.
-- `defaultVaklector`: one lecturer id or name.
-- `defaultMaxScore`: default `20`.
-- `defaultExamMode`: default exam mode.
-- `defaultAllowedResources`: default allowed-resource policy.
-- `defaultExamParts`: one or more default exam parts.
-- `defaultRoomText`: optional.
-- `source`: `manual`, `scraped`, or `seeded`.
 - `sourceLastUpdated`: optional timestamp.
-- `userJoined`: boolean indicating whether the lecturer wants this course in their own overview.
-- `overrides`: user-specific overrides layered on top of scraped/seeded data.
 
-### Exam instance
+### Course card
 
-Represents one generated exam cover for a course.
+Represents one current editable exam cover card in the UI.
 
 Required fields:
 
 - `id`: stable internal identifier.
-- `courseId`: linked course.
 - `programmeCode`: selected programme.
-- `academicYear`: selected academic year.
-- `examChance`: `S1`, `S2`, or `EK2`.
-- `language`: `nl` or `en`.
-- `date`: exam date.
+- `seedEntryId`: optional reference to the bundled seed entry.
+- `courseCode`: visible course code.
+- `courseName`: visible course name.
+- `academicYear`: current academic year, for example `2025-2026`.
+- `examChance`: visible exam chance label or code used on the cover.
+- `language`: `nl` for MVP.
+- `examDate`: exam date.
 - `startTime`: start time.
-- `endTime`: end time or computed from duration.
-- `durationMinutes`: total duration.
-- `maxScore`: default `20`, overridable.
-- `lecturers`: one or more names.
-- `vaklector`: one name.
-- `roomPlaceCode`: optional text.
-- `parts`: list of exam parts.
-- `allowedResources`: final rendered allowed-resource text or selected policy.
+- `durationMinutes`: canonical duration input.
+- `endTime`: derived display value for the PDF, with optional manual override in the full update view if later needed.
+- `vaklector`: visible vaklector name.
+- `lecturers`: one or more visible lecturer names.
+- `roomPlaceCode`: optional room or place code.
+- `maxScore`: maximum score, default `20`.
+- `allowedResources`: rendered allowed resources text.
+- `templateId`: selected PDF template.
 - `createdAt`: timestamp.
 - `updatedAt`: timestamp.
 - `lastGeneratedAt`: optional timestamp.
-
-### Exam part
-
-Represents a part of an exam. Exams can have one, two, or three parts.
-
-Required fields:
-
-- `id`: stable internal identifier.
-- `label`: visible label, for example `DEEL I`, `DEEL II`, or English equivalent.
-- `title`: optional part title.
-- `scorePercentage`: percentage of total score.
-- `durationMinutes`: duration for this part.
-- `platform`: for example `blackboard`, `blackboard-lockdownbrowser`, `paper`, `oral`, `other`.
-- `requiresBlackboardConfirmation`: boolean.
-- `allowedResourcesOverride`: optional override for this part.
-- `instructionsOverride`: optional override for this part.
-
-### Allowed-resource policy
-
-Represents reusable allowed resources text.
-
-Required fields:
-
-- `id`: stable internal identifier.
-- `name`: internal display name.
-- `language`: `nl` or `en`.
-- `examMode`: associated exam mode.
-- `text`: rendered text used in the exam data table.
-- `notes`: optional internal notes.
-
-Example policies:
-
-- Blackboard LockDown Browser on laptop, documentation as configured in LockDown Browser, no paper, exam only on laptop, no internet, no AI tools.
-- Blackboard exam without LockDown Browser.
-- Paper exam with specified documentation.
-- Exam with course-specific documentation.
-- Exam with open-book documentation but no internet.
-- Exam with explicitly allowed internet or tools, only if institutionally permitted.
+- `source`: `manual` or `seeded`.
+- `overrides`: local values that differ from the bundled seed entry.
 
 ### Template
 
-Represents a versioned document template.
+Represents a versioned PDF template.
 
 Required fields:
 
 - `id`: stable internal identifier.
 - `name`: display name.
-- `language`: `nl` or `en`.
+- `language`: `nl` for MVP.
 - `version`: semantic or date-based version.
-- `pages`: page definitions.
-- `supportsExamModes`: list of supported exam modes.
 - `requiresAssets`: list of required static assets.
 - `status`: `draft`, `active`, or `deprecated`.
 
 ## Data layering and overrides
 
-The application must support layered defaults so that the user does not repeatedly enter the same information.
-
 Recommended precedence from lowest to highest:
 
 - Built-in application defaults.
-- Scraped or pre-seeded course catalogue data.
-- User-level defaults.
-- Course-level user overrides.
-- Exam-instance values.
-- One-off generated-document overrides, if supported later.
+- Bundled programme seed data.
+- Course card local overrides.
 
-The app must make it possible to reset an override back to the underlying seeded value.
+The app must make it possible to edit seeded values locally without modifying the bundled seed file.
 
-## Course overview requirements
+The app does not need to preserve a historical timeline of previous card states in MVP. The focus is the current active cover state per card.
 
-The user must be able to maintain a personal course overview.
+## Seed data requirements
+
+The app must support bundled static seed files for programme-specific course and OLOD data.
+
+Requirements:
+
+- Seed data is bundled with the app as static JSON.
+- Seed files are read-only at runtime.
+- Each programme can have its own seed file or its own section in a combined seed file.
+- The UI must first ask for the programme when creating a new card, then offer the matching seeded course or OLOD entries for that programme.
+- The user must be able to override any seeded value before saving the card.
+- The app must continue to work when no seed file exists for a programme or when the user wants to create a fully manual card.
+- Seed updates must not silently overwrite local overrides.
+
+Example seed location:
+
+```text
+public/data/programmes.seed.json
+```
+
+## Main UI requirements
+
+The main interface is a card-based overview of current course covers.
 
 Functional requirements:
 
-- Show courses available from pre-seeded/scraped data.
-- Show courses manually added by the user.
-- Allow the user to mark themselves as involved in a course.
-- Allow the user to remove a course from their personal overview without deleting the global pre-seeded course definition.
-- Allow course data to be edited locally.
-- Preserve user overrides when seeded data is updated.
-- Allow filtering by programme, academic year, and active/inactive status.
-- Allow selecting a course to create or edit an exam instance.
+- One card represents one current course cover.
+- The overview shows the important current state of each card, such as programme, course code, course name, academic year, exam date, and quick actions.
+- The user can add a new card.
+- The user can remove a card only after an explicit confirmation step.
+- The user can filter cards by programme, academic year, and active status.
+- Clicking a card opens its current details, preview, and actions.
+- Each card must expose quick access to preview, download PDF, actualize, and full edit.
+- The card overview and dialogs must remain usable with keyboard navigation.
 
-## Exam creation requirements
+## Card creation requirements
 
-The user must be able to create an exam instance from a course.
+The user must be able to create a new card quickly.
 
-Required fields for exam creation:
+Required flow:
+
+1. Select programme.
+2. Select a seeded course or OLOD entry for that programme, or choose manual creation.
+3. Review prefilled values.
+4. Override values as needed.
+5. Save the card locally.
+
+Required fields when saving a card:
 
 - Programme.
-- Academic year.
-- Exam chance.
 - Course code.
 - Course name.
+- Academic year.
+- Exam chance.
 - Exam date.
 - Start time.
-- End time or duration.
+- Duration.
 - Vaklector.
-- One or more lecturers.
-- Maximum score, defaulting to `20`.
-- Exam room/place code, optional.
-- Exam mode.
-- Number of exam parts.
-- Score distribution across parts.
-- Time distribution across parts.
+- At least one lecturer.
+- Maximum score.
 - Allowed resources.
-- Language.
+- Template.
 
-Validation requirements:
+## Actualize flow requirements
 
-- Date must be present and valid.
-- Start time must be present and valid.
-- Either end time or duration must be present.
-- If both end time and duration are present, they must be consistent or the user must explicitly choose which value wins.
-- Maximum score must be a positive number and should default to `20`.
-- Score distribution should total `100%` unless the user explicitly marks it as non-percentage based.
-- Time distribution should match the total duration unless explicitly overridden.
-- At least one lecturer must be present.
-- Course code and course name must be present.
-- Programme must be present.
-- Exam chance must be present.
+The app must provide a quick way to update an existing card for a new academic cycle.
 
-## Exam modes
+Required behavior:
 
-The system must model exam mode separately from allowed resources and instructions.
+- The user can trigger actualize directly from a card.
+- Actualize overwrites the current card state instead of creating history in MVP.
+- Actualize should prefill the next academic year based on the current card when possible.
+- Actualize must prompt for the new exam date.
+- The same actualize dialog must allow the user to override start time and duration easily.
+- The full edit view remains available for all other changes.
 
-Required exam modes for MVP:
+## Full update view requirements
 
-- Blackboard with LockDown Browser.
-- Blackboard without LockDown Browser.
-
-For each exam mode, the system must determine:
-
-- Whether Blackboard submission confirmation boxes are required.
-- Whether page 1 Blackboard instructions are included.
-- Whether page 2 Blackboard/LockDown Browser instructions are included.
-- Whether the allowed-resources text should be selected from a default policy.
-- Whether exam parts each need separate confirmation sections.
-
-## Language requirements
-
-The system must support Dutch and English output.
+The app must provide a full update view for editing all card fields.
 
 Functional requirements:
 
-- The user must choose a language per course default and per exam instance.
-- All fixed labels must be translatable.
-- All fixed instruction blocks must be translatable.
-- Allowed-resource policies must be language-specific.
-- Template selection must be language-aware.
-- Course names and lecturer names are not translated unless explicitly provided.
-
-The first version may include Dutch as the primary complete template and English as a second template that can be completed incrementally.
+- Edit all visible PDF fields.
+- Edit seeded defaults locally for that card without changing the bundled seed file.
+- Update lecturers, vaklector, allowed resources, room code, score, academic year, exam chance, and template.
+- Preview the resulting PDF from the same working context.
+- Save changes locally without requiring any backend.
 
 ## PDF generation requirements
 
 The generated PDF must:
 
 - Use A4 portrait pages.
-- Generate at least the first two pages matching the reference exam cover for Blackboard LockDown Browser exams.
-- Preserve table-like layout for header, student fields, and exam data.
-- Preserve empty writable areas for student data.
-- Preserve confirmation-number boxes for Blackboard submission confirmation codes.
-- Support one, two, or three exam parts.
-- Generate appropriate score and time distribution text from structured part data.
-- Include page 2 only when required by the selected exam mode/template.
-- Use predictable file names.
+- Generate the current Dutch modern two-page Blackboard exam cover.
+- Preserve the overall layout structure of the current reference family with acceptable layout drift.
+- Preserve writable blank areas for student data.
+- Preserve the Blackboard confirmation-number area on page 1.
+- Include the Blackboard instruction text on page 1.
+- Include the Blackboard procedure page on page 2.
+- Render a time range based on start time and duration.
+- Use a predictable filename.
 - Be generated entirely in the browser.
 
-Recommended generated filename pattern:
+Recommended filename pattern:
 
 ```text
 {academicYearShort}_{courseCode}_{courseNameSlug}_Examenvoorblad_{examChance}.pdf
@@ -358,19 +288,54 @@ Example:
 2526_42TIN2260_Automation_I_Examenvoorblad_S2.pdf
 ```
 
+## PDF preview requirements
+
+The app must support inline preview inside the application.
+
+Functional requirements:
+
+- The user can preview the current PDF without leaving the app.
+- Preview uses client-side generated PDF data.
+- Preview and download must stay in sync with the current card state.
+- Preview controls must be keyboard accessible.
+
 ## Template rendering requirements
 
-The template rendering layer must separate data from layout.
+The rendering layer must separate data from layout.
 
 Required concepts:
 
-- `ExamCoverData`: normalized input data.
+- `CourseCardData`: normalized input data for rendering.
 - `TemplateDefinition`: static template configuration.
 - `renderExamCoverPdfDefinition(data, template)`: function that returns a pdfmake document definition.
-- `validateExamCoverData(data)`: validation before rendering.
-- `formatExamCoverData(data, locale)`: formatting for dates, times, score text, and duration text.
+- `validateCourseCardData(data)`: validation before rendering.
+- `formatCourseCardData(data, locale)`: formatting for dates, times, score text, and duration text.
+- `generatePdfPreviewSource(data, template)`: helper that provides preview-ready output such as a Blob or data URL.
 
-The rendering logic must not read directly from form controls or browser storage. It must accept normalized data objects so it can be tested independently.
+The rendering logic must not read directly from Vue form controls or browser storage.
+
+## Validation and error handling requirements
+
+The application must prevent obviously invalid PDFs.
+
+Required validation cases:
+
+- Missing programme.
+- Missing course code.
+- Missing course name.
+- Missing academic year.
+- Missing exam chance.
+- Missing exam date.
+- Missing start time.
+- Missing duration.
+- Invalid duration.
+- No lecturers.
+- Missing vaklector.
+- Invalid maximum score.
+- Empty allowed resources text.
+- Missing required static assets.
+
+Error messages must be specific and actionable.
 
 ## Storage requirements
 
@@ -379,14 +344,14 @@ The application must persist user data locally in the browser.
 MVP storage requirements:
 
 - Store user settings.
-- Store lecturer defaults.
-- Store joined courses.
-- Store course overrides.
-- Store exam instances.
-- Store reusable allowed-resource policies.
+- Store programmes.
+- Store bundled seed metadata if needed.
+- Store course cards.
+- Store locally reused lecturer defaults.
 - Store template preferences.
+- Store schema version information.
 
-Storage should be versioned so data can be migrated between application versions.
+MVP may use `localStorage` for simplicity, but the structure should not block a future move to IndexedDB.
 
 Recommended storage structure:
 
@@ -394,21 +359,17 @@ Recommended storage structure:
 {
   "schemaVersion": 1,
   "userSettings": {},
-  "lecturers": [],
   "programmes": [],
-  "courses": [],
-  "courseOverrides": [],
-  "examInstances": [],
-  "allowedResourcePolicies": [],
-  "templates": []
+  "programmeSeeds": [],
+  "lecturers": [],
+  "courseCards": [],
+  "templatePreferences": {}
 }
 ```
 
-MVP implementation can use `localStorage` for simplicity. The design should not prevent moving to IndexedDB later if data grows, import/export becomes more complex, or assets need to be stored locally.
-
 ## Import and export requirements
 
-The user must not be locked into one browser profile without backup.
+The user must not be locked into one browser profile.
 
 Functional requirements:
 
@@ -416,102 +377,32 @@ Functional requirements:
 - Import a previously exported JSON file.
 - Validate imported data before saving it.
 - Warn before replacing existing local data.
-- Allow merging imported data with existing data, if feasible.
 - Include schema version in exported data.
 
-## Pre-seeded and scraped data requirements
-
-Scraping is a separate concern from the static PDF generator.
-
-The PDF generator must be able to consume a pre-seeded data file, for example:
-
-```text
-public/data/courses.seed.json
-```
-
-The pre-seeded file may contain course codes and course names such as `42TIN2260 Automation I`, programme mappings such as `PBTIN`, and default lecturer/course metadata when available.
-
-Requirements:
-
-- Seeded data must be read-only by default.
-- User overrides must be stored separately from seeded data.
-- Seeded data updates must not overwrite local user overrides without explicit confirmation.
-- The seed format must include a source timestamp and source identifier.
-- The application must tolerate missing seeded data and still allow manual course creation.
-
-Potential future pipeline:
-
-- A separate script scrapes the course overview webpage.
-- The script normalizes course codes, course names, programme codes, and academic years.
-- The script writes a static JSON seed file.
-- The static web app loads that JSON file at runtime.
-
-## Asset requirements
-
-The application may need static assets to reproduce the PDF.
-
-Potential assets:
-
-- PXL-Digital logo.
-- Blackboard submission confirmation screenshot or simplified diagram.
-- Optional institutional icons or branding elements.
-- Fonts, if required by institutional layout.
-
-Requirements:
-
-- Assets must be stored in the repository only when licensing and institutional policy allow it.
-- Assets must be optimized for client-side loading.
-- PDF generation must handle missing non-critical assets gracefully where possible.
-- If exact fonts cannot be distributed, the app must use a close fallback and document the difference.
-
-## Validation and error handling requirements
-
-The application must prevent obviously invalid PDFs.
-
-Required validation cases:
-
-- Missing course code.
-- Missing course name.
-- Missing programme.
-- Missing academic year.
-- Missing exam chance.
-- Missing date.
-- Missing start time.
-- Missing end time and duration.
-- Inconsistent end time and duration.
-- No lecturers.
-- Invalid number of exam parts.
-- Score distribution not totaling 100%.
-- Time distribution not matching total duration.
-- Empty allowed-resource text.
-- Missing required static assets.
-
-Error messages must be specific and actionable.
+Merging imported data with existing data is desirable but not required for MVP.
 
 ## Privacy and security requirements
-
-The app should not send exam data to any server in the MVP.
 
 Requirements:
 
 - All data remains in the browser unless the user exports it manually.
 - No analytics by default.
-- No third-party remote scripts unless explicitly approved.
-- Prefer bundling dependencies at build time over loading from public CDNs.
-- Do not store personal student data because the generated cover contains blank student fields.
-- Make it clear that local browser data can be lost if the user clears site data.
+- No third-party remote runtime scripts unless explicitly approved.
+- Prefer bundling dependencies at build time.
+- Do not store personal student data because the printed student fields remain blank.
+- Make it clear that clearing browser site data can remove local information.
 
 ## Accessibility requirements
 
-The web application should be usable with keyboard navigation and screen readers.
+The application should be usable with keyboard navigation and screen readers.
 
 Requirements:
 
 - Form fields have labels.
-- Validation errors are associated with the relevant fields.
-- Generated PDF preview/download controls are keyboard accessible.
-- Language selection is explicit.
-- The application should not rely on colour alone to communicate validation status.
+- Validation errors are associated with relevant fields.
+- Card actions are keyboard accessible.
+- Preview and download controls are keyboard accessible.
+- The application does not rely on color alone for validation status.
 
 ## Browser support requirements
 
@@ -521,9 +412,9 @@ MVP should target current stable versions of:
 - Edge.
 - Firefox.
 
-Safari support is desirable but can be verified after the MVP.
+Safari support is desirable after MVP.
 
-The app must handle browsers where storage is disabled or unavailable by allowing at least one-off PDF generation without persistence.
+The app must still allow one-off PDF generation when persistent storage is unavailable.
 
 ## Testing requirements
 
@@ -531,98 +422,90 @@ The project should include automated tests for non-visual logic.
 
 Required test areas:
 
-- Data normalization.
-- Validation rules.
+- Seed-data normalization.
+- Override precedence.
+- Actualize flow logic.
 - Time and duration calculations.
 - Academic year formatting.
 - Exam chance formatting.
-- Score distribution formatting.
-- Time distribution formatting.
-- Dutch label rendering.
-- English label rendering.
-- Course override precedence.
-- Seeded data merging.
 - Filename generation.
+- Validation rules.
 - pdfmake document-definition generation shape.
+- Storage migration behavior.
 
-Visual regression tests are desirable after the first working template exists.
+Visual regression testing for the PDF is desirable after the first working template exists.
 
 ## Acceptance criteria for MVP
 
 The MVP is acceptable when:
 
-- The app runs from static files without a backend.
+- The app runs as a static Vue application without a backend.
 - The app can be hosted on GitHub Pages.
-- The user can create or edit a course manually.
-- The user can create an exam instance for a course.
-- The user can enter programme, academic year, exam chance, date, time, lecturers, exam parts, and allowed resources.
-- The user can generate a Dutch Blackboard LockDown Browser exam cover PDF matching the current two-page reference closely enough for practical submission.
-- The user can save course defaults locally.
+- The user can create a card from programme seed data or manually.
+- The user can remove a card with confirmation.
+- The user can actualize a card by updating the current state with a new exam date and optional new start time and duration.
+- The user can open a full update view for all other edits.
+- The user can preview the PDF inline.
+- The user can download the PDF from the browser.
+- The user can generate a Dutch modern two-page Blackboard exam cover PDF with acceptable layout drift relative to the current reference examples.
 - The user can reload the page and keep local data.
 - The user can export and import local data as JSON.
-- The generated PDF filename is predictable and includes academic year, course code, course name, and exam chance.
+- The generated filename is predictable and includes academic year, course code, course name, and exam chance.
 
 ## Open questions
 
-These questions should be resolved before implementation or during early prototyping:
+These questions remain open but do not block the current MVP direction:
 
-- How exact must the generated PDF be compared with the DOCX-exported PDF: visually identical, institutionally equivalent, or simply containing the required information?
-- Can the PXL-Digital logo and Blackboard screenshot be stored in a public GitHub repository?
-- Is the submitted PDF required to use a specific font?
-- Are there official English versions of the fixed instruction text, or must they be translated manually?
-- Are there official variants for Blackboard without LockDown Browser, paper exams, or documentation-based exams?
-- Do all exam parts require separate Blackboard confirmation boxes, or only Blackboard-based parts?
-- Should `EK2` be displayed exactly as `EK2`, or does the institution require a longer label in some contexts?
-- Can exam room/place code remain blank, or should the app support planned room data later?
-- Should multiple programmes for the same course generate one PDF per programme or one PDF with multiple programme codes?
-- Should co-lecturers be stored globally, per course, or per exam instance only?
-- Should the app support custom institutional templates per department later?
-- Should the app support importing scraped data manually through a JSON file before a seed-file pipeline exists?
-- Should the app include a PDF preview, or is direct download enough for MVP?
+- Which exact font should be used when the institutional original cannot be redistributed?
+- What exact seed-file format will be used for the separate programme and OLOD data you will provide?
+- Which fields, if any, should become reusable lecturer or allowed-resources presets beyond per-card editing?
+- How much of the inline preview UI should be specified in the future dedicated UI and UX design document versus this product requirements document?
 
 ## Suggested implementation phases
 
-### Phase 1: Data model and static generator skeleton
+### Phase 1: App skeleton and local data
 
-- Set up static web app project.
+- Set up Vue 3 plus Vite project.
 - Add pdfmake.
-- Define TypeScript data types or JavaScript schema objects.
-- Implement validation and formatting.
+- Define core data types.
+- Implement seed loading.
 - Implement local persistence.
-- Implement JSON import/export.
+- Implement JSON import and export.
 
-### Phase 2: Dutch Blackboard LockDown Browser template
+### Phase 2: Card workflow
 
-- Recreate the current two-page PDF structure using pdfmake.
-- Add static assets.
-- Generate the reference `Automation I` PDF from structured data.
-- Compare manually against the current generated PDF.
+- Build the card overview.
+- Add create-card flow from programme seeds.
+- Add remove-with-confirmation behavior.
+- Add actualize dialog.
+- Add full update view.
 
-### Phase 3: Course defaults and personal course overview
+### Phase 3: PDF generation and preview
 
-- Add seeded course data support.
-- Add user-joined courses.
-- Add course-level overrides.
-- Add exam instance creation from course defaults.
+- Recreate the current Dutch modern two-page Blackboard template.
+- Add required static assets.
+- Implement inline preview.
+- Implement filename generation and download.
 
-### Phase 4: Multiple exam modes and exam parts
+### Phase 4: Validation and polish
 
-- Add Blackboard without LockDown Browser.
-- Add paper exam and mixed exam variants.
-- Add one-, two-, and three-part exam rendering.
-- Add reusable allowed-resource policies.
+- Strengthen validation and error messaging.
+- Add automated tests for non-visual logic.
+- Compare generated PDFs against current references.
+- Document seed update workflow.
 
-### Phase 5: English support and maintainability
+### Future features
 
-- Add English labels and instruction text.
-- Add template versioning.
-- Add tests and visual regression workflow.
-- Document how to update seeded data and template text.
+- English support.
+- Additional template families.
+- Multi-part exam support.
+- Richer preset management.
+- Dedicated UI and UX design specification.
 
 ## Non-functional requirements
 
 - The app should remain small enough to load comfortably as a static site.
-- The PDF generation code must be deterministic for the same input data.
-- The template code must be maintainable and avoid hard-coded values scattered through the application.
-- The app must work offline after initial load if all assets are bundled locally.
-- The codebase should make it straightforward to add new templates and exam modes later.
+- PDF generation should be deterministic for the same input.
+- Template code must stay maintainable and avoid scattered hard-coded layout values.
+- The app should work offline after the initial load when all assets are bundled locally.
+- The codebase should stay easy to extend with more programmes, templates, and future UI refinements.
