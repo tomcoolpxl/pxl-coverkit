@@ -12,8 +12,7 @@ This plan turns `REQUIREMENTS.md` and `DESIGN.md` into a sequenced, reviewable b
 
 ## Workflow conventions
 
-- **Branching**: one branch per phase (`phase-1-skeleton`, `phase-2-create`, ...). One PR per phase merged to `main`. Sub-task commits stay on the phase branch.
-- **Reviewable size**: keep each phase merge-able in a single review cycle. If a phase grows, split into `phase-Na` / `phase-Nb` rather than ballooning the PR.
+- **Trunk-based**: work directly on `main`. No per-phase branches, no pull requests. If a phase grows too large for one review cycle, split it into `phase-Na` / `phase-Nb` commits and ship them sequentially on `main`.
 - **Phase gate** (per GEMINI.md "Verification" rule):
   1. `npm start` boots the app on `http://localhost:5173` without errors.
   2. `npm test` is green (Vitest).
@@ -201,7 +200,7 @@ The yearly refresh process is documented in Phase 6.
   2. Run `python scripts/build_programmes_seed.py` to produce `seed-data/programmes.seed.YYYY-YY.json`.
   3. Copy the new seed file into `public/data/` (or wire the build to do it).
   4. Bump `settings.activeAcademicYear` default in code if the academic year tick is intentional.
-  5. Open a PR titled `seed: refresh YYYY-YY`.
+  5. Commit directly to `main` with the message `seed: refresh YYYY-YY`.
 - A `package.json` script `npm run seeds:refresh:<year>` wraps the two Python steps for convenience.
 
 This phase is not gated; it runs whenever a new academic year drops.
@@ -221,7 +220,7 @@ This phase is not gated; it runs whenever a new academic year drops.
 
 The MVP is shipped when:
 
-- All five phases have merged to `main` with their verification gates met.
+- All five phases have shipped to `main` with their verification gates met.
 - `DONE.md` lists every verified deliverable from `REQUIREMENTS.md` §"Acceptance criteria for MVP".
 - `TODO.md` contains only post-MVP items.
 - The live GitHub Pages URL serves an app that a lecturer can use to recreate the `42TIN2260 Automation I` baseline cover end-to-end with no manual DOCX step.

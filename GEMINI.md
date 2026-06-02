@@ -6,6 +6,7 @@ This repository builds the PXL Cover Kit web app.
 
 ## Project Workflow
 
+- Work directly on `main`. No per-phase branches, no pull requests. Commit and push when work is verified.
 - Keep work small enough for one review cycle.
 - Stay inside the accepted requirements.
 - Ask before broad refactors, test removal, or directory-structure changes.

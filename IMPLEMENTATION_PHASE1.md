@@ -3,7 +3,6 @@
 This file is the **frozen blueprint** for Phase 1. It was copied from `IMPLEMENTATION_PLAN.md` at the start of the phase and must not change once work begins. Refer to `TODO.md` for live work tracking and `DONE.md` for verified deliverables.
 
 Frozen on: 2026-06-02
-Branch: `phase-1-skeleton`
 
 ---
 
