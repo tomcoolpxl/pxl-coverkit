@@ -28,3 +28,4 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - `scripts/scrape_studiegids_olods.py` scrapes the public PXL studiegids ASP.NET postback flow into JSON for seed-data preparation.
 - Current validated path: `PXL-Digital -> Professionele bachelor in de toegepaste informatica -> Toegepaste Informatica -> Trajectschijf -> Deeltraject`.
 - Use `requests` for the scraper transport; the endpoint rejected the earlier `urllib` client during validation.
+- `scripts/build_programmes_seed.py` converts the raw scrape JSON into the flat runtime seed format documented in `SEED_DATA_FORMAT.md`.
