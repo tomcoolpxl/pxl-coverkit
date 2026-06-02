@@ -10,24 +10,17 @@ import {
   parseImport,
   serializeExport,
 } from '@/data/importExport';
-import type { AcademicYear } from '@/domain/types';
+import { ACTIVE_ACADEMIC_YEAR } from '@/app/activeAcademicYear';
 import packageJson from '../../../package.json';
 
 const settings = useSettingsStore();
 const cards = useCardsStore();
 const programmes = useProgrammesStore();
 
-const availableYears: AcademicYear[] = ['2025-26', '2026-27'];
-
 const fileInput = ref<HTMLInputElement | null>(null);
 const status = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
 
 const cardCount = computed(() => cards.count);
-
-async function onYearChange(value: AcademicYear) {
-  settings.setActiveAcademicYear(value);
-  await programmes.loadForYear(value, { force: true });
-}
 
 function triggerExport() {
   const payload = buildExportPayload({
@@ -61,7 +54,6 @@ async function onImportFile(event: Event) {
     const parsed = parseImport(text);
     settings.replaceWith(parsed.settings);
     cards.replaceAll(parsed.cards);
-    await programmes.loadForYear(parsed.settings.activeAcademicYear, { force: true });
     status.value = {
       kind: 'success',
       message: `Import voltooid: ${parsed.cards.length} voorblad(en) geladen.`,
@@ -78,27 +70,31 @@ async function onImportFile(event: Event) {
     <h1 class="text-h4 mb-6">Instellingen</h1>
 
     <v-card class="mb-6 pa-6" variant="outlined">
-      <h2 class="text-h6 mb-4">Actief academiejaar</h2>
-      <v-select
-        :model-value="settings.activeAcademicYear"
-        :items="availableYears"
-        label="Academiejaar"
-        @update:model-value="onYearChange"
-      />
-      <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis">
+      <h2 class="text-h6 mb-2">Actief academiejaar</h2>
+      <p class="text-body-1 mb-1">
+        <strong>{{ ACTIVE_ACADEMIC_YEAR }}</strong>
+      </p>
+      <p class="text-caption text-medium-emphasis">
+        Vast in code; wordt één keer per jaar door een onderhouder vervangen.
+      </p>
+      <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis mt-3">
         Studiegidsdata wordt geladen…
       </p>
-      <p v-else-if="programmes.error" class="text-body-2 text-error">
+      <p v-else-if="programmes.error" class="text-body-2 text-error mt-3">
         {{ programmes.error }}
       </p>
-      <p v-else class="text-body-2 text-medium-emphasis">
+      <p v-else class="text-body-2 text-medium-emphasis mt-3">
         {{ programmes.programmes.length }} opleiding(en), {{ programmes.seedEntries.length }} OLOD(s)
-        beschikbaar.
+        geladen.
       </p>
     </v-card>
 
     <v-card class="mb-6 pa-6" variant="outlined">
-      <h2 class="text-h6 mb-4">Import / export</h2>
+      <h2 class="text-h6 mb-2">Lokale data — import / export</h2>
+      <p class="text-body-2 text-medium-emphasis mb-4">
+        Back-up of verhuis je eigen voorbladen en lokale overrides tussen browsers. Studiegidsdata
+        zit in de app en hoef je niet te importeren.
+      </p>
       <p class="text-body-2 mb-4">
         Lokale data: <strong>{{ cardCount }}</strong> voorblad(en).
       </p>

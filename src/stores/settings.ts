@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { CURRENT_SCHEMA_VERSION, type AppSettings, type AcademicYear } from '@/domain/types';
+import { CURRENT_SCHEMA_VERSION, type AppSettings } from '@/domain/types';
 
 interface SettingsState extends AppSettings {
   schemaVersion: number;
@@ -7,7 +7,6 @@ interface SettingsState extends AppSettings {
 
 const DEFAULTS: SettingsState = {
   schemaVersion: CURRENT_SCHEMA_VERSION,
-  activeAcademicYear: '2025-26',
   defaultTemplateId: 'template-nl-blackboard-v1',
   defaultMaxScore: 20,
   defaultExamChance: 'S1',
@@ -17,11 +16,7 @@ const DEFAULTS: SettingsState = {
 export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({ ...DEFAULTS }),
   actions: {
-    setActiveAcademicYear(year: AcademicYear) {
-      this.activeAcademicYear = year;
-    },
     replaceWith(settings: AppSettings) {
-      this.activeAcademicYear = settings.activeAcademicYear;
       this.defaultTemplateId = settings.defaultTemplateId;
       this.defaultMaxScore = settings.defaultMaxScore;
       this.defaultExamChance = settings.defaultExamChance;
@@ -32,7 +27,6 @@ export const useSettingsStore = defineStore('settings', {
     },
     asExportable(): AppSettings {
       return {
-        activeAcademicYear: this.activeAcademicYear,
         defaultTemplateId: this.defaultTemplateId,
         defaultMaxScore: this.defaultMaxScore,
         defaultExamChance: this.defaultExamChance,

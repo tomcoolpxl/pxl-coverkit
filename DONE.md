@@ -70,3 +70,46 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 - `npm start` — Vite 6.4.3 boots in ~265 ms; root and seed JSON return HTTP 200.
 
 Still requires a real browser to fully clear the gate: manual import/export round-trip and Pages live URL check after merge.
+
+## Phase 2 — Card overview and create wizard
+
+Verified on 2026-06-02 via `npm test` (69 tests), `npm run typecheck`, `npm run build`, and `npm start` (HTTP 200 on root + seed JSON).
+
+### Domain layer additions
+- `src/domain/cardFactory.ts` — `buildCourseCard()` builds a `CourseCard` from form fields + optional seed + settings; computes `endTime`, tracks `overrides[]` against the seed-or-defaults baseline, tags `source` (`seeded` vs `manual`), copies the lecturers array. Pure; no Vue/Pinia/DOM imports.
+- `src/domain/filters.ts` — `filterCards()`, `uniqueProgrammeCodes()`, `uniqueAcademicYears()` for the overview filter bar.
+
+### Store changes
+- `cards.ts` — `create()` action wraps `buildCourseCard()` and persists via the existing array. Phase 1's `replaceAll/upsert/remove/clear` left untouched.
+- `wizard.ts` — full step machine (`programme` → `source` → `review`) with `next()`/`back()` guarded by `canAdvanceFromProgramme` / `canAdvanceFromSource`. `setProgramme()` clears stale source/draft state. `saveDraft()` + `markClean()` support the dirty navigation guard. `draftToFormFields()` helper bridges the wizard draft to `CardFormFields`.
+
+### Wizard UI
+- `src/features/wizard/WizardPage.vue` — Vuetify stepper host with `onBeforeRouteLeave` confirm guard and a `beforeunload` listener, both keyed off `wizard.dirty`.
+- `WizardProgrammeStep.vue` — programme list with auto-advance when exactly one active programme is loaded.
+- `WizardSourceStep.vue` — searchable seed-entry list scoped to the chosen programme, `selectionContext` breadcrumbs under the search box, plus a "Handmatige invoer" alternative.
+- `WizardReviewStep.vue` — review form prefilled from `defaults < seed < draft`, `vee-validate` with `@vee-validate/zod` for inline Dutch validation, Save disabled until `meta.valid`, success route back to overview.
+
+### Overview UI
+- `OverviewPage.vue` — responsive 1/2/3 column card grid, sticky filter bar (programme / academic year / free-text search), programme + year selects populated from current cards, empty-state for no cards and a separate empty-state for over-filtered views, and per-tile disabled action row (PDF tooltip "Beschikbaar vanaf Phase 4"; Edit/Actualize/Delete tooltip "Beschikbaar vanaf Phase 3").
+
+### Tooling
+- `vee-validate@4.15.1` + `@vee-validate/zod@4.15.1` added as runtime dependencies.
+
+### Tests added
+- `src/domain/cardFactory.test.ts` (6 tests) — endTime + timestamps, override tracking, manual vs seeded source, lecturers array copying.
+- `src/domain/filters.test.ts` (9 tests) — programme/year/search filters individually and combined, empty-criteria pass-through, unique lists sorted.
+- `src/stores/wizard.test.ts` (10 tests) — step transitions, guard behaviour, programme-change clearing source, back/reset/markClean semantics.
+- `src/stores/cards.test.ts` (3 tests) — `create()` appends, override-on-edit, manual-card source flag.
+
+### State files
+- `IMPLEMENTATION_PHASE2.md` frozen blueprint.
+- `TODO.md` refreshed against Phase 2 (only the manual browser walkthrough remains).
+
+### Phase 2 rework after user review (2026-06-02)
+- New constant `src/app/activeAcademicYear.ts` exporting `ACTIVE_ACADEMIC_YEAR: AcademicYear = '2025-26'` — the active year is now hardcoded and bumped yearly by a maintainer commit; no runtime switcher.
+- `AppSettings` no longer carries `activeAcademicYear`; `appSettingsSchema`, `useSettingsStore`, `buildExportPayload`, `parseImport`, and the related tests updated to the new shape.
+- `App.vue` and `WizardReviewStep.vue` read the active year from the constant; the wizard review form no longer has an academiejaar input (the year is displayed as static text in the step header and stamped onto the card via `draftToFormFields`).
+- `SettingsPage.vue` shows the active year as read-only copy and explains it ships from code; the year `<v-select>` is removed. Import/export remains for local data and the section copy now clarifies "Studiegidsdata zit in de app en hoef je niet te importeren."
+- `OverviewPage.vue` empty state drops the "Importeren" CTA (single CTA: "Nieuw voorblad"). The filter bar drops the academiejaar `<v-select>`; only the programme select + free-text search remain.
+- `WizardDraft` no longer carries `academicYear`. Wizard tests still pass with the trimmed shape.
+- Verification after rework: `npm test` 69/69, `npm run typecheck` clean, `npm run build` clean (356 modules, 2.4 s), `npm start` HTTP 200.

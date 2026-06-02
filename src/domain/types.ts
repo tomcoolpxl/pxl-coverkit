@@ -92,7 +92,6 @@ export interface CourseCard {
 }
 
 export interface AppSettings {
-  activeAcademicYear: AcademicYear;
   defaultTemplateId: string;
   defaultMaxScore: number;
   defaultExamChance: string;

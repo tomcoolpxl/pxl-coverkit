@@ -112,7 +112,6 @@ describe('courseCardSchema validation messages', () => {
 describe('appSettingsSchema + exportedStateSchema', () => {
   it('roundtrips an empty export', () => {
     const settings = {
-      activeAcademicYear: '2025-26',
       defaultTemplateId: 'template-nl-blackboard-v1',
       defaultMaxScore: 20,
       defaultExamChance: 'S1',
@@ -133,7 +132,6 @@ describe('appSettingsSchema + exportedStateSchema', () => {
       schemaVersion: 999,
       exportedAt: '2026-06-02T00:00:00Z',
       settings: {
-        activeAcademicYear: '2025-26',
         defaultTemplateId: 't',
         defaultMaxScore: 20,
         defaultExamChance: 'S1',

@@ -1,13 +1,71 @@
 <script setup lang="ts">
-// Placeholder — full wizard ships in Phase 2.
+import { computed, onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
+import { useWizardStore } from '@/stores/wizard';
+import WizardProgrammeStep from './WizardProgrammeStep.vue';
+import WizardSourceStep from './WizardSourceStep.vue';
+import WizardReviewStep from './WizardReviewStep.vue';
+
+const wizard = useWizardStore();
+
+const stepIndex = computed(() => {
+  switch (wizard.step) {
+    case 'programme':
+      return 0;
+    case 'source':
+      return 1;
+    case 'review':
+      return 2;
+    default:
+      return 0;
+  }
+});
+
+function confirmLeave(): boolean {
+  if (!wizard.dirty) return true;
+  return window.confirm(
+    'Je hebt nog niet-opgeslagen wijzigingen in de wizard. Wil je echt navigeren?',
+  );
+}
+
+function onBeforeUnload(event: BeforeUnloadEvent) {
+  if (wizard.dirty) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+}
+
+onBeforeRouteLeave((to) => {
+  if (to.name === 'overview' && !wizard.dirty) return true;
+  if (!wizard.dirty) return true;
+  const allow = confirmLeave();
+  if (allow) wizard.reset();
+  return allow;
+});
+
+onMounted(() => {
+  window.addEventListener('beforeunload', onBeforeUnload);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', onBeforeUnload);
+});
 </script>
 
 <template>
   <v-card variant="outlined" class="pa-6">
-    <h1 class="text-h5 mb-2">Nieuw voorblad</h1>
-    <p class="text-body-2 text-medium-emphasis">
-      De aanmaakwizard wordt opgeleverd in Phase 2.
-    </p>
-    <v-btn :to="{ name: 'overview' }" variant="text" class="mt-4">Terug naar overzicht</v-btn>
+    <v-stepper :model-value="stepIndex + 1" alt-labels class="mb-4 elevation-0">
+      <v-stepper-header>
+        <v-stepper-item :value="1" title="Opleiding" :complete="stepIndex > 0" />
+        <v-divider />
+        <v-stepper-item :value="2" title="Bron" :complete="stepIndex > 1" />
+        <v-divider />
+        <v-stepper-item :value="3" title="Controleren" :complete="false" />
+      </v-stepper-header>
+    </v-stepper>
+
+    <WizardProgrammeStep v-if="wizard.step === 'programme'" />
+    <WizardSourceStep v-else-if="wizard.step === 'source'" />
+    <WizardReviewStep v-else-if="wizard.step === 'review'" />
   </v-card>
 </template>

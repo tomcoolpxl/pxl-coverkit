@@ -9,7 +9,6 @@ import {
 import { CURRENT_SCHEMA_VERSION } from '@/domain/types';
 
 const baseSettings = {
-  activeAcademicYear: '2025-26' as const,
   defaultTemplateId: 'template-nl-blackboard-v1',
   defaultMaxScore: 20,
   defaultExamChance: 'S1',

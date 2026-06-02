@@ -107,7 +107,6 @@ export const courseCardSchema = z.object({
 });
 
 export const appSettingsSchema = z.object({
-  activeAcademicYear: academicYearSchema,
   defaultTemplateId: z.string(),
   defaultMaxScore: z.number().positive(),
   defaultExamChance: z.string(),
