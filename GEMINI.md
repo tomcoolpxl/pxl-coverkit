@@ -26,6 +26,7 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 ## Seed Data Utilities
 
 - `scripts/scrape_studiegids_tree.py` crawls the public PXL studiegids tree for one academic year and outputs one raw JSON snapshot.
+- `scripts/scrape_studiegids_tree.py` defaults to the `PXL-Digital` department when no department filter is provided; pass an explicit department filter if you intentionally want a different scope.
 - The crawler is validated against both `2025-26` and `2026-27` entry pages, and the known PBTIN path works through `Modeltraject -> Trajectschijf -> Deeltraject`.
 - Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
 - `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.

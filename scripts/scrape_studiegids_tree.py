@@ -28,6 +28,7 @@ from scrape_studiegids_olods import (
 
 
 CONTROL_PREFIX = "ctl00$ContentPlaceHolderPXL$ddl"
+DEFAULT_DEPARTMENT_LABEL = "PXL-Digital"
 KNOWN_CONTROL_KEYS = {
     DEPARTMENT_CONTROL: "departement",
     OPLEIDING_CONTROL: "opleiding",
@@ -259,6 +260,9 @@ def scrape_tree(
 ) -> dict[str, object]:
     client = StudiegidsClient(acadjaar)
     progress = CrawlProgress(acadjaar=acadjaar, enabled=show_progress)
+    if not department_values and not department_labels:
+        department_labels = {DEFAULT_DEPARTMENT_LABEL}
+        progress.log(f"no department filter provided; defaulting to {DEFAULT_DEPARTMENT_LABEL}")
     landing_page = client.get()
     departments = filter_options(
         non_placeholder_options(landing_page, DEPARTMENT_CONTROL),
@@ -327,7 +331,7 @@ def parse_args() -> argparse.Namespace:
         "--departement-label",
         action="append",
         default=[],
-        help="Limit the scrape to one or more visible department labels.",
+        help=f"Limit the scrape to one or more visible department labels. Defaults to {DEFAULT_DEPARTMENT_LABEL} when omitted.",
     )
     parser.add_argument(
         "--opleiding-code",
