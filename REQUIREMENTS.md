@@ -40,7 +40,6 @@ Acceptance for visual fidelity is based on acceptable layout drift relative to t
 - Remove a card with explicit confirmation.
 - Quick actualize flow for moving an existing card to the next academic cycle.
 - Full update view for editing all fields of a card.
-- Inline PDF preview inside the app.
 - PDF download from the browser.
 - Import and export of local app data as JSON.
 - Support for multiple programmes through bundled seed files.
@@ -67,7 +66,6 @@ Acceptance for visual fidelity is based on acceptable layout drift relative to t
 - Vite build output is deployed as static files.
 - If deployed as a project site on GitHub Pages, Vite must be configured with the correct repository base path.
 - All PDF generation happens client-side through `pdfmake` document definitions.
-- Inline preview can be implemented using pdfmake browser APIs such as data URL or Blob output rendered in an iframe or similar embedded viewer.
 - The app bundles dependencies at build time rather than loading remote runtime scripts from a CDN.
 - Institutional assets currently used in the cover may be stored in the repository because they are already acceptable for public use.
 - If the exact institutional font cannot be redistributed, the app may use an open-source alternative or Arial-compatible fallback and document the difference.
@@ -203,9 +201,9 @@ Functional requirements:
 - The overview shows the important current state of each card, such as programme, course code, course name, academic year, exam date, and quick actions.
 - The user can add a new card.
 - The user can remove a card only after an explicit confirmation step.
-- The user can filter cards by programme, academic year, and active status.
-- Clicking a card opens its current details, preview, and actions.
-- Each card must expose quick access to preview, download PDF, actualize, and full edit.
+- The user can filter cards by programme and academic year.
+- Clicking a card opens its current details and actions.
+- Each card must expose quick access to download PDF, actualize, and full edit.
 - The card overview and dialogs must remain usable with keyboard navigation.
 
 ## Card creation requirements
@@ -258,7 +256,6 @@ Functional requirements:
 - Edit all visible PDF fields.
 - Edit seeded defaults locally for that card without changing the bundled seed file.
 - Update lecturers, vaklector, allowed resources, room code, score, academic year, exam chance, and template.
-- Preview the resulting PDF from the same working context.
 - Save changes locally without requiring any backend.
 
 ## PDF generation requirements
@@ -288,17 +285,6 @@ Example:
 2526_42TIN2260_Automation_I_Examenvoorblad_S2.pdf
 ```
 
-## PDF preview requirements
-
-The app must support inline preview inside the application.
-
-Functional requirements:
-
-- The user can preview the current PDF without leaving the app.
-- Preview uses client-side generated PDF data.
-- Preview and download must stay in sync with the current card state.
-- Preview controls must be keyboard accessible.
-
 ## Template rendering requirements
 
 The rendering layer must separate data from layout.
@@ -310,7 +296,6 @@ Required concepts:
 - `renderExamCoverPdfDefinition(data, template)`: function that returns a pdfmake document definition.
 - `validateCourseCardData(data)`: validation before rendering.
 - `formatCourseCardData(data, locale)`: formatting for dates, times, score text, and duration text.
-- `generatePdfPreviewSource(data, template)`: helper that provides preview-ready output such as a Blob or data URL.
 
 The rendering logic must not read directly from Vue form controls or browser storage.
 
@@ -401,7 +386,7 @@ Requirements:
 - Form fields have labels.
 - Validation errors are associated with relevant fields.
 - Card actions are keyboard accessible.
-- Preview and download controls are keyboard accessible.
+- Download controls are keyboard accessible.
 - The application does not rely on color alone for validation status.
 
 ## Browser support requirements
@@ -445,7 +430,6 @@ The MVP is acceptable when:
 - The user can remove a card with confirmation.
 - The user can actualize a card by updating the current state with a new exam date and optional new start time and duration.
 - The user can open a full update view for all other edits.
-- The user can preview the PDF inline.
 - The user can download the PDF from the browser.
 - The user can generate a Dutch modern two-page Blackboard exam cover PDF with acceptable layout drift relative to the current reference examples.
 - The user can reload the page and keep local data.
@@ -459,7 +443,6 @@ These questions remain open but do not block the current MVP direction:
 - Which exact font should be used when the institutional original cannot be redistributed?
 - What exact seed-file format will be used for the separate programme and OLOD data you will provide?
 - Which fields, if any, should become reusable lecturer or allowed-resources presets beyond per-card editing?
-- How much of the inline preview UI should be specified in the future dedicated UI and UX design document versus this product requirements document?
 
 ## Suggested implementation phases
 
@@ -480,11 +463,10 @@ These questions remain open but do not block the current MVP direction:
 - Add actualize dialog.
 - Add full update view.
 
-### Phase 3: PDF generation and preview
+### Phase 3: PDF generation and download
 
 - Recreate the current Dutch modern two-page Blackboard template.
 - Add required static assets.
-- Implement inline preview.
 - Implement filename generation and download.
 
 ### Phase 4: Validation and polish
@@ -498,6 +480,7 @@ These questions remain open but do not block the current MVP direction:
 
 - English support.
 - Additional template families.
+- Inline PDF preview.
 - Multi-part exam support.
 - Richer preset management.
 - Dedicated UI and UX design specification.
