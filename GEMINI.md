@@ -22,3 +22,9 @@ This repository builds the PXL Cover Kit web app.
 ## examples
 
 Old examples of the manual workflow this project is to replace: in `/examples` directory
+
+## Seed Data Utilities
+
+- `scripts/scrape_studiegids_olods.py` scrapes the public PXL studiegids ASP.NET postback flow into JSON for seed-data preparation.
+- Current validated path: `PXL-Digital -> Professionele bachelor in de toegepaste informatica -> Toegepaste Informatica -> Trajectschijf -> Deeltraject`.
+- Use `requests` for the scraper transport; the endpoint rejected the earlier `urllib` client during validation.
