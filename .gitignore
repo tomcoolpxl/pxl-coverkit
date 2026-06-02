@@ -13,3 +13,10 @@ env/
 logs/
 
 .DS_Store
+
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
+.eslintcache

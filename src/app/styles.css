@@ -1,0 +1,16 @@
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', system-ui, sans-serif;
+  background-color: #faf8f3;
+}
+
+:focus-visible {
+  outline: 2px solid #ae9a64;
+  outline-offset: 2px;
+}
