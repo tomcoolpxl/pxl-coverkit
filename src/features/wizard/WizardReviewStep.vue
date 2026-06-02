@@ -47,7 +47,7 @@ const reviewSchema = z.object({
   courseName: z.string().min(1, 'Vaknaam is verplicht.'),
   examChance: z.string().min(1, 'Examenkans is verplicht.'),
   examDate: z.string().min(1, 'Examendatum is verplicht.'),
-  startTime: z.string().regex(/^\d{1,2}:\d{2}$/, 'Starttijd moet HH:MM zijn.'),
+  startTime: z.string().regex(/^\d{1,2}:\d{2}(:\d{2})?$/, 'Starttijd moet HH:MM zijn.'),
   durationMinutes: z.coerce
     .number({ message: 'Duur is verplicht.' })
     .int()
@@ -58,13 +58,13 @@ const reviewSchema = z.object({
   maxScore: z.coerce
     .number({ message: 'Maximumscore is verplicht.' })
     .positive('Maximumscore moet groter zijn dan nul.'),
-  roomPlaceCode: z.string().optional(),
+  roomPlaceCode: z.string().nullable().optional(),
   templateId: z.string().min(1, 'Sjabloon is verplicht.'),
 });
 
 const initial = buildInitialDraft();
 
-const { defineField, handleSubmit, errors, meta } = useForm({
+const { defineField, handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(reviewSchema),
   initialValues: initial,
 });
@@ -283,17 +283,14 @@ const sourceLabel = computed(() =>
 
       <div class="d-flex justify-space-between mt-4">
         <v-btn variant="text" prepend-icon="mdi-arrow-left" @click="backStep">Terug</v-btn>
-        <v-btn type="submit" color="primary" :disabled="!meta.valid" prepend-icon="mdi-content-save">
+        <v-btn type="submit" color="primary" prepend-icon="mdi-content-save">
           Voorblad opslaan
         </v-btn>
       </div>
     </v-form>
 
-    <p v-if="!meta.valid" class="text-caption text-medium-emphasis mt-3">
-      Vul alle verplichte velden in om op te slaan.
-      <span v-if="Object.keys(errors).length">
-        ({{ Object.keys(errors).length }} fout(en))
-      </span>
+    <p v-if="Object.keys(errors).length" class="text-caption text-error mt-3">
+      Kan niet opslaan: {{ Object.keys(errors).length }} veld(en) bevatten fouten.
     </p>
   </div>
 </template>
