@@ -232,6 +232,10 @@ onMounted(() => {
         voorbladen voor te stellen. Bestaande voorbladen blijven gewone opgeslagen tekstvelden; je
         mag dus veilig wisselen tussen jaren.
       </p>
+      <p class="text-caption text-medium-emphasis mt-2">
+        Live ophalen kan door browserbeveiliging of PXL-requestfiltering mislukken. Dan valt de app
+        automatisch terug op de ingebouwde {{ ACTIVE_SEED_YEAR }}-gegevens.
+      </p>
       <div class="d-flex ga-3 align-start flex-wrap mt-4">
         <v-select
           v-model="selectedSeedYear"
@@ -272,7 +276,8 @@ onMounted(() => {
         {{ progressLabel }}
       </p>
       <p v-if="programmes.loadedYear" class="text-body-2 mt-4">
-        Geladen zoekhulp: <strong>{{ programmes.loadedYear }}</strong>
+        Geladen zoekhulp:
+        <strong class="academic-year-value">{{ programmes.loadedYear }}</strong>
       </p>
       <p v-else class="text-body-2 mt-4 text-medium-emphasis">Nog geen zoekhulp geladen.</p>
       <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis mt-3">

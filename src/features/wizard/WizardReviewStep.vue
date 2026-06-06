@@ -294,7 +294,8 @@ const sourceLabel = computed(() =>
       Bron: <strong>{{ sourceLabel }}</strong> · Opleiding:
       <strong>{{ wizard.programmeCode }}</strong>
       <template v-if="programmes.loadedYear">
-        · Academiejaar: <strong>{{ programmes.loadedYear }}</strong>
+        · Academiejaar:
+        <strong class="academic-year-value">{{ programmes.loadedYear }}</strong>
       </template>
     </p>
 

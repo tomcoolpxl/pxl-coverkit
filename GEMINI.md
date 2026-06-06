@@ -36,7 +36,8 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - Runtime preseed is intentionally limited to `public/data/programmes.seed.2025-26.json`; `ACTIVE_SEED_YEAR` remains the built-in fallback/default seed year.
 - The Settings studiegids helper may offer only the previous, current, and next academic year from the September 20 rollover rule. Non-built-in years must be loaded by the on-demand TypeScript live scraper (`src/data/studiegidsLive.ts`) with progress logging, not by adding more runtime public seed files.
 - A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
-- The live scraper URL is built dynamically from the selected academic year. Browser deployments can still be blocked by PXL's CORS/request filtering; in that case the app must fall back to `ACTIVE_SEED_YEAR` unless a same-origin proxy is added.
+- The live scraper URL is built dynamically from the selected academic year. Browser deployments can still be blocked by PXL's CORS/request filtering; in that case the app must fall back to `ACTIVE_SEED_YEAR` unless a same-origin proxy is added through `VITE_STUDIEGIDS_PROXY_URL`.
+- Academic-year labels and chips use the shared `academic-year-*` CSS classes so they stay in the PXL gold family while meeting readable contrast on light surfaces.
 
 ## PDF Generation Utilities
 

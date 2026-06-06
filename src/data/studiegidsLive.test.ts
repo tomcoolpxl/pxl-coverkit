@@ -5,6 +5,7 @@ import {
   DEFAULT_OLOD_PROGRESS_ESTIMATE,
   OPLEIDING_CONTROL,
   buildSeedDocumentFromStudiegidsTree,
+  createProxyStudiegidsTransport,
   extractHiddenFields,
   extractOlodNames,
   extractSelectOptions,
@@ -134,6 +135,45 @@ describe('studiegids live helpers', () => {
       'A Course',
       'B Course',
     ]);
+  });
+
+  it('can forward dynamic GET and POST scrape requests through a proxy endpoint', async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ html: page('ok') }), {
+      headers: { 'Content-Type': 'application/json' },
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+    const transport = createProxyStudiegidsTransport('/api/studiegids');
+
+    await expect(transport.get(studiegidsUrl('2026-27'))).resolves.toContain('ok');
+    await transport.post(studiegidsUrl('2026-27'), {
+      __EVENTTARGET: OPLEIDING_CONTROL,
+      [OPLEIDING_CONTROL]: 'PBTIN',
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      '/api/studiegids',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ url: studiegidsUrl('2026-27'), method: 'GET' }),
+      }),
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      '/api/studiegids',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          url: studiegidsUrl('2026-27'),
+          method: 'POST',
+          payload: {
+            __EVENTTARGET: OPLEIDING_CONTROL,
+            [OPLEIDING_CONTROL]: 'PBTIN',
+          },
+        }),
+      }),
+    );
+    vi.unstubAllGlobals();
   });
 });
 

@@ -14,3 +14,23 @@ body {
   outline: 2px solid #030203;
   outline-offset: 2px;
 }
+
+.academic-year-label,
+.academic-year-value {
+  color: #5f522f;
+}
+
+.academic-year-label {
+  font-weight: 700;
+}
+
+.academic-year-value {
+  font-weight: 700;
+}
+
+.academic-year-chip.v-chip {
+  color: #5f522f !important;
+  background-color: rgba(174, 154, 100, 0.18) !important;
+  border: 1px solid rgba(95, 82, 47, 0.34);
+  font-weight: 700;
+}

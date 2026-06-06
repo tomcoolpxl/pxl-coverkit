@@ -196,7 +196,12 @@ function handleDeleteConfirm() {
   <div>
     <div class="d-flex flex-wrap align-center mb-4 ga-3">
       <h1 class="text-h4 mr-2">Overzicht</h1>
-      <v-chip v-if="programmes.loadedYear" size="small" variant="tonal" color="primary">
+      <v-chip
+        v-if="programmes.loadedYear"
+        size="large"
+        variant="tonal"
+        class="academic-year-chip active-year-chip"
+      >
         Actief academiejaar {{ programmes.loadedYear }}
       </v-chip>
       <v-spacer />
@@ -279,7 +284,7 @@ function handleDeleteConfirm() {
     <template v-else>
       <div v-for="group in groupedCards" :key="group.year" class="mb-6">
         <div class="d-flex align-center ga-3 mb-3">
-          <h2 class="text-h6 mb-0 text-no-wrap flex-shrink-0 text-primary">
+          <h2 class="text-h6 mb-0 text-no-wrap flex-shrink-0 academic-year-label">
             Academiejaar {{ group.label }}
           </h2>
           <v-divider class="flex-grow-1" />
@@ -296,7 +301,9 @@ function handleDeleteConfirm() {
                 <v-chip size="small" color="primary" variant="tonal">{{
                   card.programmeCode
                 }}</v-chip>
-                <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
+                <v-chip size="small" variant="tonal" class="academic-year-chip">
+                  {{ card.academicYear }}
+                </v-chip>
                 <v-spacer />
                 <v-chip size="x-small" variant="tonal" color="secondary">{{
                   card.examChance
@@ -390,6 +397,11 @@ function handleDeleteConfirm() {
 </template>
 
 <style scoped>
+.active-year-chip {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .filter-bar {
   background-color: rgba(174, 154, 100, 0.05);
 }

@@ -92,6 +92,10 @@ export function studiegidsUrl(year: AcademicYear): string {
 }
 
 export function createFetchStudiegidsTransport(): StudiegidsTransport {
+  const proxyUrl = import.meta.env.VITE_STUDIEGIDS_PROXY_URL as string | undefined;
+  if (proxyUrl) {
+    return createProxyStudiegidsTransport(proxyUrl);
+  }
   return {
     async get(url) {
       return fetchText(url);
@@ -109,6 +113,59 @@ export function createFetchStudiegidsTransport(): StudiegidsTransport {
   };
 }
 
+export function createProxyStudiegidsTransport(proxyUrl: string): StudiegidsTransport {
+  return {
+    async get(url) {
+      return fetchProxyText(proxyUrl, {
+        url,
+        method: 'GET',
+      });
+    },
+    async post(url, payload) {
+      return fetchProxyText(proxyUrl, {
+        url,
+        method: 'POST',
+        payload,
+      });
+    },
+  };
+}
+
+interface ProxyRequest {
+  url: string;
+  method: 'GET' | 'POST';
+  payload?: Record<string, string>;
+}
+
+async function fetchProxyText(proxyUrl: string, request: ProxyRequest): Promise<string> {
+  let response: Response;
+  try {
+    response = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+  } catch (err) {
+    throw new StudiegidsLiveError('Studiegids-proxy kon niet bereikt worden.', err);
+  }
+  if (!response.ok) {
+    throw new StudiegidsLiveError(`Studiegids-proxy gaf HTTP ${response.status}.`);
+  }
+  const contentType = response.headers.get('Content-Type') ?? '';
+  if (contentType.includes('application/json')) {
+    const body = (await response.json()) as { html?: unknown; text?: unknown; error?: unknown };
+    if (typeof body.error === 'string') {
+      throw new StudiegidsLiveError(body.error);
+    }
+    const text = typeof body.html === 'string' ? body.html : body.text;
+    if (typeof text === 'string') return rejectRequestRejected(text);
+    throw new StudiegidsLiveError('Studiegids-proxy gaf geen HTML-tekst terug.');
+  }
+  return rejectRequestRejected(await response.text());
+}
+
 async function fetchText(url: string, init?: RequestInit): Promise<string> {
   let response: Response;
   try {
@@ -122,7 +179,10 @@ async function fetchText(url: string, init?: RequestInit): Promise<string> {
   if (!response.ok) {
     throw new StudiegidsLiveError(`Live studiegids gaf HTTP ${response.status}.`);
   }
-  const text = await response.text();
+  return rejectRequestRejected(await response.text());
+}
+
+function rejectRequestRejected(text: string): string {
   if (/Request Rejected/i.test(text)) {
     throw new StudiegidsLiveError(
       'Live studiegids weigerde de browseraanvraag. Gebruik hiervoor een same-origin proxy of een maintainer-refresh.',

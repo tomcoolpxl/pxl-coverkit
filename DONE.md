@@ -326,7 +326,7 @@ Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm
 
 ## On-demand Studiegids Helper Import
 
-Verified on 2026-06-06 via `npm test` (124 tests), `npm run typecheck`, `npm run lint` (0 errors, existing Vue style warnings), `npm run build`, and `npm start` (root + built-in seed HTTP 200).
+Verified on 2026-06-06 via `npm test` (125 tests), `npm run typecheck`, `npm run lint` (0 errors, existing Vue style warnings), `npm run build`, and `npm start` (root + built-in seed HTTP 200).
 
 - Runtime preseed was corrected to `public/data/programmes.seed.2025-26.json` only. No previous/next helper year is bundled in `public/data/`.
 - Added `src/domain/academicYear.ts` helpers for September 20 rollover, previous year, current year, next year, and the bounded previous/current/next candidate window. Tests pin June 6, September 19, and September 20 behavior.
@@ -341,6 +341,15 @@ Verified on 2026-06-06 via `npm test` (124 tests), `npm run typecheck`, `npm run
 - Reworked Settings "Studiegidszoekhulp" to offer only previous/current/next from the rollover window. `2025-26` loads from the built-in seed; other years run the live scraper only after the user clicks **Laden**.
 - Added a progress bar and scrollable event log for live imports. Progress is based on roughly 400 expected OLODs and is updated by scraper events.
 - Live scrape failures now log the error and fall back to the built-in `2025-26` seed. Settings tests cover both live-success action dispatch and live-failure fallback behavior.
+- Added optional same-origin proxy support through `VITE_STUDIEGIDS_PROXY_URL`; the proxy receives dynamic GET/POST scrape requests and returns HTML for browser deployments where direct Studiegids fetches are blocked.
 - `App.vue` startup always loads the built-in fallback seed instead of triggering live scraping implicitly.
 - Updated `GEMINI.md`, `README.md`, and `SEED_DATA_FORMAT.md` to document that non-built-in helper years are on-demand live imports, not pre-bundled runtime data.
 - Verified PXL request filtering/CORS behavior with `Origin` headers: direct browser deployments may be blocked by `studiegids.pxl.be`; the app handles that as a live-import failure and falls back unless a same-origin proxy is later added.
+
+## Academic Year Contrast Polish
+
+Verified on 2026-06-06 via `npm test` (125 tests), `npm run typecheck`, `npm run lint` (0 errors, existing Vue style warnings), `npm run build`, and `npm start` (root + built-in seed HTTP 200).
+
+- Made the Overzicht active academic-year chip larger, bold, and easier to scan.
+- Added shared `academic-year-label`, `academic-year-value`, and `academic-year-chip` styles using a darker gold-family text color with a subtle gold tonal background.
+- Applied the shared contrast treatment to Overzicht group headers, Overzicht card year chips, edit live-preview year chips, detail year values, Settings loaded-helper year text, and Wizard review year text.

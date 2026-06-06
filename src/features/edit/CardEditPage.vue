@@ -661,7 +661,9 @@ function formatExamDate(iso?: string): string {
                 <v-chip size="small" color="primary" variant="tonal">{{
                   card.programmeCode
                 }}</v-chip>
-                <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
+                <v-chip size="small" variant="tonal" class="academic-year-chip">
+                  {{ card.academicYear }}
+                </v-chip>
                 <v-spacer />
                 <v-chip size="x-small" variant="tonal" color="secondary">{{
                   values.examChance || '—'

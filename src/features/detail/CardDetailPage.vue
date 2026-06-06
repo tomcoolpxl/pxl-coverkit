@@ -166,7 +166,7 @@ async function downloadCardPdf() {
             </v-col>
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Academiejaar</div>
-              <div class="text-body-1">{{ card.academicYear }}</div>
+              <div class="text-body-1 academic-year-value">{{ card.academicYear }}</div>
             </v-col>
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Examenkans</div>

@@ -8,6 +8,7 @@ declare module '*.vue' {
 
 interface ImportMetaEnv {
   readonly VITE_BASE_PATH?: string;
+  readonly VITE_STUDIEGIDS_PROXY_URL?: string;
 }
 
 interface ImportMeta {
