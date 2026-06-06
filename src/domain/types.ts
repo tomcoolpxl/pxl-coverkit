@@ -78,6 +78,7 @@ export interface CourseCard {
   startTime: string;
   durationMinutes: number;
   endTime: string | null;
+  durationTextOverride: string | null;
   vaklector: string;
   lecturers: string[];
   roomPlaceCode: string | null;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any, no-empty */
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -9,11 +9,13 @@ import { useCardsStore } from '@/stores/cards';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useSettingsStore } from '@/stores/settings';
 import { useNotificationStore } from '@/stores/notifications';
+import { useLecturersStore } from '@/stores/lecturers';
 import { buildCourseCard } from '@/domain/cardFactory';
 import { endTime, START_TIME_PRESETS } from '@/domain/examTime';
 import { EXAM_CHANCE_OPTIONS } from '@/domain/examChance';
 import { ALLOWED_RESOURCES_PRESETS } from '@/domain/allowedResources';
 import { partWeightsTotal, partTitleSuffix } from '@/domain/parts';
+import { formatDuration } from '@/pdf/template-nl-blackboard-v1/definition';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
 import MultiPartEditor from '@/ui/MultiPartEditor.vue';
 import { downloadPdf } from '@/pdf/generator';
@@ -46,9 +48,10 @@ const reviewSchema = z.object({
     .number({ message: 'Duur is verplicht.' })
     .int()
     .positive('Duur moet groter zijn dan nul.'),
-  vaklector: z.string().min(1, 'Vaklector is verplicht.'),
+  vaklector: z.string().nullable().optional(),
   lecturers: z.array(z.string().min(1)).min(1, 'Minstens één lector is verplicht.'),
   allowedResources: z.string().min(1, 'Toegestane hulpmiddelen mogen niet leeg zijn.'),
+  durationTextOverride: z.string().nullable().optional(),
   maxScore: z.coerce
     .number({ message: 'Maximumscore is verplicht.' })
     .positive('Maximumscore moet groter zijn dan nul.'),
@@ -67,16 +70,22 @@ const initialValues = computed(() => {
   const templateId = templateOptions.some((o) => o.value === storedTemplate)
     ? (storedTemplate as string)
     : DEFAULT_TEMPLATE_ID;
+  const autoText = formatDuration(
+    c?.durationMinutes ?? settings.defaultDurationMinutes,
+    c?.partsCount ?? 1,
+    c?.language ?? 'nl'
+  );
   return {
     courseCode: c?.courseCode ?? '',
     courseName: c?.courseName ?? '',
     examChance: c?.examChance ?? 'S1',
     examDate: c?.examDate ?? '',
     startTime: c?.startTime ?? '08:30',
-    durationMinutes: c?.durationMinutes ?? 120,
+    durationMinutes: c?.durationMinutes ?? settings.defaultDurationMinutes,
     vaklector: c?.vaklector ?? '',
     lecturers: c ? [...c.lecturers] : [],
     allowedResources: c?.allowedResources ?? '',
+    durationTextOverride: c?.durationTextOverride || autoText,
     maxScore: c?.maxScore ?? 20,
     roomPlaceCode: c?.roomPlaceCode ?? '',
     templateId,
@@ -101,18 +110,12 @@ const [durationMinutes, durationMinutesProps] = defineField('durationMinutes', v
 const [vaklector] = defineField('vaklector', vuetifyConfig);
 const [lecturers] = defineField('lecturers', vuetifyConfig);
 const [allowedResources, allowedResourcesProps] = defineField('allowedResources', vuetifyConfig);
+const [durationTextOverride, durationTextOverrideProps] = defineField('durationTextOverride', vuetifyConfig);
 const [maxScore, maxScoreProps] = defineField('maxScore', vuetifyConfig);
 const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetifyConfig);
-const [templateId, templateIdProps] = defineField('templateId', vuetifyConfig);
 
 const examChanceOptions = EXAM_CHANCE_OPTIONS;
 const startTimePresets = START_TIME_PRESETS;
-const allowedResourcesPresets = ALLOWED_RESOURCES_PRESETS;
-
-function applyAllowedResourcesPreset(presetId: string) {
-  const preset = allowedResourcesPresets.find((p) => p.id === presetId);
-  if (preset) allowedResources.value = preset.text;
-}
 
 // Multi-part (DEEL) state lives outside vee-validate because the weights array is
 // dynamic. MultiPartEditor mutates these refs and keeps them internally consistent.
@@ -120,6 +123,91 @@ const partsCount = ref(card.value?.partsCount ?? 1);
 const partIndex = ref(card.value?.partIndex ?? 1);
 const partWeights = ref<number[]>(card.value ? [...card.value.partWeights] : [100]);
 const isEnglish = ref(card.value?.language === 'en');
+
+const allowedResourcesPresets = computed(() => {
+  const lang = isEnglish.value ? 'en' : 'nl';
+  return ALLOWED_RESOURCES_PRESETS.filter((p) => p.language === lang);
+});
+
+const lecturersStore = useLecturersStore();
+const vaklectorItems = computed(() => {
+  const list = ['in te vullen door student'];
+  const name = settings.userName.trim();
+  if (name) {
+    list.push(name);
+  }
+  for (const l of lecturersStore.lecturers) {
+    if (!list.includes(l)) {
+      list.push(l);
+    }
+  }
+  return list;
+});
+
+function applyAllowedResourcesPreset(presetId: string) {
+  const preset = allowedResourcesPresets.value.find((p) => p.id === presetId);
+  if (preset) allowedResources.value = preset.text;
+}
+
+watch(isEnglish, (newVal) => {
+  const oldLang = newVal ? 'nl' : 'en';
+  const newLang = newVal ? 'en' : 'nl';
+  
+  const currentText = allowedResources.value;
+  const matchedPresetIndex = ALLOWED_RESOURCES_PRESETS
+    .filter(p => p.language === oldLang)
+    .findIndex(p => p.text === currentText);
+    
+  if (matchedPresetIndex !== -1) {
+    const correspondingPresets = ALLOWED_RESOURCES_PRESETS.filter(p => p.language === newLang);
+    if (correspondingPresets[matchedPresetIndex]) {
+      allowedResources.value = correspondingPresets[matchedPresetIndex].text;
+    }
+  } else {
+    const confirmText = newVal
+      ? 'De toegestane hulpmiddelen bevatten handmatige aanpassingen. Wil je de tekst overschrijven met de Engelse standaardtekst?'
+      : 'De toegestane hulpmiddelen bevatten handmatige aanpassingen. Wil je de tekst overschrijven met de Nederlandse standaardtekst?';
+    if (window.confirm(confirmText)) {
+      const correspondingPresets = ALLOWED_RESOURCES_PRESETS.filter(p => p.language === newLang);
+      if (correspondingPresets[0]) {
+        allowedResources.value = correspondingPresets[0].text;
+      }
+    }
+  }
+
+  const oldAutoDuration = formatDuration(Number(durationMinutes.value) || 0, partsCount.value, oldLang);
+  const newAutoDuration = formatDuration(Number(durationMinutes.value) || 0, partsCount.value, newLang);
+
+  if (!durationTextOverride.value || durationTextOverride.value === oldAutoDuration) {
+    durationTextOverride.value = newAutoDuration;
+  } else if (durationTextOverride.value !== newAutoDuration) {
+    const confirmText = newVal
+      ? 'De tijdsverdeling bevat handmatige aanpassingen. Wil je de tekst overschrijven met de Engelse standaardtekst?'
+      : 'De tijdsverdeling bevat handmatige aanpassingen. Wil je de tekst overschrijven met de Nederlandse standaardtekst?';
+    if (window.confirm(confirmText)) {
+      durationTextOverride.value = newAutoDuration;
+    }
+  }
+});
+
+const autoDurationText = computed(() => {
+  const mins = Number(durationMinutes.value) || 0;
+  const count = partsCount.value || 1;
+  const lang = isEnglish.value ? 'en' : 'nl';
+  return formatDuration(mins, count, lang);
+});
+
+const isCustomDurationText = computed(() => {
+  const current = durationTextOverride.value;
+  if (!current) return false;
+  return current !== autoDurationText.value;
+});
+
+watch(autoDurationText, (newAutoVal, oldAutoVal) => {
+  if (!durationTextOverride.value || durationTextOverride.value === oldAutoVal) {
+    durationTextOverride.value = newAutoVal;
+  }
+});
 
 const partsValid = computed(
   () =>
@@ -146,6 +234,7 @@ const isDirty = computed(() => {
     partIndex.value !== card.value.partIndex ||
     JSON.stringify(partWeights.value) !== JSON.stringify(card.value.partWeights) ||
     values.templateId !== card.value.templateId ||
+    (values.durationTextOverride || '') !== (card.value.durationTextOverride || '') ||
     (isEnglish.value ? 'en' : 'nl') !== card.value.language
   );
 });
@@ -179,6 +268,7 @@ const onSave = handleSubmit(async (formValues) => {
       roomPlaceCode: formValues.roomPlaceCode || null,
       maxScore: Number(formValues.maxScore),
       allowedResources: formValues.allowedResources,
+      durationTextOverride: formValues.durationTextOverride || null,
       partsCount: partsCount.value,
       partIndex: partIndex.value,
       partWeights: [...partWeights.value],
@@ -220,6 +310,7 @@ async function downloadCardPdf() {
         roomPlaceCode: values.roomPlaceCode || null,
         maxScore: Number(values.maxScore),
         allowedResources: values.allowedResources,
+        durationTextOverride: values.durationTextOverride || null,
         partsCount: partsCount.value,
         partIndex: partIndex.value,
         partWeights: [...partWeights.value],
@@ -419,6 +510,24 @@ function formatExamDate(iso?: string): string {
                       required
                     />
                   </v-col>
+                  <v-col v-if="partsCount > 1" cols="12">
+                    <v-text-field
+                      v-model="durationTextOverride"
+                      v-bind="durationTextOverrideProps"
+                      label="Tijdsverdeling"
+                      variant="outlined"
+                      density="comfortable"
+                    />
+                    <v-alert
+                      v-if="isCustomDurationText"
+                      type="warning"
+                      density="compact"
+                      variant="tonal"
+                      class="mt-n2 mb-2"
+                    >
+                      Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
+                    </v-alert>
+                  </v-col>
                   <v-col cols="12" md="4">
                     <v-text-field
                       v-model="maxScore"
@@ -452,7 +561,9 @@ function formatExamDate(iso?: string): string {
                     <LecturerAutocomplete
                       v-model="vaklector"
                       :error-messages="errors.vaklector"
+                      :customItems="vaklectorItems"
                       label="Vaklector"
+                      placeholder="(in te vullen door student)"
                     />
                   </v-col>
                   <v-col cols="12" md="6">
@@ -504,28 +615,17 @@ function formatExamDate(iso?: string): string {
             <!-- expansion-panel 4: Template -->
             <v-expansion-panel value="4">
               <v-expansion-panel-title class="font-weight-bold">
-                Sjabloon &amp; Taal
+                Taal
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <v-row class="mt-2">
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-model="templateId"
-                      v-bind="templateIdProps"
-                      :items="templateOptions"
-                      label="Voorbladsjabloon"
-                      variant="outlined"
-                      density="comfortable"
-                      required
-                    />
-                  </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
                     <v-switch
                       v-model="isEnglish"
                       color="primary"
                       inset
                       hide-details
-                      :label="isEnglish ? 'Engelstalig voorblad (EN)' : 'Nederlandstalig voorblad (NL)'"
+                      :label="isEnglish ? 'Taal: Engelstalig voorblad (EN)' : 'Taal: Nederlandstalig voorblad (NL)'"
                     />
                   </v-col>
                 </v-row>

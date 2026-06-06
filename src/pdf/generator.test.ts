@@ -40,6 +40,7 @@ const mockCard: CourseCard = {
   startTime: '08:30',
   durationMinutes: 90,
   endTime: '10:00',
+  durationTextOverride: null,
   vaklector: 'Tom Cool',
   lecturers: ['Tom Cool'],
   roomPlaceCode: null,

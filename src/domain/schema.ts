@@ -93,7 +93,8 @@ export const courseCardSchema = z.object({
     .int()
     .positive('Duur moet groter zijn dan nul.'),
   endTime: z.string().nullable(),
-  vaklector: z.string().min(1, 'Vaklector is verplicht.'),
+  durationTextOverride: z.string().nullable(),
+  vaklector: z.string().nullable().optional(),
   lecturers: z.array(z.string().min(1)).min(1, 'Minstens één lector is verplicht.'),
   roomPlaceCode: z.string().nullable(),
   maxScore: z.number().positive('Maximumscore moet groter zijn dan nul.'),

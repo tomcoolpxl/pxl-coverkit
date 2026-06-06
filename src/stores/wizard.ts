@@ -11,7 +11,7 @@ export interface WizardDraft {
   examDate: string;
   startTime: string;
   durationMinutes: number;
-  vaklector: string;
+  vaklector?: string | null;
   lecturers: string[];
   allowedResources: string;
   maxScore: number;
@@ -21,6 +21,7 @@ export interface WizardDraft {
   roomPlaceCode: string;
   templateId: string;
   language: Language;
+  durationTextOverride?: string | null;
 }
 
 interface WizardState {
@@ -146,6 +147,7 @@ export function draftToFormFields(
     partsCount: draft.partsCount,
     partIndex: draft.partIndex,
     partWeights: [...draft.partWeights],
+    durationTextOverride: draft.durationTextOverride || null,
     templateId: draft.templateId,
   };
 }

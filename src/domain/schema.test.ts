@@ -101,7 +101,6 @@ describe('courseCardSchema validation messages', () => {
       expect(messages).toContain('Examenkans is verplicht.');
       expect(messages).toContain('Examendatum is verplicht.');
       expect(messages).toContain('Starttijd is verplicht.');
-      expect(messages).toContain('Vaklector is verplicht.');
       expect(messages).toContain('Minstens één lector is verplicht.');
     }
   });

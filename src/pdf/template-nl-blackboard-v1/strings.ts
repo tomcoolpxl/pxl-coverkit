@@ -10,6 +10,7 @@ export interface TemplateStrings {
   studentNumber: string;
   classGroup: string;
   courseLecturer: string;
+  studentToFillIn: string;
   examRoomSeat: string;
   examDetails: string;
   date: string;
@@ -63,6 +64,7 @@ export const templateStrings: Record<Language, TemplateStrings> = {
     studentNumber: 'Studentennummer',
     classGroup: 'Klasgroep',
     courseLecturer: 'Vaklector',
+    studentToFillIn: 'in te vullen door student',
     examRoomSeat: 'Examenlokaal - Plaatscode',
     examDetails: 'Examengegevens',
     date: 'Datum',
@@ -182,6 +184,7 @@ export const templateStrings: Record<Language, TemplateStrings> = {
     studentNumber: 'Student Number',
     classGroup: 'Class Group',
     courseLecturer: 'Course Lecturer',
+    studentToFillIn: 'to be completed by the student',
     examRoomSeat: 'Examination Room - Seat Code',
     examDetails: 'Examination Details',
     date: 'Date',
@@ -194,7 +197,7 @@ export const templateStrings: Record<Language, TemplateStrings> = {
       'IMMEDIATELY AFTER COMPLETING EACH PART, FILL IN THE confirmation number AND the submission time OF YOUR BLACKBOARD EXAM ON THE NEXT PAGE.',
     instructions: [
       {
-        text: 'Start the exam on Blackboard immediately when the invigilator gives permission to do so.',
+        text: 'Start the exam on Blackboard immediately when the Exam Supervisor gives permission to do so.',
       },
       { text: 'You will be given the access code.' },
       {
@@ -243,7 +246,7 @@ export const templateStrings: Record<Language, TemplateStrings> = {
         heading: 'Starting the exam',
         items: [
           {
-            text: 'Go to the exam on Blackboard and wait until you receive the code from the invigilator',
+            text: 'Go to the exam on Blackboard and wait until you receive the code from the Exam Supervisor',
           },
         ],
       },

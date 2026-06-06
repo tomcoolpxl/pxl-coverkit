@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
@@ -7,12 +7,14 @@ import { useRouter } from 'vue-router';
 import { useSettingsStore } from '@/stores/settings';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useCardsStore } from '@/stores/cards';
+import { useLecturersStore } from '@/stores/lecturers';
 import { useWizardStore, type WizardDraft, draftToFormFields } from '@/stores/wizard';
 import { buildBaselineFor } from '@/domain/cardFactory';
 import { EXAM_CHANCE_OPTIONS } from '@/domain/examChance';
 import { START_TIME_PRESETS, DEFAULT_START_TIME } from '@/domain/examTime';
 import { ALLOWED_RESOURCES_PRESETS, DEFAULT_ALLOWED_RESOURCES } from '@/domain/allowedResources';
 import { partWeightsTotal } from '@/domain/parts';
+import { formatDuration } from '@/pdf/template-nl-blackboard-v1/definition';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
 import MultiPartEditor from '@/ui/MultiPartEditor.vue';
 
@@ -40,6 +42,8 @@ function buildInitialDraft(): WizardDraft {
     defaultDurationMinutes: settings.defaultDurationMinutes,
   });
   const userName = settings.userName.trim();
+  const baselineLecturers = baseline.lecturers.length ? [...baseline.lecturers] : userName ? [userName] : [];
+  const initialVaklector = baselineLecturers.length > 1 ? '' : (baseline.vaklector || userName || '');
   return {
     courseCode: baseline.courseCode,
     courseName: baseline.courseName,
@@ -47,8 +51,8 @@ function buildInitialDraft(): WizardDraft {
     examDate: '',
     startTime: baseline.startTime || DEFAULT_START_TIME,
     durationMinutes: baseline.durationMinutes,
-    vaklector: baseline.vaklector || userName,
-    lecturers: baseline.lecturers.length ? [...baseline.lecturers] : userName ? [userName] : [],
+    vaklector: initialVaklector,
+    lecturers: baselineLecturers,
     allowedResources: baseline.allowedResources || DEFAULT_ALLOWED_RESOURCES,
     maxScore: baseline.maxScore,
     partsCount: 1,
@@ -57,6 +61,7 @@ function buildInitialDraft(): WizardDraft {
     roomPlaceCode: '',
     templateId: settings.defaultTemplateId,
     language: 'nl' as const,
+    durationTextOverride: null,
   };
 }
 
@@ -70,9 +75,10 @@ const reviewSchema = z.object({
     .number({ message: 'Duur is verplicht.' })
     .int()
     .positive('Duur moet groter zijn dan nul.'),
-  vaklector: z.string().min(1, 'Vaklector is verplicht.'),
+  vaklector: z.string().nullable().optional(),
   lecturers: z.array(z.string().min(1)).min(1, 'Minstens één lector is verplicht.'),
   allowedResources: z.string().min(1, 'Toegestane hulpmiddelen mogen niet leeg zijn.'),
+  durationTextOverride: z.string().nullable().optional(),
   maxScore: z.coerce
     .number({ message: 'Maximumscore is verplicht.' })
     .positive('Maximumscore moet groter zijn dan nul.'),
@@ -113,18 +119,99 @@ const [durationMinutes, durationMinutesProps] = defineField('durationMinutes', v
 const [vaklector] = defineField('vaklector', vuetifyConfig);
 const [lecturers] = defineField('lecturers', vuetifyConfig);
 const [allowedResources, allowedResourcesProps] = defineField('allowedResources', vuetifyConfig);
+const [durationTextOverride, durationTextOverrideProps] = defineField('durationTextOverride', vuetifyConfig);
 const [maxScore, maxScoreProps] = defineField('maxScore', vuetifyConfig);
 const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetifyConfig);
 
 const examChanceOptions = EXAM_CHANCE_OPTIONS;
 const startTimePresets = START_TIME_PRESETS;
-const allowedResourcesPresets = ALLOWED_RESOURCES_PRESETS;
+
+const allowedResourcesPresets = computed(() => {
+  const lang = isEnglish.value ? 'en' : 'nl';
+  return ALLOWED_RESOURCES_PRESETS.filter((p) => p.language === lang);
+});
+
+const lecturersStore = useLecturersStore();
+const vaklectorItems = computed(() => {
+  const list = ['in te vullen door student'];
+  const name = settings.userName.trim();
+  if (name) {
+    list.push(name);
+  }
+  for (const l of lecturersStore.lecturers) {
+    if (!list.includes(l)) {
+      list.push(l);
+    }
+  }
+  return list;
+});
+
 const submitError = ref<string | null>(null);
 
 function applyAllowedResourcesPreset(presetId: string) {
-  const preset = allowedResourcesPresets.find((p) => p.id === presetId);
+  const preset = allowedResourcesPresets.value.find((p) => p.id === presetId);
   if (preset) allowedResources.value = preset.text;
 }
+
+watch(isEnglish, (newVal) => {
+  const oldLang = newVal ? 'nl' : 'en';
+  const newLang = newVal ? 'en' : 'nl';
+  
+  const currentText = allowedResources.value;
+  const matchedPresetIndex = ALLOWED_RESOURCES_PRESETS
+    .filter(p => p.language === oldLang)
+    .findIndex(p => p.text === currentText);
+    
+  if (matchedPresetIndex !== -1) {
+    const correspondingPresets = ALLOWED_RESOURCES_PRESETS.filter(p => p.language === newLang);
+    if (correspondingPresets[matchedPresetIndex]) {
+      allowedResources.value = correspondingPresets[matchedPresetIndex].text;
+    }
+  } else {
+    const confirmText = newVal
+      ? 'De toegestane hulpmiddelen bevatten handmatige aanpassingen. Wil je de tekst overschrijven met de Engelse standaardtekst?'
+      : 'De toegestane hulpmiddelen bevatten handmatige aanpassingen. Wil je de tekst overschrijven met de Nederlandse standaardtekst?';
+    if (window.confirm(confirmText)) {
+      const correspondingPresets = ALLOWED_RESOURCES_PRESETS.filter(p => p.language === newLang);
+      if (correspondingPresets[0]) {
+        allowedResources.value = correspondingPresets[0].text;
+      }
+    }
+  }
+
+  const oldAutoDuration = formatDuration(Number(durationMinutes.value) || 0, partsCount.value, oldLang);
+  const newAutoDuration = formatDuration(Number(durationMinutes.value) || 0, partsCount.value, newLang);
+
+  if (!durationTextOverride.value || durationTextOverride.value === oldAutoDuration) {
+    durationTextOverride.value = newAutoDuration;
+  } else if (durationTextOverride.value !== newAutoDuration) {
+    const confirmText = newVal
+      ? 'De tijdsverdeling bevat handmatige aanpassingen. Wil je de tekst overschrijven met de Engelse standaardtekst?'
+      : 'De tijdsverdeling bevat handmatige aanpassingen. Wil je de tekst overschrijven met de Nederlandse standaardtekst?';
+    if (window.confirm(confirmText)) {
+      durationTextOverride.value = newAutoDuration;
+    }
+  }
+});
+
+const autoDurationText = computed(() => {
+  const mins = Number(durationMinutes.value) || 0;
+  const count = partsCount.value || 1;
+  const lang = isEnglish.value ? 'en' : 'nl';
+  return formatDuration(mins, count, lang);
+});
+
+const isCustomDurationText = computed(() => {
+  const current = durationTextOverride.value;
+  if (!current) return false;
+  return current !== autoDurationText.value;
+});
+
+watch(autoDurationText, (newAutoVal, oldAutoVal) => {
+  if (!durationTextOverride.value || durationTextOverride.value === oldAutoVal) {
+    durationTextOverride.value = newAutoVal;
+  }
+});
 
 const onSave = handleSubmit(async (draftValues) => {
   submitError.value = null;
@@ -150,6 +237,7 @@ const onSave = handleSubmit(async (draftValues) => {
     vaklector: draftValues.vaklector,
     lecturers: [...draftValues.lecturers],
     allowedResources: draftValues.allowedResources,
+    durationTextOverride: draftValues.durationTextOverride || null,
     maxScore: Number(draftValues.maxScore),
     partsCount: partsCount.value,
     partIndex: partIndex.value,
@@ -276,6 +364,24 @@ const sourceLabel = computed(() =>
             variant="outlined"
           />
         </v-col>
+        <v-col v-if="partsCount > 1" cols="12">
+          <v-text-field
+            v-model="durationTextOverride"
+            v-bind="durationTextOverrideProps"
+            label="Tijdsverdeling"
+            density="comfortable"
+            variant="outlined"
+          />
+          <v-alert
+            v-if="isCustomDurationText"
+            type="warning"
+            density="compact"
+            variant="tonal"
+            class="mt-n2 mb-2"
+          >
+            Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
+          </v-alert>
+        </v-col>
         <v-col cols="12" md="4">
           <v-text-field
             v-model.number="maxScore"
@@ -302,7 +408,9 @@ const sourceLabel = computed(() =>
           <LecturerAutocomplete
             v-model="vaklector"
             :error-messages="errors.vaklector"
+            :customItems="vaklectorItems"
             label="Vaklector"
+            placeholder="(in te vullen door student)"
           />
         </v-col>
         <v-col cols="12" md="6">
@@ -352,7 +460,7 @@ const sourceLabel = computed(() =>
           color="primary"
           inset
           hide-details
-          :label="isEnglish ? 'Engelstalig voorblad (EN)' : 'Nederlandstalig voorblad (NL)'"
+          :label="isEnglish ? 'Taal: Engelstalig voorblad (EN)' : 'Taal: Nederlandstalig voorblad (NL)'"
         />
       </div>
 

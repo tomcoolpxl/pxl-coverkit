@@ -10,7 +10,7 @@ const DEFAULTS: SettingsState = {
   defaultTemplateId: 'template-nl-blackboard-v1',
   defaultMaxScore: 20,
   defaultExamChance: 'S1',
-  defaultDurationMinutes: 120,
+  defaultDurationMinutes: 90,
   userName: '',
 };
 

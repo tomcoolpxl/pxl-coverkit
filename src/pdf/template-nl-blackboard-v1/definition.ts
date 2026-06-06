@@ -63,7 +63,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
   const formattedDate = formatDate(data.examDate);
   const timeRange = `${formatTimeForPdf(data.startTime, data.language)} – ${formatTimeForPdf(data.endTime || '', data.language)}`;
   const lecturersText = data.lecturers.join(', ');
-  const durationText = formatDuration(data.durationMinutes, data.partsCount, data.language);
+  const durationText = data.durationTextOverride || formatDuration(data.durationMinutes, data.partsCount, data.language);
   const partsBreakdown = formatPartsBreakdown(data);
   const titleSuffix = partTitleSuffix(data.partsCount, data.partIndex, data.language);
 
@@ -219,7 +219,21 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             [{ text: s.classGroup, style: 'tableLabelBold' }, { text: '' }],
             [
               { text: s.courseLecturer, style: 'tableLabelBold' },
-              { text: data.vaklector, style: 'tableValue', margin: [0, 4, 0, 0] },
+              (() => {
+                const isVaklectorPlaceholder = !data.vaklector || data.vaklector.trim() === '' || data.vaklector.trim().toLowerCase() === 'in te vullen door student';
+                const vaklectorVal = isVaklectorPlaceholder
+                  ? `(${s.studentToFillIn})`
+                  : data.vaklector;
+                const cell: any = {
+                  text: vaklectorVal,
+                  style: 'tableValue',
+                  margin: [0, 4, 0, 0],
+                };
+                if (isVaklectorPlaceholder) {
+                  cell.color = '#888888';
+                }
+                return cell;
+              })(),
             ],
             [
               { text: s.examRoomSeat, style: 'tableLabelBold' },

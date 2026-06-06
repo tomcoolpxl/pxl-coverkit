@@ -24,6 +24,7 @@ function makeCard(overrides: Partial<CourseCard>): CourseCard {
     vaklector: 'A. Lector',
     lecturers: ['Tom Cool'],
     roomPlaceCode: null,
+    durationTextOverride: null,
     maxScore: 20,
     allowedResources: 'Geen',
     partsCount: 1,

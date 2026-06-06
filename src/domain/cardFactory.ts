@@ -24,9 +24,10 @@ export interface CardFormFields {
   examDate: string;
   startTime: string;
   durationMinutes: number;
-  vaklector: string;
+  vaklector?: string | null;
   lecturers: string[];
   roomPlaceCode: string | null;
+  durationTextOverride?: string | null;
   maxScore: number;
   allowedResources: string;
   partsCount?: number;
@@ -102,7 +103,7 @@ export function buildCourseCard(input: BuildCourseCardInput): CourseCard {
   const snapshot: OverridableSnapshot = {
     courseCode: fields.courseCode,
     courseName: fields.courseName,
-    vaklector: fields.vaklector,
+    vaklector: fields.vaklector || '',
     lecturers: fields.lecturers,
     startTime: fields.startTime,
     durationMinutes: fields.durationMinutes,
@@ -125,7 +126,8 @@ export function buildCourseCard(input: BuildCourseCardInput): CourseCard {
     startTime: range.startTime,
     durationMinutes: range.durationMinutes,
     endTime: range.endTime,
-    vaklector: fields.vaklector,
+    durationTextOverride: fields.durationTextOverride || null,
+    vaklector: fields.vaklector || '',
     lecturers: [...fields.lecturers],
     roomPlaceCode: fields.roomPlaceCode,
     maxScore: fields.maxScore,

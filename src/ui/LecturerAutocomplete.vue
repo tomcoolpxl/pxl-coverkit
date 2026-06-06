@@ -9,12 +9,15 @@ const props = withDefaults(
     label?: string;
     errorMessages?: string | string[];
     hint?: string;
+    placeholder?: string;
+    customItems?: string[];
   }>(),
   {
     multiple: false,
     label: 'Lector',
     errorMessages: undefined,
     hint: undefined,
+    placeholder: '',
   },
 );
 
@@ -24,7 +27,10 @@ const emit = defineEmits<{
 
 const lecturersStore = useLecturersStore();
 
-const items = computed(() => lecturersStore.lecturers);
+const items = computed(() => {
+  if (props.customItems) return props.customItems;
+  return lecturersStore.lecturers;
+});
 
 // In multiple mode each name is committed as a chip, so spell out the interaction:
 // type the full name (first + last, even if multi-word) and press Enter to add it.
@@ -54,6 +60,7 @@ const value = computed({
     :closable-chips="multiple"
     :hint="effectiveHint"
     :persistent-hint="!!effectiveHint"
+    :placeholder="placeholder"
     density="comfortable"
     variant="outlined"
     hide-no-data

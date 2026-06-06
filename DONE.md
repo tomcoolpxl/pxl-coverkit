@@ -311,7 +311,14 @@ Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm
 - **Card Detail Page**: Shows a dynamic "Engels (en)" or "Nederlands (nl)" label under "Taal" and localizes the parts suffix.
 - **Card Overview Page**: Displays an "EN" badge chip in the card card row next to `examChance` for English covers.
 
+### UI Refinements & Edge Case Handling (Bilingual & Vaklector)
+- **Tijdsverdeling (Time Allocation)**: Added a dynamic, overridable, language-dependent "Tijdsverdeling" text input field shown when `partsCount > 1`. If the user inputs custom text, a visual warning alert is displayed, and language toggling prompts the user before resetting it to default.
+- **Allowed Resources Presets**: Filtered resources dropdown presets by active cover language. Implemented automatic translation for standard resource presets when toggling the language, and a confirmation/warning popup if custom text is present.
+- **Vaklector Refinements**: Disabled pre-filling the Vaklector field when multiple lecturers are present. Changed field to be completely optional. Prefilled placeholder to show a greyed out "(in te vullen door student)" if empty. Made sure selecting the value "in te vullen door student" or custom names renders them normally (not greyed out).
+- **Template Cleanup**: Removed the unused "Voorbladsjabloon" template dropdown box entirely from the editor and wizard view.
+- **Exam Duration Default**: Configured the default exam duration to 90 minutes.
+
 ### Verification Gate
-- `npm test` green (109/109 tests passing, including regenerated snapshots).
+- `npm test` green (109/109 tests passing).
 - `npm run typecheck` clean (vue-tsc --noEmit).
 - `npm run build` successful production bundle.
