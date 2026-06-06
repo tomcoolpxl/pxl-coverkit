@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useCardsStore } from '@/stores/cards';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useLecturersStore } from '@/stores/lecturers';
-import { ACTIVE_SEED_YEAR } from '@/app/activeAcademicYear';
-import { candidateAcademicYearsForDate, currentAcademicYearForDate } from '@/domain/academicYear';
-import {
-  DEFAULT_OLOD_PROGRESS_ESTIMATE,
-  scrapeProgrammesSeed,
-  type StudiegidsProgressEvent,
-} from '@/data/studiegidsLive';
 import {
   buildExportPayload,
   exportFilename,
@@ -31,119 +24,56 @@ const status = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
 const showConfirmImportDialog = ref(false);
 const pendingImport = ref<ExportedState | null>(null);
 const showConfirmCleanDialog = ref(false);
-const currentYear = currentAcademicYearForDate(new Date());
-const candidateYears = candidateAcademicYearsForDate(new Date());
 const selectedSeedYear = ref<AcademicYear>(
-  settings.activeSeedYear ?? programmes.loadedYear ?? ACTIVE_SEED_YEAR,
+  settings.activeSeedYear ??
+    programmes.loadedYear ??
+    programmes.currentYear ??
+    programmes.availableYears[0],
 );
 const seedStatus = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
-const seedLog = ref<string[]>([]);
 const loadingSeed = ref(false);
-const seedProgress = ref(0);
-const progressLabel = ref('');
-const studiegidsProxyConfigured = Boolean(import.meta.env.VITE_STUDIEGIDS_PROXY_URL);
 
 const cardCount = computed(() => cards.count);
-const seedConsoleLines = computed(() => seedLog.value.slice(-80));
 
 const seedOptions = computed(() =>
-  candidateYears.map((year) => ({
+  programmes.availableYears.map((year) => ({
     value: year,
     title: seedOptionTitle(year),
-    subtitle:
-      year === ACTIVE_SEED_YEAR
-        ? 'Ingebouwde seed, direct beschikbaar'
-        : studiegidsProxyConfigured
-          ? `Live ophalen uit studiegids.pxl.be op aanvraag, voortgang geschat op ${DEFAULT_OLOD_PROGRESS_ESTIMATE} OLOD's`
-          : `Live ophalen vereist een same-origin proxy; zonder proxy valt Laden terug op ${ACTIVE_SEED_YEAR}`,
   })),
 );
 
-function appendSeedLog(message: string) {
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  const ss = String(now.getSeconds()).padStart(2, '0');
-  seedLog.value = [...seedLog.value, `${hh}:${mm}:${ss} ${message}`];
-}
-
 function seedOptionTitle(year: AcademicYear): string {
-  const suffix = year === ACTIVE_SEED_YEAR ? 'ingebouwd' : 'live ophalen';
-  const relation =
-    year === currentYear
-      ? 'huidig academiejaar'
-      : candidateYears[0] === year
-        ? 'vorig academiejaar'
-        : candidateYears[2] === year
-          ? 'volgend academiejaar'
-          : 'academiejaar';
-  return `${year} - ${relation} (${suffix})`;
-}
-
-function handleLiveProgress(event: StudiegidsProgressEvent) {
-  seedProgress.value = Math.round(event.progress * 100);
-  progressLabel.value = `${event.completedOlods}/${event.estimatedOlods} OLOD's`;
-  appendSeedLog(event.message);
+  if (year === programmes.currentYear) return `${year} - huidig academiejaar`;
+  const yearIndex = programmes.availableYears.indexOf(year);
+  const currentIndex = programmes.currentYear
+    ? programmes.availableYears.indexOf(programmes.currentYear)
+    : -1;
+  if (currentIndex !== -1 && yearIndex !== -1) {
+    if (yearIndex < currentIndex) return `${year} - vorig academiejaar`;
+    if (yearIndex > currentIndex) return `${year} - volgend academiejaar`;
+  }
+  return `${year} - academiejaar`;
 }
 
 async function loadSelectedSeedYear() {
   loadingSeed.value = true;
   seedStatus.value = null;
-  seedLog.value = [];
-  seedProgress.value = 0;
-  progressLabel.value = '';
   const requestedYear = selectedSeedYear.value;
 
-  try {
-    if (requestedYear === ACTIVE_SEED_YEAR) {
-      const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR, {
-        force: true,
-        log: appendSeedLog,
-      });
-      if (!loadedYear) {
-        throw new Error('Ingebouwde studiegidsseed kon niet geladen worden.');
-      }
-      seedProgress.value = 100;
-      progressLabel.value = `${programmes.seedEntries.length} OLOD's`;
-    } else {
-      const seed = await scrapeProgrammesSeed(requestedYear, {
-        estimatedOlods: DEFAULT_OLOD_PROGRESS_ESTIMATE,
-        onProgress: handleLiveProgress,
-      });
-      programmes.replaceWithSeed(seed);
-    }
+  const loaded = await programmes.loadForYear(requestedYear, { force: true });
+  if (loaded) {
     settings.activeSeedYear = requestedYear;
-    selectedSeedYear.value = requestedYear;
     seedStatus.value = {
       kind: 'success',
       message: `Studiegidszoekhulp geladen voor ${requestedYear}.`,
     };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Onbekende fout bij live import.';
-    appendSeedLog(`Oorzaak: ${message}`);
-    if (!studiegidsProxyConfigured && requestedYear !== ACTIVE_SEED_YEAR) {
-      appendSeedLog('Diagnose: geen VITE_STUDIEGIDS_PROXY_URL geconfigureerd; browser-fetch is daarom overgeslagen.');
-    }
-    appendSeedLog(`Val terug op ingebouwde standaard ${ACTIVE_SEED_YEAR}.`);
-    const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR, {
-      force: true,
-      log: appendSeedLog,
-    });
-    console.warn('[pxl-coverkit] Studiegids live import failed', {
-      requestedYear,
-      fallbackYear: loadedYear ?? ACTIVE_SEED_YEAR,
-      proxyConfigured: studiegidsProxyConfigured,
-      reason: message,
-    });
-    settings.activeSeedYear = loadedYear ?? ACTIVE_SEED_YEAR;
-    selectedSeedYear.value = loadedYear ?? ACTIVE_SEED_YEAR;
+  } else {
     seedStatus.value = {
       kind: 'error',
-      message: `Live import voor ${requestedYear} mislukte. Oorzaak: ${message} ${loadedYear ?? ACTIVE_SEED_YEAR} werd geladen.`,
+      message: programmes.error ?? `Laden van ${requestedYear} mislukte.`,
     };
-  } finally {
-    loadingSeed.value = false;
   }
+  loadingSeed.value = false;
 }
 
 function triggerExport() {
@@ -199,7 +129,11 @@ function confirmImport() {
   };
   pendingImport.value = null;
   showConfirmImportDialog.value = false;
-  selectedSeedYear.value = settings.activeSeedYear ?? programmes.loadedYear ?? ACTIVE_SEED_YEAR;
+  selectedSeedYear.value =
+    settings.activeSeedYear ??
+    programmes.loadedYear ??
+    programmes.currentYear ??
+    programmes.availableYears[0];
 }
 
 function cleanEnvironment() {
@@ -213,7 +147,7 @@ function cleanEnvironment() {
     // Ignore storage errors (e.g. private mode); in-memory stores are already reset.
   }
   status.value = { kind: 'success', message: 'Omgeving opgeschoond. Alle lokale data is gewist.' };
-  selectedSeedYear.value = ACTIVE_SEED_YEAR;
+  selectedSeedYear.value = programmes.currentYear ?? programmes.availableYears[0];
   seedStatus.value = null;
   showConfirmCleanDialog.value = false;
 }
@@ -225,12 +159,6 @@ function createPredefinedCards() {
     message: `${cards.count} voorbeeldkaart(en) aangemaakt.`,
   };
 }
-
-onMounted(() => {
-  appendSeedLog(
-    `Beschikbare keuzes: ${candidateYears.join(', ')}. Alleen ${ACTIVE_SEED_YEAR} is ingebouwd; andere jaren worden pas live opgehaald na Laden.`,
-  );
-});
 </script>
 
 <template>
@@ -243,11 +171,6 @@ onMounted(() => {
         Kies welk studiegidsjaar wordt gebruikt om OLOD-codes en vaknamen voor nieuwe voorbladen
         voor te stellen. Bestaande voorbladen blijven gewone opgeslagen tekstvelden; je mag dus
         veilig wisselen tussen jaren.
-      </p>
-      <p class="text-caption text-medium-emphasis mt-2">
-        Live ophalen vanuit GitHub Pages vereist een same-origin proxy, omdat studiegids.pxl.be
-        browser-CORS niet toestaat. Zonder proxy probeert de app geen rechtstreekse browseraanvraag
-        en valt Laden automatisch terug op de ingebouwde {{ ACTIVE_SEED_YEAR }}-gegevens.
       </p>
       <div class="d-flex ga-3 align-start flex-wrap mt-4">
         <v-select
@@ -262,11 +185,7 @@ onMounted(() => {
           :disabled="loadingSeed"
           style="max-width: 420px"
           hide-details
-        >
-          <template #item="{ props, item }">
-            <v-list-item v-bind="props" :subtitle="item.raw.subtitle" />
-          </template>
-        </v-select>
+        />
         <v-btn
           color="primary"
           prepend-icon="mdi-database-refresh-outline"
@@ -277,17 +196,6 @@ onMounted(() => {
           Laden
         </v-btn>
       </div>
-      <v-progress-linear
-        v-if="loadingSeed || seedProgress > 0"
-        :model-value="seedProgress"
-        color="primary"
-        height="8"
-        rounded
-        class="mt-4"
-      />
-      <p v-if="progressLabel" class="text-caption text-medium-emphasis mt-1">
-        {{ progressLabel }}
-      </p>
       <p v-if="programmes.loadedYear" class="text-body-2 mt-4">
         Geladen zoekhulp:
         <strong class="academic-year-value">{{ programmes.loadedYear }}</strong>
@@ -311,13 +219,6 @@ onMounted(() => {
       >
         {{ seedStatus.message }}
       </v-alert>
-      <div
-        v-if="seedConsoleLines.length"
-        class="seed-console mt-4 pa-3 text-caption"
-        aria-label="Studiegids laadlog"
-      >
-        <div v-for="line in seedConsoleLines" :key="line">{{ line }}</div>
-      </div>
     </v-card>
 
     <v-card class="mb-6 pa-6" variant="outlined">
@@ -453,17 +354,3 @@ onMounted(() => {
     </v-dialog>
   </div>
 </template>
-
-<style scoped>
-.seed-console {
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.16);
-  border-radius: 6px;
-  background: #fafafa;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
-  white-space: pre-wrap;
-}
-</style>

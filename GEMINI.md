@@ -33,11 +33,12 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
 - `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.
 - Do not combine academic years in one output file; generate and replace one academic-year seed file at a time.
-- Runtime preseed is intentionally limited to `public/data/programmes.seed.2025-26.json`; `ACTIVE_SEED_YEAR` remains the built-in fallback/default seed year.
-- The Settings studiegids helper may offer only the previous, current, and next academic year from the September 20 rollover rule. Non-built-in years must be loaded by the on-demand TypeScript live scraper (`src/data/studiegidsLive.ts`) with progress logging, not by adding more runtime public seed files.
+- There is NO live in-browser scraping. A static GitHub Pages site cannot scrape `studiegids.pxl.be`: it sends no CORS header, and PXL's F5 WAF rejects public-proxy IPs (`Request Rejected`). All studiegids data is pre-generated offline and bundled as static JSON.
+- Exactly three academic years are bundled in `public/data/` (previous, current, next by the September 20 rollover rule), plus `programmes.seed.index.json` listing those years and the current one.
+- The app reads `programmes.seed.index.json` at startup (`loadSeedIndex` → `useProgrammesStore().setIndex`) and loads the remembered year if it is still bundled, otherwise the index's `currentYear`. `ACTIVE_SEED_YEAR` in `src/app/activeAcademicYear.ts` is only the fallback used if the index can't be loaded.
+- The Settings studiegids helper offers exactly the bundled years from the index; "Laden" loads the selected bundled seed via `useProgrammesStore().loadForYear`. No progress bar, no event log, no proxy/CORS messaging.
 - A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
-- The live scraper URL is built dynamically from the selected academic year. Direct browser fetches to `studiegids.pxl.be` are not allowed without CORS, so browser runtimes must fail before `fetch()` when no `VITE_STUDIEGIDS_PROXY_URL` is configured and fall back to `ACTIVE_SEED_YEAR`.
-- Settings live-import failures must show the concrete cause in the visible alert/log and emit a `[pxl-coverkit] Studiegids live import failed` console warning with requested year, fallback year, proxy state, and reason.
+- Deferred: a September-20 GitHub Actions job to re-run the scraper and commit only the three seed files + index. Caveat: GitHub runner IPs are datacenter IPs the WAF may also reject, so generating locally and committing remains the reliable refresh path.
 - Academic-year labels and chips use the shared `academic-year-*` CSS classes so they stay in the PXL gold family while meeting readable contrast on light surfaces.
 - `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` are intentional inert placeholders. Some browser/content-script environments request these root files on GitHub Pages; serving placeholders prevents visible 404 noise without changing app behavior.
 

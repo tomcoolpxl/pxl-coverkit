@@ -369,3 +369,14 @@ Verified on 2026-06-06 via `npm test` (126 tests), `npm run typecheck`, `npm run
 - Settings live-import fallback alerts now include the concrete failure cause instead of only saying which fallback year loaded.
 - The live-import event log prefixes the cause with `Oorzaak:` and adds a no-proxy diagnosis when `VITE_STUDIEGIDS_PROXY_URL` is absent.
 - The app emits a namespaced console warning, `[pxl-coverkit] Studiegids live import failed`, with requested year, fallback year, proxy state, and reason.
+
+## Static three-year seed bundle (live scraping removed) — 2026-06-06
+
+- Removed all live in-browser studiegids scraping. Deleted `src/data/studiegidsLive.ts` and its test; dropped `VITE_STUDIEGIDS_PROXY_URL` from `src/env.d.ts` and the scrape-only `replaceWithSeed` store action. Rationale: a static GitHub Pages site cannot scrape `studiegids.pxl.be` (no CORS header; PXL's F5 WAF returns `Request Rejected` to public-proxy IPs).
+- Bundled exactly three academic years in `public/data/` (`2024-25`, `2025-26`, `2026-27`, restored from the proven set at commit `6daa518^`) plus a new `public/data/programmes.seed.index.json` manifest (`version`, `currentYear`, `years`).
+- Added `seedIndexSchema` (`src/domain/schema.ts`) and `loadSeedIndex()` (`src/data/seed.ts`). The programmes store gained `availableYears`/`currentYear` state and a `setIndex` action.
+- `App.vue` now reads the index at startup and loads the remembered year (if still bundled) or the index `currentYear`; `ACTIVE_SEED_YEAR` is only the fallback when the index can't load.
+- Settings "Studiegidszoekhulp" now lists exactly the bundled years and "Laden" loads the selected static seed via `loadForYear`. Removed the proxy/CORS explanation paragraph, the progress bar, the progress label, and the scrollable event console.
+- Deferred: a September-20 GitHub Actions refresh job (runner IPs may also be WAF-blocked; local generation remains the reliable path).
+
+Verified on 2026-06-06 via `npm run typecheck`, `npm test` (121 tests pass), `npm run build`, and a `npm run preview` smoke test confirming `data/programmes.seed.index.json` and `data/programmes.seed.2026-27.json` are served at the Pages base path.

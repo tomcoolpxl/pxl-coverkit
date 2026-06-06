@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { loadProgrammesSeed, SeedLoadError } from '@/data/seed';
-import type { AcademicYear, Programme, ProgrammesSeedFile, SeedEntry } from '@/domain/types';
+import { loadProgrammesSeed, SeedLoadError, type SeedIndex } from '@/data/seed';
+import type { AcademicYear, Programme, SeedEntry } from '@/domain/types';
 
 interface ProgrammesState {
   loadedYear: AcademicYear | null;
@@ -8,6 +8,9 @@ interface ProgrammesState {
   seedEntries: SeedEntry[];
   loading: boolean;
   error: string | null;
+  // Bundled academic years discovered from the static seed index at startup.
+  availableYears: AcademicYear[];
+  currentYear: AcademicYear | null;
 }
 
 export const useProgrammesStore = defineStore('programmes', {
@@ -17,6 +20,8 @@ export const useProgrammesStore = defineStore('programmes', {
     seedEntries: [],
     loading: false,
     error: null,
+    availableYears: [],
+    currentYear: null,
   }),
   getters: {
     activeProgrammes: (state) => state.programmes.filter((p) => p.active),
@@ -31,11 +36,9 @@ export const useProgrammesStore = defineStore('programmes', {
     },
   },
   actions: {
-    replaceWithSeed(seed: ProgrammesSeedFile) {
-      this.programmes = seed.programmes;
-      this.seedEntries = seed.seedEntries;
-      this.loadedYear = seed.academicYear;
-      this.error = null;
+    setIndex(index: SeedIndex) {
+      this.availableYears = index.years;
+      this.currentYear = index.currentYear;
     },
     async loadForYear(
       year: AcademicYear,

@@ -78,19 +78,9 @@ De build-output verschijnt in de `dist/` map en kan direct gehost worden op een 
 
 ## Beheerder & Studiegids-seed (Voor beheerders)
 
-De standaard studiegidsdata is ingebakken in de applicatie als statisch JSON-bestand in `public/data/`. Op dit moment is alleen `public/data/programmes.seed.2025-26.json` een runtime preseed. Andere jaren worden in **Instellingen** pas live opgehaald wanneer de gebruiker expliciet op **Laden** klikt.
+Alle studiegidsdata is ingebakken in de applicatie als statische JSON-bestanden in `public/data/`. Er zijn altijd drie jaren mee gebundeld (vorig, huidig en volgend academiejaar volgens de 20-september-regel), plus een index `public/data/programmes.seed.index.json` die deze jaren en het huidige jaar opsomt. De app leest die index bij het opstarten en laadt het onthouden jaar (indien nog gebundeld) of anders het huidige jaar. In **Instellingen** kiest de gebruiker met **Laden** een van de gebundelde jaren.
 
-Live ophalen vanuit GitHub Pages werkt niet rechtstreeks door browser-CORS op `studiegids.pxl.be`. Zonder proxy probeert de app geen rechtstreekse browseraanvraag en valt ze terug op de ingebouwde `2025-26` seed. Configureer `VITE_STUDIEGIDS_PROXY_URL` met een same-origin proxy-endpoint als live scraping in productie moet werken. De app stuurt `POST` JSON naar die proxy:
-
-```json
-{
-  "url": "https://studiegids.pxl.be/?acadjaar=2026-27",
-  "method": "POST",
-  "payload": { "__EVENTTARGET": "..." }
-}
-```
-
-De proxy moet de HTML teruggeven als platte tekst of als JSON met `{"html": "..."}`. Als live ophalen faalt, valt de app terug op de ingebouwde `2025-26` seed.
+Er is **geen** live scraping in de browser. Een statische GitHub Pages-site kan `studiegids.pxl.be` niet rechtstreeks ophalen: er is geen CORS-header, en de F5-WAF van PXL weigert proxy-IP's (`Request Rejected`). De seeds worden daarom offline gegenereerd (zie hieronder) en gecommit.
 
 ### Jaarlijkse Studiegids Refresh
 Volg deze stappen om de studiegids-seed te vernieuwen voor een nieuw academiejaar:
@@ -109,15 +99,23 @@ Volg deze stappen om de studiegids-seed te vernieuwen voor een nieuw academiejaa
    ```
    Dit maakt `seed-data/programmes.seed.YYYY-YY.json` aan.
 
-3. **Kopieer naar de public map**:
-   Kopieer alleen de ingebouwde standaardseed naar `public/data/programmes.seed.YYYY-YY.json`. Voeg vorige/volgende jaren niet preventief toe aan `public/data/`; die worden door de app live opgehaald op aanvraag.
+3. **Bundel de drie jaren in de public map**:
+   Genereer en kopieer de seeds voor het vorige, huidige en volgende academiejaar naar `public/data/programmes.seed.YYYY-YY.json` (drie bestanden) en werk de index `public/data/programmes.seed.index.json` bij met diezelfde drie jaren en het huidige jaar:
+   ```json
+   {
+     "version": 1,
+     "currentYear": "2025-26",
+     "years": ["2024-25", "2025-26", "2026-27"]
+   }
+   ```
+   Laat geen rauwe scrape-dumps of extra jaren in `public/data/` achter — alleen de drie seeds en de index.
 
-4. **Update de ingebouwde standaardseed in de app**:
-   Open `src/app/activeAcademicYear.ts` en verander `ACTIVE_SEED_YEAR` als de standaard bij opstarten moet wijzigen:
+4. **Fallback-jaar (optioneel)**:
+   `ACTIVE_SEED_YEAR` in `src/app/activeAcademicYear.ts` wordt alleen gebruikt als de index niet geladen kan worden. De app bepaalt het actieve jaar normaal uit de index, dus dit hoef je zelden te wijzigen:
    ```typescript
    export const ACTIVE_SEED_YEAR: AcademicYear = 'YYYY-YY';
    ```
-   Dit is de fallback en standaard voor welk seed-bestand de applicatie laadt bij het opstarten. In **Instellingen** kan de gebruiker het vorige, huidige of volgende academiejaar kiezen; jaren buiten de ingebouwde standaard worden live uit `studiegids.pxl.be` opgehaald met een voortgangslog. Bestaande voorbladen blijven opgeslagen tekstwaarden.
+   In **Instellingen** kiest de gebruiker een van de drie gebundelde jaren. Bestaande voorbladen blijven opgeslagen tekstwaarden.
 
 5. **Verifieer en Commit**:
    Verifieer dat `npm test` en `npm run build` slagen, en commit rechtstreeks naar `main`:

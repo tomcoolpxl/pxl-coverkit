@@ -7,13 +7,28 @@ import { useLecturersStore } from './stores/lecturers';
 import { useNotificationStore } from './stores/notifications';
 import { useSettingsStore } from './stores/settings';
 import { ACTIVE_SEED_YEAR } from './app/activeAcademicYear';
+import { loadSeedIndex } from './data/seed';
 
 const programmes = useProgrammesStore();
 const notifications = useNotificationStore();
 const settings = useSettingsStore();
 
 onMounted(async () => {
-  const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR);
+  // Discover which academic years are bundled from the static seed index, so the
+  // app picks them up dynamically instead of relying on a single hardcoded year.
+  let defaultYear: typeof ACTIVE_SEED_YEAR = ACTIVE_SEED_YEAR;
+  try {
+    const index = await loadSeedIndex();
+    programmes.setIndex(index);
+    const remembered = settings.activeSeedYear;
+    defaultYear =
+      remembered && index.years.includes(remembered) ? remembered : index.currentYear;
+  } catch {
+    // No index (e.g. older build): fall back to the built-in year constant.
+    programmes.setIndex({ currentYear: ACTIVE_SEED_YEAR, years: [ACTIVE_SEED_YEAR] });
+  }
+
+  const loadedYear = await programmes.loadWithFallback(defaultYear, ACTIVE_SEED_YEAR);
   if (!loadedYear) {
     notifications.show('Fout bij het laden van studiegids-gegevens.', 10000);
   } else {

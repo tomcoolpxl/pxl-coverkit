@@ -50,6 +50,13 @@ export const seedEntrySchema = z.object({
     .optional(),
 });
 
+export const seedIndexSchema = z.object({
+  version: z.number().int().positive(),
+  generatedAt: z.string().optional(),
+  currentYear: academicYearSchema,
+  years: z.array(academicYearSchema).min(1),
+});
+
 export const programmesSeedFileSchema = z.object({
   version: z.number().int().positive(),
   generatedAt: z.string(),

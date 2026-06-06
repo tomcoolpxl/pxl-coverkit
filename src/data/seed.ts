@@ -1,11 +1,24 @@
-import { programmesSeedFileSchema } from '@/domain/schema';
+import { programmesSeedFileSchema, seedIndexSchema } from '@/domain/schema';
 import type { ProgrammesSeedFile, AcademicYear } from '@/domain/types';
 
 const base = import.meta.env.BASE_URL ?? '/';
 
-export function seedUrl(year: AcademicYear): string {
+function dataUrl(file: string): string {
   const trimmed = base.endsWith('/') ? base : `${base}/`;
-  return `${trimmed}data/programmes.seed.${year}.json`;
+  return `${trimmed}data/${file}`;
+}
+
+export function seedUrl(year: AcademicYear): string {
+  return dataUrl(`programmes.seed.${year}.json`);
+}
+
+export function seedIndexUrl(): string {
+  return dataUrl('programmes.seed.index.json');
+}
+
+export interface SeedIndex {
+  currentYear: AcademicYear;
+  years: AcademicYear[];
 }
 
 export class SeedLoadError extends Error {
@@ -43,4 +56,31 @@ export async function loadProgrammesSeed(year: AcademicYear): Promise<Programmes
     );
   }
   return parsed.data as ProgrammesSeedFile;
+}
+
+export async function loadSeedIndex(): Promise<SeedIndex> {
+  const url = seedIndexUrl();
+  let response: Response;
+  try {
+    response = await fetch(url, { cache: 'no-cache' });
+  } catch (err) {
+    throw new SeedLoadError('Kon de studiegids-index niet ophalen.', err);
+  }
+  if (!response.ok) {
+    throw new SeedLoadError(`Studiegids-index niet gevonden (HTTP ${response.status}).`);
+  }
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch (err) {
+    throw new SeedLoadError('Studiegids-index bevat geen geldige JSON.', err);
+  }
+  const parsed = seedIndexSchema.safeParse(body);
+  if (!parsed.success) {
+    throw new SeedLoadError('Studiegids-index voldoet niet aan het verwachte formaat.', parsed.error);
+  }
+  return {
+    currentYear: parsed.data.currentYear as AcademicYear,
+    years: parsed.data.years as AcademicYear[],
+  };
 }

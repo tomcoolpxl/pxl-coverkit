@@ -29,7 +29,7 @@ Suggested paths:
 seed-data/programmes.seed.2025-26.json
 ```
 
-Only the built-in fallback/current preseed should be copied to `public/data/` for runtime loading. Previous and next helper years are loaded on demand by the live TypeScript scraper instead of being pre-bundled.
+All three helper years (previous, current, next) are pre-bundled into `public/data/` for runtime loading, alongside `public/data/programmes.seed.index.json` which lists those years and the current one. There is no live in-browser scraping; the app reads the index at startup. Keep only the three seeds and the index in `public/data/` — no raw scrape dumps or extra years.
 
 Example top-level shape for one academic year:
 
