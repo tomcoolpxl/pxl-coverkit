@@ -38,6 +38,7 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
 - The live scraper URL is built dynamically from the selected academic year. Direct browser fetches to `studiegids.pxl.be` are not allowed without CORS, so browser runtimes must fail before `fetch()` when no `VITE_STUDIEGIDS_PROXY_URL` is configured and fall back to `ACTIVE_SEED_YEAR`.
 - Academic-year labels and chips use the shared `academic-year-*` CSS classes so they stay in the PXL gold family while meeting readable contrast on light surfaces.
+- `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` are intentional inert placeholders. Some browser/content-script environments request these root files on GitHub Pages; serving placeholders prevents visible 404 noise without changing app behavior.
 
 ## PDF Generation Utilities
 

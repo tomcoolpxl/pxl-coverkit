@@ -354,3 +354,10 @@ Verified on 2026-06-06 via `npm test` (126 tests), `npm run typecheck`, `npm run
 - Made the Overzicht active academic-year chip larger, bold, and easier to scan.
 - Added shared `academic-year-label`, `academic-year-value`, and `academic-year-chip` styles using a darker gold-family text color with a subtle gold tonal background.
 - Applied the shared contrast treatment to Overzicht group headers, Overzicht card year chips, edit live-preview year chips, detail year values, Settings loaded-helper year text, and Wizard review year text.
+
+## Static Console-Noise Placeholders
+
+Verified on 2026-06-06 via `npm run build` and `npm start` (root placeholders served with HTTP 200).
+
+- Added inert `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` so GitHub Pages can serve those root-level filenames when browser/content-script environments request them.
+- The placeholder files contain no runtime behavior; they only prevent root-file 404 noise for those known filenames.
