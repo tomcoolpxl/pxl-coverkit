@@ -114,7 +114,11 @@ describe('appSettingsSchema + exportedStateSchema', () => {
       defaultExamChance: 'S1',
       defaultDurationMinutes: 120,
     };
-    expect(appSettingsSchema.safeParse(settings).success).toBe(true);
+    const parsedSettings = appSettingsSchema.safeParse(settings);
+    expect(parsedSettings.success).toBe(true);
+    if (parsedSettings.success) {
+      expect(parsedSettings.data.activeSeedYear).toBeNull();
+    }
     const exported = exportedStateSchema.safeParse({
       schemaVersion: CURRENT_SCHEMA_VERSION,
       exportedAt: '2026-06-02T00:00:00Z',

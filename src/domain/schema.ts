@@ -116,6 +116,7 @@ export const appSettingsSchema = z.object({
   defaultExamChance: z.string(),
   defaultDurationMinutes: z.number().int().positive(),
   userName: z.string().default(''),
+  activeSeedYear: academicYearSchema.nullable().default(null),
 });
 
 export const exportedStateSchema = z.object({

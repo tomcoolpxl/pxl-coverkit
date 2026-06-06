@@ -5,17 +5,24 @@ import { useProgrammesStore } from './stores/programmes';
 import { useCardsStore } from './stores/cards';
 import { useLecturersStore } from './stores/lecturers';
 import { useNotificationStore } from './stores/notifications';
+import { useSettingsStore } from './stores/settings';
 import { ACTIVE_SEED_YEAR } from './app/activeAcademicYear';
 
 const programmes = useProgrammesStore();
 const notifications = useNotificationStore();
+const settings = useSettingsStore();
 
 onMounted(async () => {
-  try {
-    await programmes.loadForYear(ACTIVE_SEED_YEAR);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    notifications.show('Fout bij het laden van studiegids-gegevens: ' + message, 10000);
+  const requestedYear = settings.activeSeedYear ?? ACTIVE_SEED_YEAR;
+  const loadedYear = await programmes.loadWithFallback(requestedYear, ACTIVE_SEED_YEAR);
+  if (!loadedYear) {
+    notifications.show('Fout bij het laden van studiegids-gegevens.', 10000);
+  } else if (loadedYear !== requestedYear) {
+    settings.activeSeedYear = loadedYear;
+    notifications.show(
+      `Studiegidsdata voor ${requestedYear} was niet beschikbaar; ${loadedYear} werd geladen.`,
+      10000,
+    );
   }
 
   // Seed observed lecturers from existing cards

@@ -86,26 +86,26 @@ Volg deze stappen om de studiegids-seed te vernieuwen voor een nieuw academiejaa
 1. **Scrape de studiegids**:
    Haal een JSON-snapshot op van de PXL-Digital studiegids (vervang `YYYY-YY` door het academiejaar, bijv. `2026-27`):
    ```bash
-   python scripts/scrape_studiegids_tree.py --year YYYY-YY
+   python scripts/scrape_studiegids_tree.py --acadjaar YYYY-YY --output seed-data/raw/studiegids-tree.YYYY-YY.json
    ```
    Dit genereert een rauw snapshot in `seed-data/raw/studiegids-tree.YYYY-YY.json`.
 
 2. **Bouw de seed**:
    Converteer de rauwe scrape naar een geoptimaliseerd seed-bestand voor de app:
    ```bash
-   python scripts/build_programmes_seed.py
+   python scripts/build_programmes_seed.py --input seed-data/raw/studiegids-tree.YYYY-YY.json --output seed-data/programmes.seed.YYYY-YY.json
    ```
    Dit maakt `seed-data/programmes.seed.YYYY-YY.json` aan.
 
 3. **Kopieer naar de public map**:
    Kopieer het gegenereerde bestand naar `public/data/programmes.seed.YYYY-YY.json`.
 
-4. **Update de actieve seed in de app**:
-   Open [activeAcademicYear.ts](file:///home/tomc/github/pxl-coverkit/src/app/activeAcademicYear.ts) en verander `ACTIVE_SEED_YEAR` naar je nieuwe jaar:
+4. **Update de ingebouwde standaardseed in de app**:
+   Open `src/app/activeAcademicYear.ts` en verander `ACTIVE_SEED_YEAR` als de standaard bij opstarten moet wijzigen:
    ```typescript
    export const ACTIVE_SEED_YEAR: AcademicYear = 'YYYY-YY';
    ```
-   Dit is de single source of truth voor welk seed-bestand de applicatie laadt bij het opstarten.
+   Dit is de fallback en standaard voor welk seed-bestand de applicatie laadt bij het opstarten. Extra seedbestanden in `public/data/` kunnen in **Instellingen** gekozen worden als studiegidszoekhulp voor OLOD-codes en vaknamen; bestaande voorbladen blijven opgeslagen tekstwaarden.
 
 5. **Verifieer en Commit**:
    Verifieer dat `npm test` en `npm run build` slagen, en commit rechtstreeks naar `main`:

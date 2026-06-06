@@ -12,6 +12,7 @@ const DEFAULTS: SettingsState = {
   defaultExamChance: 'S1',
   defaultDurationMinutes: 90,
   userName: '',
+  activeSeedYear: null,
 };
 
 export const useSettingsStore = defineStore('settings', {
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore('settings', {
       this.defaultExamChance = settings.defaultExamChance;
       this.defaultDurationMinutes = settings.defaultDurationMinutes;
       this.userName = settings.userName ?? '';
+      this.activeSeedYear = settings.activeSeedYear ?? null;
     },
     reset() {
       Object.assign(this, { ...DEFAULTS });
@@ -34,6 +36,7 @@ export const useSettingsStore = defineStore('settings', {
         defaultExamChance: this.defaultExamChance,
         defaultDurationMinutes: this.defaultDurationMinutes,
         userName: this.userName,
+        activeSeedYear: this.activeSeedYear,
       };
     },
   },

@@ -14,6 +14,7 @@ const baseSettings = {
   defaultExamChance: 'S1',
   defaultDurationMinutes: 120,
   userName: '',
+  activeSeedYear: null,
 };
 
 describe('buildExportPayload', () => {

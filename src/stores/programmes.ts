@@ -31,8 +31,11 @@ export const useProgrammesStore = defineStore('programmes', {
     },
   },
   actions: {
-    async loadForYear(year: AcademicYear, opts: { force?: boolean } = {}) {
-      if (!opts.force && this.loadedYear === year && this.programmes.length > 0) return;
+    async loadForYear(
+      year: AcademicYear,
+      opts: { force?: boolean; keepPreviousOnError?: boolean } = {},
+    ): Promise<boolean> {
+      if (!opts.force && this.loadedYear === year && this.programmes.length > 0) return true;
       this.loading = true;
       this.error = null;
       try {
@@ -40,18 +43,56 @@ export const useProgrammesStore = defineStore('programmes', {
         this.programmes = file.programmes;
         this.seedEntries = file.seedEntries;
         this.loadedYear = year;
+        return true;
       } catch (err) {
         const message =
           err instanceof SeedLoadError
             ? err.message
             : 'Onbekende fout bij het laden van seed-data.';
         this.error = message;
-        this.programmes = [];
-        this.seedEntries = [];
-        this.loadedYear = null;
+        if (!opts.keepPreviousOnError) {
+          this.programmes = [];
+          this.seedEntries = [];
+          this.loadedYear = null;
+        }
+        return false;
       } finally {
         this.loading = false;
       }
+    },
+    async loadWithFallback(
+      year: AcademicYear,
+      fallbackYear: AcademicYear,
+      opts: { force?: boolean; log?: (message: string) => void } = {},
+    ): Promise<AcademicYear | null> {
+      opts.log?.(`Seed ${year} laden...`);
+      const loaded = await this.loadForYear(year, {
+        force: opts.force,
+        keepPreviousOnError: year !== fallbackYear,
+      });
+      if (loaded) {
+        opts.log?.(
+          `Seed ${year} geladen: ${this.programmes.length} opleiding(en), ${this.seedEntries.length} OLOD(s).`,
+        );
+        return year;
+      }
+
+      opts.log?.(this.error ?? `Seed ${year} kon niet geladen worden.`);
+      if (year === fallbackYear) return null;
+
+      opts.log?.(`Val terug op ingebouwde standaard ${fallbackYear}.`);
+      const fallbackLoaded = await this.loadForYear(fallbackYear, {
+        force: true,
+        keepPreviousOnError: false,
+      });
+      if (!fallbackLoaded) {
+        opts.log?.(this.error ?? `Ingebouwde standaard ${fallbackYear} kon niet geladen worden.`);
+        return null;
+      }
+      opts.log?.(
+        `Seed ${fallbackYear} geladen: ${this.programmes.length} opleiding(en), ${this.seedEntries.length} OLOD(s).`,
+      );
+      return fallbackYear;
     },
   },
   // Seed data is fetched from public/, not persisted in localStorage.

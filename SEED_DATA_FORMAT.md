@@ -26,6 +26,7 @@ The studiegids scrape result and the runtime seed file should not be the same ar
 Suggested paths:
 
 ```text
+seed-data/programmes.seed.2024-25.json
 seed-data/programmes.seed.2025-26.json
 seed-data/programmes.seed.2026-27.json
 ```
@@ -123,13 +124,15 @@ Example top-level shape for one academic year:
 
 ## Integration model in the app
 
-The app can use one academic-year file with a simple flow:
+The app can use one loaded academic-year file with a simple flow:
 
 1. Load `programmes` for the first selector.
 2. Read `selectionFlow` for the chosen programme.
 3. Derive available option labels from `seedEntries` by filtering on the current `selectionContext`.
 4. Show the matching `label` values as the final OLOD picker.
 5. Copy the chosen texts into the card as defaults.
+
+Multiple year-specific files may be shipped at the same time so Settings can switch the studiegids helper between the previous, current, and next available academic year. Saved cards are not linked back to those files; they keep copied strings such as `academicYear`, `courseCode`, and `courseName`.
 
 ## Current tooling
 

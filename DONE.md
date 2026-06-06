@@ -323,3 +323,21 @@ Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm
 - `npm test` green (109/109 tests passing).
 - `npm run typecheck` clean (vue-tsc --noEmit).
 - `npm run build` successful production bundle.
+
+## Seed Helper Year Selector — previous/current/next window
+
+Verified on 2026-06-06 via `npm test` (116 tests), `npm run typecheck`, `npm run build`, `npm run lint` (0 errors, existing Vue style warnings), and `npm start` (root + seed JSON HTTP 200).
+
+- Added `src/domain/academicYear.ts` helpers for September 20 rollover, previous year, current year, next year, and the bounded previous/current/next candidate window. Tests pin June 6, September 19, and September 20 behavior.
+- Generated `2024-25` data with the existing Python workflow:
+  - `scripts/scrape_studiegids_tree.py --acadjaar 2024-25 --output seed-data/raw/studiegids-tree.2024-25.json`
+  - `scripts/build_programmes_seed.py --input seed-data/raw/studiegids-tree.2024-25.json --output seed-data/programmes.seed.2024-25.json`
+- Added `seed-data/programmes.seed.2024-25.json` and copied the same file to `public/data/programmes.seed.2024-25.json`; `cmp -s` verified the public copy matches the generated seed.
+- Kept `ACTIVE_SEED_YEAR` at `2025-26`; app startup now loads a persisted helper-year choice when present and falls back to `2025-26` if that seed is unavailable.
+- Added `settings.activeSeedYear` with schema default `null` so existing exports/imports remain compatible.
+- Added static seed availability checking in `src/data/seed.ts`; Settings only offers available seeds from the bounded previous/current/next window.
+- Reworked Settings "Actief academiejaar" into "Studiegidszoekhulp" with a dropdown, load button, recheck button, and compact scrollable event log.
+- Settings copy now explicitly says switching studiegids years only affects OLOD-code and vak-name lookup help; saved cards remain stored text values and are safe to keep.
+- Added programmes-store fallback tests covering successful load, fallback load, and preserving existing helper data on a failed non-fallback load.
+- Updated `README.md` seed-refresh commands to the existing script interfaces (`--acadjaar`, explicit `--input` / `--output`) and documented bundled helper-year selection.
+- Updated `SEED_DATA_FORMAT.md` to include `2024-25` and describe multiple year-specific helper files while retaining the one-file-per-year rule.

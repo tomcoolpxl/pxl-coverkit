@@ -101,6 +101,7 @@ export interface AppSettings {
   defaultExamChance: string;
   defaultDurationMinutes: number;
   userName: string;
+  activeSeedYear: AcademicYear | null;
 }
 
 export interface ExportedState {
