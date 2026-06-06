@@ -115,8 +115,8 @@ function createPredefinedCards() {
       </p>
       <p v-else class="text-body-1 mb-1 text-medium-emphasis">—</p>
       <p class="text-caption text-medium-emphasis">
-        Komt uit de gebundelde studiegids-seed; wordt één keer per jaar door een onderhouder
-        vervangen.
+        Komt uit de gebundelde studiegids-seed; wordt één keer per jaar door een maintainer
+        vervangen in september.
       </p>
       <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis mt-3">
         Studiegidsdata wordt geladen…

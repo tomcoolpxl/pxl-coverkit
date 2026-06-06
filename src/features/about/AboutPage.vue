@@ -6,7 +6,7 @@ import packageJson from '../../../package.json';
   <v-card variant="flat" class="pa-6">
     <h1 class="text-h4 mb-4">Over PXL Cover Kit</h1>
     <p class="text-body-1 mb-2">
-      PXL Cover Kit maakt het <strong>examenvoorblad voor Blackboard-examens</strong> van
+      PXL Cover Kit maakt het <strong>examenvoorblad voor Blackboardexamens</strong> van
       PXL-Digital aan. Je kiest een opleiding en opleidingsonderdeel uit de gebundelde studiegids,
       vult de examengegevens aan (datum, uur, duur, examenkans, hulpmiddelen …) en de app genereert
       een kant-en-klare PDF in de officiële huisstijl.
@@ -17,7 +17,7 @@ import packageJson from '../../../package.json';
       academiejaar.
     </p>
     <p class="text-body-2 text-medium-emphasis">
-      Let op: deze tool is enkel bedoeld voor <strong>Blackboard-examens</strong>. Versie
+      Let op: deze tool is enkel bedoeld voor <strong>Blackboardexamens</strong>. Versie
       {{ packageJson.version }}.
     </p>
 
@@ -27,7 +27,7 @@ import packageJson from '../../../package.json';
       browsergegevens wist, verdwijnt ook de lokale data.
     </p>
 
-    <h2 class="text-h6 mt-6 mb-2">Bron</h2>
+    <h2 class="text-h6 mt-6 mb-2">Bronnen</h2>
     <p class="text-body-2">
       De studiegidsdata komt van de publieke
       <a href="https://studiegids.pxl.be/" target="_blank" rel="noopener">PXL Studiegids</a>
@@ -35,9 +35,9 @@ import packageJson from '../../../package.json';
       <code>scripts/build_programmes_seed.py</code>.
     </p>
 
-    <h2 class="text-h6 mt-6 mb-2">Broncode</h2>
+    <h2 class="text-h6 mt-6 mb-2">Source Code</h2>
     <p class="text-body-2">
-      De volledige broncode staat op
+      De volledige source code staat op
       <a href="https://github.com/tomcoolpxl/pxl-coverkit" target="_blank" rel="noopener">GitHub</a
       >.
     </p>
