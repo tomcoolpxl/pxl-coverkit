@@ -52,3 +52,5 @@ npm start        # ontwikkelserver
 npm test         # tests
 npm run build    # productiebuild
 ```
+
+Technische details — architectuur, datamodel, PDF-generatie, seedbeheer en deploy — staan in [`ARCHITECTURE.md`](ARCHITECTURE.md).
