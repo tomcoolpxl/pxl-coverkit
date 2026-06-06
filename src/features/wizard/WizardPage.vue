@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
         <v-card-title class="text-h6">Welkom.</v-card-title>
         <v-card-text>
           <p class="mb-4 text-body-2 text-medium-emphasis">
-            Wat is je voor- en achternaam? We vullen die automatisch in als vaklector en lector op nieuwe
+            Wat is je voor- en achternaam? Die worden automatisch ingevuld als vaklector en lector op nieuwe
             voorbladen. Je kan dit later aanpassen in Instellingen.
           </p>
           <v-text-field
