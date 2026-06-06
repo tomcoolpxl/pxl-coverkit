@@ -317,6 +317,7 @@ Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm
 - **Vaklector Refinements**: Disabled pre-filling the Vaklector field when multiple lecturers are present. Changed field to be completely optional. Prefilled placeholder to show a greyed out "(in te vullen door student)" if empty. Made sure selecting the value "in te vullen door student" or custom names renders them normally (not greyed out).
 - **Template Cleanup**: Removed the unused "Voorbladsjabloon" template dropdown box entirely from the editor and wizard view.
 - **Exam Duration Default**: Configured the default exam duration to 90 minutes.
+- **Default Parts Weights**: Configured resizing of parts count to automatically assign balanced/even default weights (`[50, 50]` for 2 parts, `[40, 30, 30]` for 3 parts, and `[25, 25, 25, 25]` for 4 parts) instead of starting with `0%` entries (like `[100, 0]`).
 
 ### Verification Gate
 - `npm test` green (109/109 tests passing).
