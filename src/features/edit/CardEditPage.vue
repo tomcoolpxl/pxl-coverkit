@@ -510,24 +510,7 @@ function formatExamDate(iso?: string): string {
                       required
                     />
                   </v-col>
-                  <v-col v-if="partsCount > 1" cols="12">
-                    <v-text-field
-                      v-model="durationTextOverride"
-                      v-bind="durationTextOverrideProps"
-                      label="Tijdsverdeling"
-                      variant="outlined"
-                      density="comfortable"
-                    />
-                    <v-alert
-                      v-if="isCustomDurationText"
-                      type="warning"
-                      density="compact"
-                      variant="tonal"
-                      class="mt-n2 mb-2"
-                    >
-                      Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
-                    </v-alert>
-                  </v-col>
+
                   <v-col cols="12" md="4">
                     <v-text-field
                       v-model="maxScore"
@@ -638,11 +621,29 @@ function formatExamDate(iso?: string): string {
                 Delen (DEEL)
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <MultiPartEditor
+                 <MultiPartEditor
                   v-model:parts-count="partsCount"
                   v-model:part-index="partIndex"
                   v-model:weights="partWeights"
                 />
+                <div v-if="partsCount > 1" class="mt-4">
+                  <v-text-field
+                    v-model="durationTextOverride"
+                    v-bind="durationTextOverrideProps"
+                    label="Tijdsverdeling"
+                    variant="outlined"
+                    density="comfortable"
+                  />
+                  <v-alert
+                    v-if="isCustomDurationText"
+                    type="warning"
+                    density="compact"
+                    variant="tonal"
+                    class="mt-n2"
+                  >
+                    Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
+                  </v-alert>
+                </div>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>

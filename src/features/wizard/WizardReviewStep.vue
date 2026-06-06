@@ -369,24 +369,7 @@ const sourceLabel = computed(() =>
             variant="outlined"
           />
         </v-col>
-        <v-col v-if="partsCount > 1" cols="12">
-          <v-text-field
-            v-model="durationTextOverride"
-            v-bind="durationTextOverrideProps"
-            label="Tijdsverdeling"
-            density="comfortable"
-            variant="outlined"
-          />
-          <v-alert
-            v-if="isCustomDurationText"
-            type="warning"
-            density="compact"
-            variant="tonal"
-            class="mt-n2 mb-2"
-          >
-            Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
-          </v-alert>
-        </v-col>
+
         <v-col cols="12" md="4">
           <v-text-field
             v-model.number="maxScore"
@@ -457,6 +440,24 @@ const sourceLabel = computed(() =>
           v-model:part-index="partIndex"
           v-model:weights="partWeights"
         />
+        <div v-if="partsCount > 1" class="mt-4">
+          <v-text-field
+            v-model="durationTextOverride"
+            v-bind="durationTextOverrideProps"
+            label="Tijdsverdeling"
+            density="comfortable"
+            variant="outlined"
+          />
+          <v-alert
+            v-if="isCustomDurationText"
+            type="warning"
+            density="compact"
+            variant="tonal"
+            class="mt-n2"
+          >
+            Let op: handmatige tijdsverdeling actief (wordt niet automatisch bijgewerkt).
+          </v-alert>
+        </div>
       </div>
 
       <div class="mt-4">
