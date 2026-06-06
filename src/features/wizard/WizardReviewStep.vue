@@ -31,12 +31,16 @@ const seedEntry = computed(() =>
 );
 
 function buildInitialDraft(): WizardDraft {
-  if (wizard.draft)
+  if (wizard.draft) {
+    const draft = wizard.draft;
+    const autoText = formatDuration(draft.durationMinutes, draft.partsCount, draft.language);
     return {
-      ...wizard.draft,
-      lecturers: [...wizard.draft.lecturers],
-      partWeights: [...wizard.draft.partWeights],
+      ...draft,
+      lecturers: [...draft.lecturers],
+      partWeights: [...draft.partWeights],
+      durationTextOverride: draft.durationTextOverride || autoText,
     };
+  }
   const baseline = buildBaselineFor(seedEntry.value, {
     defaultMaxScore: settings.defaultMaxScore,
     defaultDurationMinutes: settings.defaultDurationMinutes,
@@ -44,6 +48,7 @@ function buildInitialDraft(): WizardDraft {
   const userName = settings.userName.trim();
   const baselineLecturers = baseline.lecturers.length ? [...baseline.lecturers] : userName ? [userName] : [];
   const initialVaklector = baselineLecturers.length > 1 ? '' : (baseline.vaklector || userName || '');
+  const autoText = formatDuration(baseline.durationMinutes, 1, 'nl');
   return {
     courseCode: baseline.courseCode,
     courseName: baseline.courseName,
@@ -61,7 +66,7 @@ function buildInitialDraft(): WizardDraft {
     roomPlaceCode: '',
     templateId: settings.defaultTemplateId,
     language: 'nl' as const,
-    durationTextOverride: null,
+    durationTextOverride: autoText,
   };
 }
 
@@ -237,7 +242,7 @@ const onSave = handleSubmit(async (draftValues) => {
     vaklector: draftValues.vaklector,
     lecturers: [...draftValues.lecturers],
     allowedResources: draftValues.allowedResources,
-    durationTextOverride: draftValues.durationTextOverride || null,
+    durationTextOverride: isCustomDurationText.value ? (draftValues.durationTextOverride || null) : null,
     maxScore: Number(draftValues.maxScore),
     partsCount: partsCount.value,
     partIndex: partIndex.value,
