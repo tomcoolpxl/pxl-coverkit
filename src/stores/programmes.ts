@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { loadProgrammesSeed, SeedLoadError } from '@/data/seed';
-import type { AcademicYear, Programme, SeedEntry } from '@/domain/types';
+import type { AcademicYear, Programme, ProgrammesSeedFile, SeedEntry } from '@/domain/types';
 
 interface ProgrammesState {
   loadedYear: AcademicYear | null;
@@ -31,6 +31,12 @@ export const useProgrammesStore = defineStore('programmes', {
     },
   },
   actions: {
+    replaceWithSeed(seed: ProgrammesSeedFile) {
+      this.programmes = seed.programmes;
+      this.seedEntries = seed.seedEntries;
+      this.loadedYear = seed.academicYear;
+      this.error = null;
+    },
     async loadForYear(
       year: AcademicYear,
       opts: { force?: boolean; keepPreviousOnError?: boolean } = {},

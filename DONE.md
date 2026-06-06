@@ -61,7 +61,7 @@ Verified on 2026-06-02 via `npm start`, `npm test`, `npm run typecheck`, and `np
 
 ### Seed bundling
 
-- `public/data/programmes.seed.2025-26.json` and `public/data/programmes.seed.2026-27.json` copied from `seed-data/`; served at runtime.
+- `public/data/programmes.seed.2025-26.json` copied from `seed-data/`; served as the built-in runtime preseed.
 
 ### CI / deploy
 
@@ -324,20 +324,23 @@ Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm
 - `npm run typecheck` clean (vue-tsc --noEmit).
 - `npm run build` successful production bundle.
 
-## Seed Helper Year Selector — previous/current/next window
+## On-demand Studiegids Helper Import
 
-Verified on 2026-06-06 via `npm test` (116 tests), `npm run typecheck`, `npm run build`, `npm run lint` (0 errors, existing Vue style warnings), and `npm start` (root + seed JSON HTTP 200).
+Verified on 2026-06-06 via `npm test` (124 tests), `npm run typecheck`, `npm run lint` (0 errors, existing Vue style warnings), `npm run build`, and `npm start` (root + built-in seed HTTP 200).
 
+- Runtime preseed was corrected to `public/data/programmes.seed.2025-26.json` only. No previous/next helper year is bundled in `public/data/`.
 - Added `src/domain/academicYear.ts` helpers for September 20 rollover, previous year, current year, next year, and the bounded previous/current/next candidate window. Tests pin June 6, September 19, and September 20 behavior.
-- Generated `2024-25` data with the existing Python workflow:
-  - `scripts/scrape_studiegids_tree.py --acadjaar 2024-25 --output seed-data/raw/studiegids-tree.2024-25.json`
-  - `scripts/build_programmes_seed.py --input seed-data/raw/studiegids-tree.2024-25.json --output seed-data/programmes.seed.2024-25.json`
-- Added `seed-data/programmes.seed.2024-25.json` and copied the same file to `public/data/programmes.seed.2024-25.json`; `cmp -s` verified the public copy matches the generated seed.
-- Kept `ACTIVE_SEED_YEAR` at `2025-26`; app startup now loads a persisted helper-year choice when present and falls back to `2025-26` if that seed is unavailable.
-- Added `settings.activeSeedYear` with schema default `null` so existing exports/imports remain compatible.
-- Added static seed availability checking in `src/data/seed.ts`; Settings only offers available seeds from the bounded previous/current/next window.
-- Reworked Settings "Actief academiejaar" into "Studiegidszoekhulp" with a dropdown, load button, recheck button, and compact scrollable event log.
-- Settings copy now explicitly says switching studiegids years only affects OLOD-code and vak-name lookup help; saved cards remain stored text values and are safe to keep.
-- Added programmes-store fallback tests covering successful load, fallback load, and preserving existing helper data on a failed non-fallback load.
-- Updated `README.md` seed-refresh commands to the existing script interfaces (`--acadjaar`, explicit `--input` / `--output`) and documented bundled helper-year selection.
-- Updated `SEED_DATA_FORMAT.md` to include `2024-25` and describe multiple year-specific helper files while retaining the one-file-per-year rule.
+- Added `src/data/studiegidsLive.ts`, a TypeScript port of the existing Python scrape/build workflow:
+  - dynamic `studiegidsUrl(year)` generation from the selected academic year;
+  - ASP.NET hidden field extraction and postback payload building;
+  - dynamic selector discovery for `Modeltraject`, `Trajectschijf`, `Deeltraject`, and future selector changes;
+  - recursive branch crawl and OLOD link deduplication;
+  - runtime seed document build/validation matching `SEED_DATA_FORMAT.md`;
+  - progress events with a 400-OLOD estimate.
+- Added offline tests for the live scraper covering `2024-25`, `2025-26`, and `2026-27` URL generation, hidden fields/select parsing, OLOD dedupe, postback payloads, recursive crawl output, schema-valid seed building, progress events, and expected failure when PXL-Digital is absent.
+- Reworked Settings "Studiegidszoekhulp" to offer only previous/current/next from the rollover window. `2025-26` loads from the built-in seed; other years run the live scraper only after the user clicks **Laden**.
+- Added a progress bar and scrollable event log for live imports. Progress is based on roughly 400 expected OLODs and is updated by scraper events.
+- Live scrape failures now log the error and fall back to the built-in `2025-26` seed. Settings tests cover both live-success action dispatch and live-failure fallback behavior.
+- `App.vue` startup always loads the built-in fallback seed instead of triggering live scraping implicitly.
+- Updated `GEMINI.md`, `README.md`, and `SEED_DATA_FORMAT.md` to document that non-built-in helper years are on-demand live imports, not pre-bundled runtime data.
+- Verified PXL request filtering/CORS behavior with `Origin` headers: direct browser deployments may be blocked by `studiegids.pxl.be`; the app handles that as a live-import failure and falls back unless a same-origin proxy is later added.

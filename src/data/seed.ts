@@ -44,34 +44,3 @@ export async function loadProgrammesSeed(year: AcademicYear): Promise<Programmes
   }
   return parsed.data as ProgrammesSeedFile;
 }
-
-export interface SeedAvailability {
-  year: AcademicYear;
-  available: boolean;
-  programmeCount: number;
-  seedEntryCount: number;
-  error: string | null;
-}
-
-export async function checkProgrammesSeed(year: AcademicYear): Promise<SeedAvailability> {
-  try {
-    const seed = await loadProgrammesSeed(year);
-    return {
-      year,
-      available: true,
-      programmeCount: seed.programmes.length,
-      seedEntryCount: seed.seedEntries.length,
-      error: null,
-    };
-  } catch (err) {
-    const message =
-      err instanceof SeedLoadError ? err.message : 'Onbekende fout bij seed-controle.';
-    return {
-      year,
-      available: false,
-      programmeCount: 0,
-      seedEntryCount: 0,
-      error: message,
-    };
-  }
-}

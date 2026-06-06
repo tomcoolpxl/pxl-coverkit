@@ -78,7 +78,7 @@ De build-output verschijnt in de `dist/` map en kan direct gehost worden op een 
 
 ## Beheerder & Studiegids-seed (Voor beheerders)
 
-De studiegidsdata is ingebakken in de applicatie als statische JSON-bestanden in `public/data/` en `seed-data/`.
+De standaard studiegidsdata is ingebakken in de applicatie als statisch JSON-bestand in `public/data/`. Op dit moment is alleen `public/data/programmes.seed.2025-26.json` een runtime preseed. Andere jaren worden in **Instellingen** pas live opgehaald wanneer de gebruiker expliciet op **Laden** klikt.
 
 ### Jaarlijkse Studiegids Refresh
 Volg deze stappen om de studiegids-seed te vernieuwen voor een nieuw academiejaar:
@@ -98,14 +98,14 @@ Volg deze stappen om de studiegids-seed te vernieuwen voor een nieuw academiejaa
    Dit maakt `seed-data/programmes.seed.YYYY-YY.json` aan.
 
 3. **Kopieer naar de public map**:
-   Kopieer het gegenereerde bestand naar `public/data/programmes.seed.YYYY-YY.json`.
+   Kopieer alleen de ingebouwde standaardseed naar `public/data/programmes.seed.YYYY-YY.json`. Voeg vorige/volgende jaren niet preventief toe aan `public/data/`; die worden door de app live opgehaald op aanvraag.
 
 4. **Update de ingebouwde standaardseed in de app**:
    Open `src/app/activeAcademicYear.ts` en verander `ACTIVE_SEED_YEAR` als de standaard bij opstarten moet wijzigen:
    ```typescript
    export const ACTIVE_SEED_YEAR: AcademicYear = 'YYYY-YY';
    ```
-   Dit is de fallback en standaard voor welk seed-bestand de applicatie laadt bij het opstarten. Extra seedbestanden in `public/data/` kunnen in **Instellingen** gekozen worden als studiegidszoekhulp voor OLOD-codes en vaknamen; bestaande voorbladen blijven opgeslagen tekstwaarden.
+   Dit is de fallback en standaard voor welk seed-bestand de applicatie laadt bij het opstarten. In **Instellingen** kan de gebruiker het vorige, huidige of volgende academiejaar kiezen; jaren buiten de ingebouwde standaard worden live uit `studiegids.pxl.be` opgehaald met een voortgangslog. Bestaande voorbladen blijven opgeslagen tekstwaarden.
 
 5. **Verifieer en Commit**:
    Verifieer dat `npm test` en `npm run build` slagen, en commit rechtstreeks naar `main`:

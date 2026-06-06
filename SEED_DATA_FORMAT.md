@@ -26,10 +26,10 @@ The studiegids scrape result and the runtime seed file should not be the same ar
 Suggested paths:
 
 ```text
-seed-data/programmes.seed.2024-25.json
 seed-data/programmes.seed.2025-26.json
-seed-data/programmes.seed.2026-27.json
 ```
+
+Only the built-in fallback/current preseed should be copied to `public/data/` for runtime loading. Previous and next helper years are loaded on demand by the live TypeScript scraper instead of being pre-bundled.
 
 Example top-level shape for one academic year:
 
@@ -132,7 +132,7 @@ The app can use one loaded academic-year file with a simple flow:
 4. Show the matching `label` values as the final OLOD picker.
 5. Copy the chosen texts into the card as defaults.
 
-Multiple year-specific files may be shipped at the same time so Settings can switch the studiegids helper between the previous, current, and next available academic year. Saved cards are not linked back to those files; they keep copied strings such as `academicYear`, `courseCode`, and `courseName`.
+Settings can switch the studiegids helper between the previous, current, and next academic year from the September 20 rollover window. The built-in year is loaded from `public/data/`; non-built-in years are live-scraped on demand. Saved cards are not linked back to seed files; they keep copied strings such as `academicYear`, `courseCode`, and `courseName`.
 
 ## Current tooling
 

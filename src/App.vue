@@ -13,16 +13,11 @@ const notifications = useNotificationStore();
 const settings = useSettingsStore();
 
 onMounted(async () => {
-  const requestedYear = settings.activeSeedYear ?? ACTIVE_SEED_YEAR;
-  const loadedYear = await programmes.loadWithFallback(requestedYear, ACTIVE_SEED_YEAR);
+  const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR);
   if (!loadedYear) {
     notifications.show('Fout bij het laden van studiegids-gegevens.', 10000);
-  } else if (loadedYear !== requestedYear) {
+  } else {
     settings.activeSeedYear = loadedYear;
-    notifications.show(
-      `Studiegidsdata voor ${requestedYear} was niet beschikbaar; ${loadedYear} werd geladen.`,
-      10000,
-    );
   }
 
   // Seed observed lecturers from existing cards

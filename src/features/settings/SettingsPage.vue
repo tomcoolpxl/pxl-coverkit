@@ -6,7 +6,11 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useLecturersStore } from '@/stores/lecturers';
 import { ACTIVE_SEED_YEAR } from '@/app/activeAcademicYear';
 import { candidateAcademicYearsForDate, currentAcademicYearForDate } from '@/domain/academicYear';
-import { checkProgrammesSeed, type SeedAvailability } from '@/data/seed';
+import {
+  DEFAULT_OLOD_PROGRESS_ESTIMATE,
+  scrapeProgrammesSeed,
+  type StudiegidsProgressEvent,
+} from '@/data/studiegidsLive';
 import {
   buildExportPayload,
   exportFilename,
@@ -29,26 +33,27 @@ const pendingImport = ref<ExportedState | null>(null);
 const showConfirmCleanDialog = ref(false);
 const currentYear = currentAcademicYearForDate(new Date());
 const candidateYears = candidateAcademicYearsForDate(new Date());
-const availableSeeds = ref<SeedAvailability[]>([]);
 const selectedSeedYear = ref<AcademicYear>(
   settings.activeSeedYear ?? programmes.loadedYear ?? ACTIVE_SEED_YEAR,
 );
 const seedStatus = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
 const seedLog = ref<string[]>([]);
-const checkingSeeds = ref(false);
 const loadingSeed = ref(false);
+const seedProgress = ref(0);
+const progressLabel = ref('');
 
 const cardCount = computed(() => cards.count);
 const seedConsoleLines = computed(() => seedLog.value.slice(-80));
 
 const seedOptions = computed(() =>
-  availableSeeds.value
-    .filter((seed) => seed.available)
-    .map((seed) => ({
-      value: seed.year,
-      title: seedOptionTitle(seed.year),
-      subtitle: `${seed.programmeCount} opleiding(en), ${seed.seedEntryCount} OLOD(s)`,
-    })),
+  candidateYears.map((year) => ({
+    value: year,
+    title: seedOptionTitle(year),
+    subtitle:
+      year === ACTIVE_SEED_YEAR
+        ? 'Ingebouwde seed, direct beschikbaar'
+        : `Live ophalen uit studiegids.pxl.be op aanvraag, voortgang geschat op ${DEFAULT_OLOD_PROGRESS_ESTIMATE} OLOD's`,
+  })),
 );
 
 function appendSeedLog(message: string) {
@@ -60,71 +65,73 @@ function appendSeedLog(message: string) {
 }
 
 function seedOptionTitle(year: AcademicYear): string {
-  if (year === currentYear) return `${year} - huidig academiejaar`;
-  if (candidateYears[0] === year) return `${year} - vorig academiejaar`;
-  if (candidateYears[2] === year) return `${year} - volgend academiejaar`;
-  return year;
+  const suffix = year === ACTIVE_SEED_YEAR ? 'ingebouwd' : 'live ophalen';
+  const relation =
+    year === currentYear
+      ? 'huidig academiejaar'
+      : candidateYears[0] === year
+        ? 'vorig academiejaar'
+        : candidateYears[2] === year
+          ? 'volgend academiejaar'
+          : 'academiejaar';
+  return `${year} - ${relation} (${suffix})`;
 }
 
-function chooseDefaultAvailableYear(results: SeedAvailability[]): AcademicYear {
-  const availableYears = results.filter((seed) => seed.available).map((seed) => seed.year);
-  if (availableYears.includes(selectedSeedYear.value)) return selectedSeedYear.value;
-  if (availableYears.includes(ACTIVE_SEED_YEAR)) return ACTIVE_SEED_YEAR;
-  if (availableYears.includes(currentYear)) return currentYear;
-  return availableYears[0] ?? ACTIVE_SEED_YEAR;
-}
-
-async function refreshSeedAvailability() {
-  checkingSeeds.value = true;
-  seedLog.value = [];
-  appendSeedLog(
-    `Controleer beschikbare studiegidsjaren: ${candidateYears.join(', ')}. Buiten dit venster wordt niets aangeboden.`,
-  );
-  const results: SeedAvailability[] = [];
-  for (const year of candidateYears) {
-    appendSeedLog(`Controleer seed ${year}...`);
-    const result = await checkProgrammesSeed(year);
-    results.push(result);
-    if (result.available) {
-      appendSeedLog(
-        `Seed ${year} gevonden: ${result.programmeCount} opleiding(en), ${result.seedEntryCount} OLOD(s).`,
-      );
-    } else {
-      appendSeedLog(result.error ?? `Seed ${year} niet beschikbaar.`);
-    }
-  }
-  availableSeeds.value = results;
-  selectedSeedYear.value = chooseDefaultAvailableYear(results);
-  checkingSeeds.value = false;
+function handleLiveProgress(event: StudiegidsProgressEvent) {
+  seedProgress.value = Math.round(event.progress * 100);
+  progressLabel.value = `${event.completedOlods}/${event.estimatedOlods} OLOD's`;
+  appendSeedLog(event.message);
 }
 
 async function loadSelectedSeedYear() {
   loadingSeed.value = true;
   seedStatus.value = null;
+  seedLog.value = [];
+  seedProgress.value = 0;
+  progressLabel.value = '';
   const requestedYear = selectedSeedYear.value;
-  const loadedYear = await programmes.loadWithFallback(requestedYear, ACTIVE_SEED_YEAR, {
-    force: true,
-    log: appendSeedLog,
-  });
-  loadingSeed.value = false;
 
-  if (!loadedYear) {
+  try {
+    if (requestedYear === ACTIVE_SEED_YEAR) {
+      const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR, {
+        force: true,
+        log: appendSeedLog,
+      });
+      if (!loadedYear) {
+        throw new Error('Ingebouwde studiegidsseed kon niet geladen worden.');
+      }
+      seedProgress.value = 100;
+      progressLabel.value = `${programmes.seedEntries.length} OLOD's`;
+    } else {
+      const seed = await scrapeProgrammesSeed(requestedYear, {
+        estimatedOlods: DEFAULT_OLOD_PROGRESS_ESTIMATE,
+        onProgress: handleLiveProgress,
+      });
+      programmes.replaceWithSeed(seed);
+    }
+    settings.activeSeedYear = requestedYear;
+    selectedSeedYear.value = requestedYear;
+    seedStatus.value = {
+      kind: 'success',
+      message: `Studiegidszoekhulp geladen voor ${requestedYear}.`,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Onbekende fout bij live import.';
+    appendSeedLog(message);
+    appendSeedLog(`Val terug op ingebouwde standaard ${ACTIVE_SEED_YEAR}.`);
+    const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR, {
+      force: true,
+      log: appendSeedLog,
+    });
+    settings.activeSeedYear = loadedYear ?? ACTIVE_SEED_YEAR;
+    selectedSeedYear.value = loadedYear ?? ACTIVE_SEED_YEAR;
     seedStatus.value = {
       kind: 'error',
-      message: 'Studiegidsdata kon niet geladen worden.',
+      message: `Live import voor ${requestedYear} mislukte; ${loadedYear ?? ACTIVE_SEED_YEAR} werd geladen.`,
     };
-    return;
+  } finally {
+    loadingSeed.value = false;
   }
-
-  settings.activeSeedYear = loadedYear;
-  selectedSeedYear.value = loadedYear;
-  seedStatus.value = {
-    kind: requestedYear === loadedYear ? 'success' : 'error',
-    message:
-      requestedYear === loadedYear
-        ? `Studiegidszoekhulp geladen voor ${loadedYear}.`
-        : `Seed ${requestedYear} faalde; teruggevallen op ${loadedYear}.`,
-  };
 }
 
 function triggerExport() {
@@ -208,7 +215,9 @@ function createPredefinedCards() {
 }
 
 onMounted(() => {
-  void refreshSeedAvailability();
+  appendSeedLog(
+    `Beschikbare keuzes: ${candidateYears.join(', ')}. Alleen ${ACTIVE_SEED_YEAR} is ingebouwd; andere jaren worden pas live opgehaald na Laden.`,
+  );
 });
 </script>
 
@@ -232,8 +241,8 @@ onMounted(() => {
           label="Studiegidsjaar voor zoekhulp"
           variant="outlined"
           density="comfortable"
-          :loading="checkingSeeds"
-          :disabled="checkingSeeds || loadingSeed || seedOptions.length === 0"
+          :loading="loadingSeed"
+          :disabled="loadingSeed"
           style="max-width: 420px"
           hide-details
         >
@@ -245,20 +254,23 @@ onMounted(() => {
           color="primary"
           prepend-icon="mdi-database-refresh-outline"
           :loading="loadingSeed"
-          :disabled="checkingSeeds || loadingSeed || seedOptions.length === 0"
+          :disabled="loadingSeed"
           @click="loadSelectedSeedYear"
         >
           Laden
         </v-btn>
-        <v-btn
-          variant="text"
-          prepend-icon="mdi-refresh"
-          :disabled="checkingSeeds || loadingSeed"
-          @click="refreshSeedAvailability"
-        >
-          Opnieuw controleren
-        </v-btn>
       </div>
+      <v-progress-linear
+        v-if="loadingSeed || seedProgress > 0"
+        :model-value="seedProgress"
+        color="primary"
+        height="8"
+        rounded
+        class="mt-4"
+      />
+      <p v-if="progressLabel" class="text-caption text-medium-emphasis mt-1">
+        {{ progressLabel }}
+      </p>
       <p v-if="programmes.loadedYear" class="text-body-2 mt-4">
         Geladen zoekhulp: <strong>{{ programmes.loadedYear }}</strong>
       </p>

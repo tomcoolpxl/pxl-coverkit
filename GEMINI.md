@@ -33,8 +33,10 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
 - `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.
 - Do not combine academic years in one output file; generate and replace one academic-year seed file at a time.
-- The Settings studiegids helper may offer only the previous, current, and next academic year from the September 20 rollover rule, and only when the corresponding `public/data/programmes.seed.<year>.json` exists and validates.
-- `ACTIVE_SEED_YEAR` remains the built-in fallback/default seed year. A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
+- Runtime preseed is intentionally limited to `public/data/programmes.seed.2025-26.json`; `ACTIVE_SEED_YEAR` remains the built-in fallback/default seed year.
+- The Settings studiegids helper may offer only the previous, current, and next academic year from the September 20 rollover rule. Non-built-in years must be loaded by the on-demand TypeScript live scraper (`src/data/studiegidsLive.ts`) with progress logging, not by adding more runtime public seed files.
+- A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
+- The live scraper URL is built dynamically from the selected academic year. Browser deployments can still be blocked by PXL's CORS/request filtering; in that case the app must fall back to `ACTIVE_SEED_YEAR` unless a same-origin proxy is added.
 
 ## PDF Generation Utilities
 
@@ -60,4 +62,3 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 
 - Eliminated all 6 `no-explicit-any` ESLint compiler errors across `src/App.vue`, `src/features/delete/DeleteDialog.vue`, `src/features/settings/SettingsPage.vue`, `src/ui/LecturerAutocomplete.vue`, and `src/data/migrations.test.ts` by introducing type-safe error checking, dynamic return type utilities, explicit types, and correct test assertions.
 - Adjusted the global CSS focus visible outline color to `#030203` to satisfy WCAG AA 3:1 minimum contrast standards against the light cream background.
-
