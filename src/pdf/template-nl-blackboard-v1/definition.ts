@@ -92,12 +92,28 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
                 border: [false, false, false, false],
               },
               {
-                text: `/ ${data.maxScore}`,
-                alignment: 'right',
-                fontSize: 16,
-                bold: true,
-                margin: [0, 14, 6, 0],
-                border: [true, true, true, true],
+                // Half-height bordered box, vertically centered in the header row.
+                border: [false, false, false, false],
+                margin: [0, 13, 0, 0],
+                table: {
+                  widths: ['*'],
+                  body: [
+                    [
+                      {
+                        text: `/ ${data.maxScore}`,
+                        alignment: 'center',
+                        fontSize: 16,
+                        bold: true,
+                      },
+                    ],
+                  ],
+                },
+                layout: {
+                  hLineWidth: () => 1,
+                  vLineWidth: () => 1,
+                  hLineColor: () => colors.black,
+                  vLineColor: () => colors.black,
+                },
               },
             ],
           ],
@@ -111,13 +127,18 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
         style: 'courseTitle',
       },
 
-      // Student Section
+      // Student + Examengegevens: one continuous table. The pale-gray section
+      // rows (Student / Examengegevens) mark each block, so they can butt
+      // together with no gap.
       {
         table: {
           widths: [148, '*'],
-          heights: [18, 21, 21, 21, 21, 21, 21],
+          heights: [18, 21, 21, 21, 21, 21, 21, 18, 18, 18, 18, 18, 18, 30],
           body: [
-            [{ text: 'Student', style: 'tableLabelBold', fillColor: '#EAEAEA', colSpan: 2 }, {}],
+            [
+              { text: 'Student', style: 'tableLabelBold', fillColor: colors.paleGray, colSpan: 2 },
+              {},
+            ],
             [{ text: 'Naam student', style: 'tableLabelBold' }, { text: '' }],
             [{ text: 'Voornaam student', style: 'tableLabelBold' }, { text: '' }],
             [{ text: 'Studentennummer', style: 'tableLabelBold' }, { text: '' }],
@@ -130,19 +151,13 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
               { text: 'Examenlokaal - Plaatscode', style: 'tableLabelBold' },
               { text: data.roomPlaceCode || '', style: 'tableValue', margin: [0, 4, 0, 0] },
             ],
-          ],
-        },
-        margin: [0, 0, 0, 8],
-      },
-
-      // Exam Data Section
-      {
-        table: {
-          widths: [148, '*'],
-          heights: [18, 18, 18, 18, 18, 18, 30],
-          body: [
             [
-              { text: 'Examengegevens', style: 'tableLabelBold', fillColor: '#EAEAEA', colSpan: 2 },
+              {
+                text: 'Examengegevens',
+                style: 'tableLabelBold',
+                fillColor: colors.paleGray,
+                colSpan: 2,
+              },
               {},
             ],
             [
@@ -185,7 +200,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             text: 'Start het examen op Blackboard onmiddellijk wanneer de toezichter hier toestemming voor geeft.',
             style: 'instructionText',
           },
-          { text: 'Je krijgt de toegangscode.', style: 'instructionSubText', listType: 'circle' },
+          { text: 'Je krijgt de toegangscode.', style: 'instructionText' },
           {
             text: 'Blanco afgeven? Schrijf “blanco afgegeven” bovenaan deze kopij, samen met je handtekening.',
             style: 'instructionText',
@@ -195,7 +210,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             style: 'instructionTextBold',
           },
           {
-            text: 'Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden - zie afbeelding hieronder.',
+            text: 'Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.',
             style: 'instructionText',
           },
         ],
@@ -212,9 +227,9 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
                 text: 'Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.',
                 color: colors.red,
                 bold: true,
-                fontSize: 10,
+                fontSize: 8,
                 alignment: 'center',
-                margin: [0, 5, 0, 5],
+                margin: [0, 4, 0, 4],
               },
             ],
           ],
@@ -235,8 +250,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           {
             width: '*',
             stack: [
-              { text: 'In te vullen door student', style: 'confirmTitle' },
-              { text: 'BLACKBOARD EXAMEN - DEEL I', style: 'confirmSubTitle' },
+              { text: 'In te vullen door student', style: 'confirmTitle', margin: [0, 0, 0, 5] },
               {
                 text: 'Noteer hier het inzendingstijdstip en de eerste acht karakters van het bevestigingsnummer dat je ziet bij het inzenden van je toets',
                 style: 'confirmNote',
@@ -280,7 +294,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             ],
           },
           {
-            width: 170,
+            width: 150,
             image: 'blackboardScreenshot',
             margin: [10, 0, 0, 0],
             alignment: 'right',
@@ -302,7 +316,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             style: 'page2ListItem',
           },
         ],
-        type: 'circle',
         margin: [0, 0, 0, 10],
       },
       { text: 'Starten van het examen', style: 'page2Heading' },
@@ -313,7 +326,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             style: 'page2ListItem',
           },
         ],
-        type: 'circle',
         margin: [0, 0, 0, 10],
       },
       { text: 'Tijdens het examen', style: 'page2Heading' },
@@ -322,7 +334,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           { text: 'Laat het Blackboard-examen open staan', style: 'page2ListItem' },
           { text: 'Let op de tijdsduur van het examen', style: 'page2ListItem' },
         ],
-        type: 'circle',
         margin: [0, 0, 0, 10],
       },
       { text: 'Als je de toets gaat inzenden en de kopij gaat afgeven', style: 'page2Heading' },
@@ -352,7 +363,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           },
           { text: 'Je mag nu het inzendingsschermpje sluiten', style: 'page2ListItem' },
         ],
-        type: 'circle',
       },
     ],
     styles: {
@@ -366,9 +376,9 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
         margin: [0, 0, 0, 2],
       },
       courseTitle: {
-        fontSize: 24,
+        fontSize: 20,
         bold: true,
-        margin: [0, 2, 0, 4],
+        margin: [0, 2, 0, 2],
       },
       tableLabelBold: {
         fontSize: 11,
@@ -392,10 +402,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
         fontSize: 11,
         margin: [0, 1, 0, 1],
       },
-      instructionSubText: {
-        fontSize: 11,
-        margin: [0, 1, 0, 1],
-      },
       instructionTextBold: {
         fontSize: 11,
         bold: true,
@@ -404,11 +410,6 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       confirmTitle: {
         fontSize: 12,
         bold: true,
-      },
-      confirmSubTitle: {
-        fontSize: 16,
-        bold: true,
-        margin: [0, 0, 0, 5],
       },
       confirmNote: {
         fontSize: 11,

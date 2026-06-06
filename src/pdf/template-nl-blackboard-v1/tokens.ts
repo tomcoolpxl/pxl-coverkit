@@ -2,6 +2,7 @@ export const colors = {
   black: '#000000',
   darkGray: '#333333',
   lightGray: '#CCCCCC',
+  paleGray: '#F5F5F5',
   pxlGold: '#AE9A64',
   pxlBlack: '#030203',
   red: '#B3261E',

@@ -52,22 +52,39 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
               ],
             },
             {
-              "alignment": "right",
-              "bold": true,
               "border": [
-                true,
-                true,
-                true,
-                true,
+                false,
+                false,
+                false,
+                false,
               ],
-              "fontSize": 16,
+              "layout": {
+                "hLineColor": [Function],
+                "hLineWidth": [Function],
+                "vLineColor": [Function],
+                "vLineWidth": [Function],
+              },
               "margin": [
                 0,
-                14,
-                6,
+                13,
+                0,
                 0,
               ],
-              "text": "/ 20",
+              "table": {
+                "body": [
+                  [
+                    {
+                      "alignment": "center",
+                      "bold": true,
+                      "fontSize": 16,
+                      "text": "/ 20",
+                    },
+                  ],
+                ],
+                "widths": [
+                  "*",
+                ],
+              },
             },
           ],
         ],
@@ -87,14 +104,14 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        8,
+        6,
       ],
       "table": {
         "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Student",
             },
@@ -168,35 +185,10 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
               "text": "B104",
             },
           ],
-        ],
-        "heights": [
-          18,
-          21,
-          21,
-          21,
-          21,
-          21,
-          21,
-        ],
-        "widths": [
-          148,
-          "*",
-        ],
-      },
-    },
-    {
-      "margin": [
-        0,
-        0,
-        0,
-        6,
-      ],
-      "table": {
-        "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Examengegevens",
             },
@@ -271,6 +263,13 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         ],
         "heights": [
           18,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
+          18,
           18,
           18,
           18,
@@ -301,8 +300,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
           "text": "Start het examen op Blackboard onmiddellijk wanneer de toezichter hier toestemming voor geeft.",
         },
         {
-          "listType": "circle",
-          "style": "instructionSubText",
+          "style": "instructionText",
           "text": "Je krijgt de toegangscode.",
         },
         {
@@ -315,7 +313,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         },
         {
           "style": "instructionText",
-          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden - zie afbeelding hieronder.",
+          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
       ],
     },
@@ -340,12 +338,12 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
               "alignment": "center",
               "bold": true,
               "color": "#B3261E",
-              "fontSize": 10,
+              "fontSize": 8,
               "margin": [
                 0,
-                5,
+                4,
                 0,
-                5,
+                4,
               ],
               "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
             },
@@ -361,12 +359,14 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         {
           "stack": [
             {
+              "margin": [
+                0,
+                0,
+                0,
+                5,
+              ],
               "style": "confirmTitle",
               "text": "In te vullen door student",
-            },
-            {
-              "style": "confirmSubTitle",
-              "text": "BLACKBOARD EXAMEN - DEEL I",
             },
             {
               "style": "confirmNote",
@@ -490,7 +490,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
             0,
             0,
           ],
-          "width": 170,
+          "width": 150,
         },
       ],
     },
@@ -515,7 +515,6 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -538,7 +537,6 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -557,7 +555,6 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -574,7 +571,6 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -643,28 +639,18 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         8,
       ],
     },
-    "confirmSubTitle": {
-      "bold": true,
-      "fontSize": 16,
-      "margin": [
-        0,
-        0,
-        0,
-        5,
-      ],
-    },
     "confirmTitle": {
       "bold": true,
       "fontSize": 12,
     },
     "courseTitle": {
       "bold": true,
-      "fontSize": 24,
+      "fontSize": 20,
       "margin": [
         0,
         2,
         0,
-        4,
+        2,
       ],
     },
     "headerDept": {
@@ -694,15 +680,6 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         2,
         0,
         5,
-      ],
-    },
-    "instructionSubText": {
-      "fontSize": 11,
-      "margin": [
-        0,
-        1,
-        0,
-        1,
       ],
     },
     "instructionText": {
@@ -827,22 +804,39 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               ],
             },
             {
-              "alignment": "right",
-              "bold": true,
               "border": [
-                true,
-                true,
-                true,
-                true,
+                false,
+                false,
+                false,
+                false,
               ],
-              "fontSize": 16,
+              "layout": {
+                "hLineColor": [Function],
+                "hLineWidth": [Function],
+                "vLineColor": [Function],
+                "vLineWidth": [Function],
+              },
               "margin": [
                 0,
-                14,
-                6,
+                13,
+                0,
                 0,
               ],
-              "text": "/ 20",
+              "table": {
+                "body": [
+                  [
+                    {
+                      "alignment": "center",
+                      "bold": true,
+                      "fontSize": 16,
+                      "text": "/ 20",
+                    },
+                  ],
+                ],
+                "widths": [
+                  "*",
+                ],
+              },
             },
           ],
         ],
@@ -862,14 +856,14 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        8,
+        6,
       ],
       "table": {
         "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Student",
             },
@@ -943,35 +937,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               "text": "",
             },
           ],
-        ],
-        "heights": [
-          18,
-          21,
-          21,
-          21,
-          21,
-          21,
-          21,
-        ],
-        "widths": [
-          148,
-          "*",
-        ],
-      },
-    },
-    {
-      "margin": [
-        0,
-        0,
-        0,
-        6,
-      ],
-      "table": {
-        "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Examengegevens",
             },
@@ -1046,6 +1015,13 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         ],
         "heights": [
           18,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
+          18,
           18,
           18,
           18,
@@ -1076,8 +1052,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
           "text": "Start het examen op Blackboard onmiddellijk wanneer de toezichter hier toestemming voor geeft.",
         },
         {
-          "listType": "circle",
-          "style": "instructionSubText",
+          "style": "instructionText",
           "text": "Je krijgt de toegangscode.",
         },
         {
@@ -1090,7 +1065,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         },
         {
           "style": "instructionText",
-          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden - zie afbeelding hieronder.",
+          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
       ],
     },
@@ -1115,12 +1090,12 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               "alignment": "center",
               "bold": true,
               "color": "#B3261E",
-              "fontSize": 10,
+              "fontSize": 8,
               "margin": [
                 0,
-                5,
+                4,
                 0,
-                5,
+                4,
               ],
               "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
             },
@@ -1136,12 +1111,14 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         {
           "stack": [
             {
+              "margin": [
+                0,
+                0,
+                0,
+                5,
+              ],
               "style": "confirmTitle",
               "text": "In te vullen door student",
-            },
-            {
-              "style": "confirmSubTitle",
-              "text": "BLACKBOARD EXAMEN - DEEL I",
             },
             {
               "style": "confirmNote",
@@ -1265,7 +1242,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
             0,
             0,
           ],
-          "width": 170,
+          "width": 150,
         },
       ],
     },
@@ -1290,7 +1267,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -1313,7 +1289,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -1332,7 +1307,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -1349,7 +1323,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -1418,28 +1391,18 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         8,
       ],
     },
-    "confirmSubTitle": {
-      "bold": true,
-      "fontSize": 16,
-      "margin": [
-        0,
-        0,
-        0,
-        5,
-      ],
-    },
     "confirmTitle": {
       "bold": true,
       "fontSize": 12,
     },
     "courseTitle": {
       "bold": true,
-      "fontSize": 24,
+      "fontSize": 20,
       "margin": [
         0,
         2,
         0,
-        4,
+        2,
       ],
     },
     "headerDept": {
@@ -1469,15 +1432,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         2,
         0,
         5,
-      ],
-    },
-    "instructionSubText": {
-      "fontSize": 11,
-      "margin": [
-        0,
-        1,
-        0,
-        1,
       ],
     },
     "instructionText": {
@@ -1602,22 +1556,39 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               ],
             },
             {
-              "alignment": "right",
-              "bold": true,
               "border": [
-                true,
-                true,
-                true,
-                true,
+                false,
+                false,
+                false,
+                false,
               ],
-              "fontSize": 16,
+              "layout": {
+                "hLineColor": [Function],
+                "hLineWidth": [Function],
+                "vLineColor": [Function],
+                "vLineWidth": [Function],
+              },
               "margin": [
                 0,
-                14,
-                6,
+                13,
+                0,
                 0,
               ],
-              "text": "/ 20",
+              "table": {
+                "body": [
+                  [
+                    {
+                      "alignment": "center",
+                      "bold": true,
+                      "fontSize": 16,
+                      "text": "/ 20",
+                    },
+                  ],
+                ],
+                "widths": [
+                  "*",
+                ],
+              },
             },
           ],
         ],
@@ -1637,14 +1608,14 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        8,
+        6,
       ],
       "table": {
         "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Student",
             },
@@ -1718,35 +1689,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               "text": "B104",
             },
           ],
-        ],
-        "heights": [
-          18,
-          21,
-          21,
-          21,
-          21,
-          21,
-          21,
-        ],
-        "widths": [
-          148,
-          "*",
-        ],
-      },
-    },
-    {
-      "margin": [
-        0,
-        0,
-        0,
-        6,
-      ],
-      "table": {
-        "body": [
           [
             {
               "colSpan": 2,
-              "fillColor": "#EAEAEA",
+              "fillColor": "#F5F5F5",
               "style": "tableLabelBold",
               "text": "Examengegevens",
             },
@@ -1821,6 +1767,13 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         ],
         "heights": [
           18,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
+          18,
           18,
           18,
           18,
@@ -1851,8 +1804,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
           "text": "Start het examen op Blackboard onmiddellijk wanneer de toezichter hier toestemming voor geeft.",
         },
         {
-          "listType": "circle",
-          "style": "instructionSubText",
+          "style": "instructionText",
           "text": "Je krijgt de toegangscode.",
         },
         {
@@ -1865,7 +1817,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         },
         {
           "style": "instructionText",
-          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden - zie afbeelding hieronder.",
+          "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
       ],
     },
@@ -1890,12 +1842,12 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
               "alignment": "center",
               "bold": true,
               "color": "#B3261E",
-              "fontSize": 10,
+              "fontSize": 8,
               "margin": [
                 0,
-                5,
+                4,
                 0,
-                5,
+                4,
               ],
               "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
             },
@@ -1911,12 +1863,14 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         {
           "stack": [
             {
+              "margin": [
+                0,
+                0,
+                0,
+                5,
+              ],
               "style": "confirmTitle",
               "text": "In te vullen door student",
-            },
-            {
-              "style": "confirmSubTitle",
-              "text": "BLACKBOARD EXAMEN - DEEL I",
             },
             {
               "style": "confirmNote",
@@ -2040,7 +1994,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
             0,
             0,
           ],
-          "width": 170,
+          "width": 150,
         },
       ],
     },
@@ -2065,7 +2019,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -2088,7 +2041,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -2107,7 +2059,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         10,
       ],
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -2124,7 +2075,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
-      "type": "circle",
       "ul": [
         {
           "style": "page2ListItem",
@@ -2193,28 +2143,18 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         8,
       ],
     },
-    "confirmSubTitle": {
-      "bold": true,
-      "fontSize": 16,
-      "margin": [
-        0,
-        0,
-        0,
-        5,
-      ],
-    },
     "confirmTitle": {
       "bold": true,
       "fontSize": 12,
     },
     "courseTitle": {
       "bold": true,
-      "fontSize": 24,
+      "fontSize": 20,
       "margin": [
         0,
         2,
         0,
-        4,
+        2,
       ],
     },
     "headerDept": {
@@ -2244,15 +2184,6 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         2,
         0,
         5,
-      ],
-    },
-    "instructionSubText": {
-      "fontSize": 11,
-      "margin": [
-        0,
-        1,
-        0,
-        1,
       ],
     },
     "instructionText": {
