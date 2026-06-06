@@ -167,5 +167,13 @@ onBeforeUnmount(() => {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* Highlight the active step in the brand color. Vuetify otherwise paints the
+   active and completed avatars the same surface-variant grey; completed/past
+   valid steps keep that grey, the active one gets primary. */
+.v-stepper :deep(.v-stepper-item--selected .v-stepper-item__avatar.v-avatar) {
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+}
 </style>
 

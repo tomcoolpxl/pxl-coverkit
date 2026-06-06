@@ -278,11 +278,10 @@ function handleDeleteConfirm() {
     <template v-else>
       <div v-for="group in groupedCards" :key="group.year" class="mb-6">
         <div class="d-flex align-center ga-3 mb-3">
-          <h2 class="text-h6 mb-0">Academiejaar {{ group.label }}</h2>
+          <h2 class="text-h6 mb-0 text-no-wrap flex-shrink-0 text-primary">
+            Academiejaar {{ group.label }}
+          </h2>
           <v-divider class="flex-grow-1" />
-          <span class="text-caption text-medium-emphasis">
-            {{ group.cards.length }} voorblad(en)
-          </span>
         </div>
         <v-row dense>
           <v-col v-for="card in group.cards" :key="card.id" cols="12" sm="6" lg="4">
