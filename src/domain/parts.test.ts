@@ -25,12 +25,9 @@ describe('isValidPartWeights', () => {
 });
 
 describe('resizePartWeights', () => {
-  it('pads with 0 when growing and preserves existing values', () => {
-    expect(resizePartWeights([100], 3)).toEqual([100, 0, 0]);
-  });
-
-  it('trims extra entries when shrinking', () => {
-    expect(resizePartWeights([60, 40, 0], 2)).toEqual([60, 40]);
+  it('returns default weights when partsCount grows or shrinks', () => {
+    expect(resizePartWeights([100], 3)).toEqual([40, 30, 30]);
+    expect(resizePartWeights([60, 40, 0], 2)).toEqual([50, 50]);
   });
 
   it('returns the same shape when the count is unchanged', () => {

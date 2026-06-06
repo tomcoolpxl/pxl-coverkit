@@ -15,11 +15,16 @@ export function isValidPartWeights(weights: number[], partsCount: number): boole
   return weights.length === partsCount && partWeightsTotal(weights) === TOTAL_WEIGHT;
 }
 
-// Pad with 0 / trim to match the requested part count, preserving existing values.
+const DEFAULT_WEIGHTS_BY_COUNT: Record<number, number[]> = {
+  1: [100],
+  2: [50, 50],
+  3: [40, 30, 30],
+  4: [25, 25, 25, 25],
+};
+
 export function resizePartWeights(weights: number[], partsCount: number): number[] {
-  const next = weights.slice(0, partsCount);
-  while (next.length < partsCount) next.push(0);
-  return next;
+  if (weights.length === partsCount) return weights;
+  return [...(DEFAULT_WEIGHTS_BY_COUNT[partsCount] || Array(partsCount).fill(0))];
 }
 
 export function clampPartIndex(partIndex: number, partsCount: number): number {
