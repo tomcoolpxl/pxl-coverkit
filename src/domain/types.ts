@@ -83,6 +83,9 @@ export interface CourseCard {
   roomPlaceCode: string | null;
   maxScore: number;
   allowedResources: string;
+  partsCount: number;
+  partIndex: number;
+  partWeights: number[];
   templateId: string;
   createdAt: string;
   updatedAt: string;
@@ -96,6 +99,7 @@ export interface AppSettings {
   defaultMaxScore: number;
   defaultExamChance: string;
   defaultDurationMinutes: number;
+  userName: string;
 }
 
 export interface ExportedState {

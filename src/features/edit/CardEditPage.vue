@@ -9,8 +9,12 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useSettingsStore } from '@/stores/settings';
 import { useNotificationStore } from '@/stores/notifications';
 import { buildCourseCard } from '@/domain/cardFactory';
-import { endTime } from '@/domain/examTime';
+import { endTime, START_TIME_PRESETS } from '@/domain/examTime';
+import { EXAM_CHANCE_OPTIONS } from '@/domain/examChance';
+import { ALLOWED_RESOURCES_PRESETS } from '@/domain/allowedResources';
+import { partWeightsTotal } from '@/domain/parts';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
+import MultiPartEditor from '@/ui/MultiPartEditor.vue';
 import { downloadPdf } from '@/pdf/generator';
 
 const props = defineProps<{ id: string }>();
@@ -51,8 +55,16 @@ const reviewSchema = z.object({
   templateId: z.string().min(1, 'Sjabloon is verplicht.'),
 });
 
+const DEFAULT_TEMPLATE_ID = 'template-nl-blackboard-v1';
+
 const initialValues = computed(() => {
   const c = card.value;
+  // Fall back to an available template option when the card's stored templateId
+  // isn't selectable (e.g. legacy/mock ids), so the dropdown never renders blank.
+  const storedTemplate = c?.templateId;
+  const templateId = templateOptions.some((o) => o.value === storedTemplate)
+    ? (storedTemplate as string)
+    : DEFAULT_TEMPLATE_ID;
   return {
     courseCode: c?.courseCode ?? '',
     courseName: c?.courseName ?? '',
@@ -65,7 +77,7 @@ const initialValues = computed(() => {
     allowedResources: c?.allowedResources ?? '',
     maxScore: c?.maxScore ?? 20,
     roomPlaceCode: c?.roomPlaceCode ?? '',
-    templateId: c?.templateId ?? 'template-nl-blackboard-v1',
+    templateId,
   };
 });
 
@@ -91,8 +103,28 @@ const [maxScore, maxScoreProps] = defineField('maxScore', vuetifyConfig);
 const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetifyConfig);
 const [templateId, templateIdProps] = defineField('templateId', vuetifyConfig);
 
-const examChanceOptions = ['S1', 'S2', 'EK1', 'EK2', 'HE'];
+const examChanceOptions = EXAM_CHANCE_OPTIONS;
+const startTimePresets = START_TIME_PRESETS;
+const allowedResourcesPresets = ALLOWED_RESOURCES_PRESETS;
 const templateOptions = [{ title: 'Blackboard NL v1', value: 'template-nl-blackboard-v1' }];
+
+function applyAllowedResourcesPreset(presetId: string) {
+  const preset = allowedResourcesPresets.find((p) => p.id === presetId);
+  if (preset) allowedResources.value = preset.text;
+}
+
+// Multi-part (DEEL) state lives outside vee-validate because the weights array is
+// dynamic. MultiPartEditor mutates these refs and keeps them internally consistent.
+const partsCount = ref(card.value?.partsCount ?? 1);
+const partIndex = ref(card.value?.partIndex ?? 1);
+const partWeights = ref<number[]>(card.value ? [...card.value.partWeights] : [100]);
+
+const partsValid = computed(
+  () =>
+    partsCount.value === 1 ||
+    (partWeights.value.length === partsCount.value &&
+      partWeightsTotal(partWeights.value) === 100),
+);
 
 const isDirty = computed(() => {
   if (!card.value) return false;
@@ -108,6 +140,9 @@ const isDirty = computed(() => {
     values.roomPlaceCode !== (card.value.roomPlaceCode || '') ||
     Number(values.maxScore) !== card.value.maxScore ||
     values.allowedResources !== card.value.allowedResources ||
+    partsCount.value !== card.value.partsCount ||
+    partIndex.value !== card.value.partIndex ||
+    JSON.stringify(partWeights.value) !== JSON.stringify(card.value.partWeights) ||
     values.templateId !== card.value.templateId
   );
 });
@@ -141,6 +176,9 @@ const onSave = handleSubmit(async (formValues) => {
       roomPlaceCode: formValues.roomPlaceCode || null,
       maxScore: Number(formValues.maxScore),
       allowedResources: formValues.allowedResources,
+      partsCount: partsCount.value,
+      partIndex: partIndex.value,
+      partWeights: [...partWeights.value],
       templateId: formValues.templateId,
     },
     seedEntry: seedEntry.value,
@@ -179,6 +217,9 @@ async function downloadCardPdf() {
         roomPlaceCode: values.roomPlaceCode || null,
         maxScore: Number(values.maxScore),
         allowedResources: values.allowedResources,
+        partsCount: partsCount.value,
+        partIndex: partIndex.value,
+        partWeights: [...partWeights.value],
         templateId: values.templateId,
       },
       seedEntry: seedEntry.value,
@@ -268,7 +309,7 @@ function formatExamDate(iso?: string): string {
       <v-row>
         <!-- Form Fields Left Column -->
         <v-col cols="12" md="8">
-          <v-expansion-panels multiple model-value="[0, 1, 2, 3, 4]">
+          <v-expansion-panels multiple model-value="[0, 1, 2, 3, 4, 5]">
             <!-- expansion-panel 0: Course Info -->
             <v-expansion-panel value="0">
               <v-expansion-panel-title class="font-weight-bold">
@@ -332,6 +373,8 @@ function formatExamDate(iso?: string): string {
                       v-model="examChance"
                       v-bind="examChanceProps"
                       :items="examChanceOptions"
+                      item-title="title"
+                      item-value="value"
                       label="Examenkans"
                       variant="outlined"
                       density="comfortable"
@@ -350,11 +393,13 @@ function formatExamDate(iso?: string): string {
                     />
                   </v-col>
                   <v-col cols="12" md="4">
-                    <v-text-field
+                    <v-combobox
                       v-model="startTime"
                       v-bind="startTimeProps"
+                      :items="startTimePresets"
                       label="Starttijd"
-                      type="time"
+                      hint="Kies of typ een eigen tijd (uu:mm)."
+                      persistent-hint
                       variant="outlined"
                       density="comfortable"
                       required
@@ -426,7 +471,20 @@ function formatExamDate(iso?: string): string {
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <v-row class="mt-2">
-                  <v-col cols="12">
+                  <v-col cols="12" md="5">
+                    <v-select
+                      :items="allowedResourcesPresets"
+                      item-title="title"
+                      item-value="id"
+                      label="Voorgedefinieerde hulpmiddelen"
+                      hint="Vult onderstaand veld; daarna vrij aanpasbaar."
+                      persistent-hint
+                      variant="outlined"
+                      density="comfortable"
+                      @update:model-value="applyAllowedResourcesPreset"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="7">
                     <v-text-field
                       v-model="allowedResources"
                       v-bind="allowedResourcesProps"
@@ -471,6 +529,20 @@ function formatExamDate(iso?: string): string {
                 </v-row>
               </v-expansion-panel-text>
             </v-expansion-panel>
+
+            <!-- expansion-panel 5: Multi-part (DEEL) -->
+            <v-expansion-panel value="5">
+              <v-expansion-panel-title class="font-weight-bold">
+                Delen (DEEL)
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <MultiPartEditor
+                  v-model:parts-count="partsCount"
+                  v-model:part-index="partIndex"
+                  v-model:weights="partWeights"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
           </v-expansion-panels>
         </v-col>
 
@@ -511,7 +583,7 @@ function formatExamDate(iso?: string): string {
                   color="secondary"
                   variant="outlined"
                   prepend-icon="mdi-file-pdf-box"
-                  :disabled="!meta.valid"
+                  :disabled="!meta.valid || !partsValid"
                   class="w-100"
                   @click="downloadCardPdf"
                 >
@@ -522,7 +594,7 @@ function formatExamDate(iso?: string): string {
                   color="primary"
                   type="submit"
                   prepend-icon="mdi-content-save"
-                  :disabled="!meta.valid"
+                  :disabled="!meta.valid || !partsValid"
                   class="w-100"
                 >
                   Opslaan

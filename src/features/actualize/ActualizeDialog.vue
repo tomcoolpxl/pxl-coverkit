@@ -2,6 +2,9 @@
 import { ref, computed, watch } from 'vue';
 import type { CourseCard } from '@/domain/types';
 import { nextAcademicYear } from '@/domain/academicYear';
+import { START_TIME_PRESETS } from '@/domain/examTime';
+
+const startTimePresets = START_TIME_PRESETS;
 
 const props = defineProps<{
   modelValue: boolean;
@@ -104,10 +107,10 @@ function handleSave() {
           </v-col>
 
           <v-col cols="6">
-            <v-text-field
+            <v-combobox
               v-model="startTime"
+              :items="startTimePresets"
               label="Starttijd"
-              type="time"
               variant="outlined"
               density="comfortable"
               required

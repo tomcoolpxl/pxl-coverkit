@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { filterCards, uniqueAcademicYears, uniqueProgrammeCodes } from './filters';
+import {
+  filterCards,
+  sortProgrammesByPriority,
+  uniqueAcademicYears,
+  uniqueProgrammeCodes,
+} from './filters';
 import type { CourseCard } from './types';
 
 function makeCard(overrides: Partial<CourseCard>): CourseCard {
@@ -21,6 +26,9 @@ function makeCard(overrides: Partial<CourseCard>): CourseCard {
     roomPlaceCode: null,
     maxScore: 20,
     allowedResources: 'Geen',
+    partsCount: 1,
+    partIndex: 1,
+    partWeights: [100],
     templateId: 'template-nl-blackboard-v1',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
@@ -92,6 +100,52 @@ describe('filterCards', () => {
       search: '   ',
     });
     expect(r.length).toBe(3);
+  });
+});
+
+describe('sortProgrammesByPriority', () => {
+  const make = (code: string, name: string) => ({ code, name });
+
+  it('orders listed codes first in priority order, regardless of input order', () => {
+    const input = [
+      make('GRDVO', 'Digitale vormgeving'),
+      make('PBTIW', 'Switch2IT'),
+      make('PBTIN', 'Toegepaste informatica'),
+      make('GRPRO', 'Programmeren'),
+      make('GRSNE', 'Systeem- en netwerkbeheer'),
+    ];
+    expect(sortProgrammesByPriority(input).map((p) => p.code)).toEqual([
+      'PBTIN',
+      'PBTIW',
+      'GRSNE',
+      'GRPRO',
+      'GRDVO',
+    ]);
+  });
+
+  it('appends unlisted codes after priority ones, alphabetically by name', () => {
+    const input = [
+      make('PGATA', 'Zebra postgraduaat'),
+      make('PBTIN', 'Toegepaste informatica'),
+      make('PGABA', 'Alpha postgraduaat'),
+    ];
+    expect(sortProgrammesByPriority(input).map((p) => p.code)).toEqual([
+      'PBTIN',
+      'PGABA',
+      'PGATA',
+    ]);
+  });
+
+  it('is robust when some priority codes are absent from the input', () => {
+    const input = [make('GRPRO', 'Programmeren'), make('GRDVO', 'Digitale vormgeving')];
+    expect(sortProgrammesByPriority(input).map((p) => p.code)).toEqual(['GRPRO', 'GRDVO']);
+  });
+
+  it('does not mutate the input array', () => {
+    const input = [make('GRDVO', 'B'), make('PBTIN', 'A')];
+    const copy = [...input];
+    sortProgrammesByPriority(input);
+    expect(input).toEqual(copy);
   });
 });
 

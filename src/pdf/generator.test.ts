@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { downloadPdf } from './generator';
+import { validateCourseCardData, downloadPdf } from './generator';
 import type { CourseCard } from '@/domain/types';
 import pdfMake from 'pdfmake/build/pdfmake';
 
@@ -11,6 +11,17 @@ vi.mock('pdfmake/build/pdfmake', () => {
     default: {
       createPdf: mockCreatePdf,
       fonts: {},
+    },
+  };
+});
+
+vi.mock('virtual:pdfmake-vfs', () => {
+  return {
+    default: {
+      'Carlito-Regular.ttf': 'mock-font',
+      'Carlito-Bold.ttf': 'mock-font',
+      'Carlito-Italic.ttf': 'mock-font',
+      'Carlito-BoldItalic.ttf': 'mock-font',
     },
   };
 });
@@ -33,6 +44,9 @@ const mockCard: CourseCard = {
   roomPlaceCode: null,
   maxScore: 20,
   allowedResources: 'Geen',
+  partsCount: 1,
+  partIndex: 1,
+  partWeights: [100],
   templateId: 'template-nl-blackboard-v1',
   createdAt: '2026-06-02T12:00:00Z',
   updatedAt: '2026-06-02T12:00:00Z',
@@ -42,6 +56,15 @@ const mockCard: CourseCard = {
 };
 
 describe('generator.ts', () => {
+  it('should validate valid card successfully', () => {
+    expect(() => validateCourseCardData(mockCard)).not.toThrow();
+  });
+
+  it('should throw error on invalid card data (missing courseCode)', () => {
+    const invalidCard = { ...mockCard, courseCode: '' };
+    expect(() => validateCourseCardData(invalidCard)).toThrow('Vakcode is verplicht.');
+  });
+
   it('should call pdfMake.createPdf with proper document definition and download it', async () => {
     await downloadPdf(mockCard);
 

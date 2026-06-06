@@ -13,6 +13,7 @@ const baseSettings = {
   defaultMaxScore: 20,
   defaultExamChance: 'S1',
   defaultDurationMinutes: 120,
+  userName: '',
 };
 
 describe('buildExportPayload', () => {

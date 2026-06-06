@@ -22,6 +22,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const status = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
 const showConfirmImportDialog = ref(false);
 const pendingImport = ref<any>(null);
+const showConfirmCleanDialog = ref(false);
 
 const cardCount = computed(() => cards.count);
 
@@ -79,6 +80,28 @@ function confirmImport() {
   pendingImport.value = null;
   showConfirmImportDialog.value = false;
 }
+
+function cleanEnvironment() {
+  cards.clear();
+  lecturersStore.clear();
+  settings.reset();
+  try {
+    const keys = Object.keys(localStorage).filter((k) => k.startsWith('pxl-coverkit:'));
+    for (const key of keys) localStorage.removeItem(key);
+  } catch {
+    // Ignore storage errors (e.g. private mode); in-memory stores are already reset.
+  }
+  status.value = { kind: 'success', message: 'Omgeving opgeschoond. Alle lokale data is gewist.' };
+  showConfirmCleanDialog.value = false;
+}
+
+function createPredefinedCards() {
+  cards.seedPredefined();
+  status.value = {
+    kind: 'success',
+    message: `${cards.count} voorbeeldkaart(en) aangemaakt.`,
+  };
+}
 </script>
 
 <template>
@@ -105,6 +128,21 @@ function confirmImport() {
         {{ programmes.programmes.length }} opleiding(en),
         {{ programmes.seedEntries.length }} OLOD(s) geladen.
       </p>
+    </v-card>
+
+    <v-card class="mb-6 pa-6" variant="outlined">
+      <h2 class="text-h6 mb-2">Jouw naam</h2>
+      <p class="text-body-2 text-medium-emphasis mb-4">
+        Wordt automatisch ingevuld als vaklector en lector bij nieuwe voorbladen.
+      </p>
+      <v-text-field
+        v-model="settings.userName"
+        label="Jouw naam"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        style="max-width: 360px"
+      />
     </v-card>
 
     <v-card class="mb-6 pa-6" variant="outlined">
@@ -139,6 +177,21 @@ function confirmImport() {
       >
         {{ status.message }}
       </v-alert>
+    </v-card>
+
+    <v-card class="mb-6 pa-6" variant="outlined" color="warning" border>
+      <h2 class="text-h6 mb-2">Ontwikkeling / debug</h2>
+      <p class="text-body-2 text-medium-emphasis mb-4">
+        Hulpmiddelen voor ontwikkeling. "Omgeving opschonen" wist al je lokale data.
+      </p>
+      <div class="d-flex ga-3 flex-wrap">
+        <v-btn color="error" prepend-icon="mdi-delete-sweep" @click="showConfirmCleanDialog = true">
+          Omgeving opschonen
+        </v-btn>
+        <v-btn variant="outlined" prepend-icon="mdi-card-plus-outline" @click="createPredefinedCards">
+          Voorbeeldkaarten aanmaken
+        </v-btn>
+      </div>
     </v-card>
 
     <v-card class="pa-6" variant="outlined">
@@ -180,6 +233,29 @@ function confirmImport() {
           <v-btn variant="text" @click="showConfirmImportDialog = false">Annuleren</v-btn>
           <v-btn color="error" variant="elevated" @click="confirmImport">
             Ja, vervang lokale data
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirm Clean Dialog -->
+    <v-dialog v-model="showConfirmCleanDialog" max-width="500">
+      <v-card>
+        <v-card-title class="text-h6">Omgeving opschonen</v-card-title>
+        <v-card-text>
+          <p class="mb-4">
+            Dit wist <strong>alle</strong> lokale data: voorbladen, instellingen (incl. je naam) en
+            opgeslagen lectoren. Studiegidsdata blijft behouden.
+          </p>
+          <p class="text-caption text-error">
+            Waarschuwing: Deze actie kan niet ongedaan worden gemaakt.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="showConfirmCleanDialog = false">Annuleren</v-btn>
+          <v-btn color="error" variant="elevated" @click="cleanEnvironment">
+            Ja, wis alles
           </v-btn>
         </v-card-actions>
       </v-card>

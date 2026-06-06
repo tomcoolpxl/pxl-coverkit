@@ -24,27 +24,39 @@ function formatTimeForPdf(timeStr: string): string {
   return timeStr.replace(':', 'u');
 }
 
-export function formatDuration(minutes: number): string {
-  if (minutes === 90) return '90 minuten (1 deel)';
+export function formatDuration(minutes: number, partsCount = 1): string {
+  const deel = partsCount === 1 ? '(1 deel)' : `(${partsCount} delen)`;
   if (minutes === 80) return '1 uur 20 minuten (inclusief tijd faciliteiten)';
-  if (minutes === 120) return '120 minuten (1 deel)';
-  if (minutes < 60) return `${minutes} minuten (1 deel)`;
+  if (minutes === 90) return `90 minuten ${deel}`;
+  if (minutes === 120) return `120 minuten ${deel}`;
+  if (minutes < 60) return `${minutes} minuten ${deel}`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  if (mins === 0) return `${hours} uur (1 deel)`;
-  return `${hours} uur ${mins} minuten (1 deel)`;
+  if (mins === 0) return `${hours} uur ${deel}`;
+  return `${hours} uur ${mins} minuten ${deel}`;
+}
+
+// "Puntenverdeling" cell text. Single-part keeps the legacy "1 deel, 100%" wording;
+// multi-part lists each deel's weight and marks the deel this cover is for.
+export function formatPartsBreakdown(data: CourseCard): string {
+  if (data.partsCount <= 1) return '1 deel, 100%';
+  return data.partWeights
+    .map((w, i) => `Deel ${i + 1}: ${w}%${i + 1 === data.partIndex ? ' (dit deel)' : ''}`)
+    .join(' · ');
 }
 
 export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinitions {
   const formattedDate = formatDate(data.examDate);
   const timeRange = `${formatTimeForPdf(data.startTime)} – ${formatTimeForPdf(data.endTime || '')}`;
   const lecturersText = data.lecturers.join(', ');
-  const durationText = formatDuration(data.durationMinutes);
+  const durationText = formatDuration(data.durationMinutes, data.partsCount);
+  const partsBreakdown = formatPartsBreakdown(data);
+  const titleSuffix = data.partsCount > 1 ? ` - DEEL ${data.partIndex}` : '';
 
   return {
     pageSize: 'A4',
     pageOrientation: 'portrait',
-    pageMargins: [36, 36, 36, 36],
+    pageMargins: [24, 24, 24, 24],
     defaultStyle: {
       font: 'Carlito',
       fontSize: 10,
@@ -80,10 +92,10 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
               },
               {
                 text: `/ ${data.maxScore}`,
-                alignment: 'center',
+                alignment: 'right',
                 fontSize: 16,
                 bold: true,
-                margin: [0, 10, 0, 10],
+                margin: [0, 14, 6, 0],
                 border: [true, true, true, true],
               },
             ],
@@ -94,7 +106,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
 
       // Course Title Line
       {
-        text: `${data.courseCode} ${data.courseName}`,
+        text: `${data.courseCode} ${data.courseName}${titleSuffix}`,
         style: 'courseTitle',
       },
 
@@ -102,7 +114,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       {
         table: {
           widths: [148, '*'],
-          heights: [18, 24, 24, 24, 24, 18, 24],
+          heights: [18, 24, 24, 24, 24, 24, 24],
           body: [
             [{ text: 'Student', style: 'tableLabelBold', fillColor: '#EAEAEA', colSpan: 2 }, {}],
             [{ text: 'Naam student', style: 'tableLabelBold' }, { text: '' }],
@@ -146,7 +158,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             ],
             [
               { text: 'Puntenverdeling', style: 'tableLabelRegular' },
-              { text: '1 deel, 100%', style: 'tableValue' },
+              { text: partsBreakdown, style: 'tableValue' },
             ],
             [
               { text: 'Tijdsverdeling', style: 'tableLabelRegular' },
@@ -158,7 +170,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             ],
           ],
         },
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 6],
       },
 
       // Blackboard Instruction Block on Page 1
@@ -355,7 +367,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       courseTitle: {
         fontSize: 24,
         bold: true,
-        margin: [0, 10, 0, 15],
+        margin: [0, 4, 0, 8],
       },
       tableLabelBold: {
         fontSize: 11,
@@ -373,7 +385,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       instructionHeader: {
         fontSize: 12,
         bold: true,
-        margin: [0, 10, 0, 5],
+        margin: [0, 2, 0, 5],
       },
       instructionText: {
         fontSize: 11,

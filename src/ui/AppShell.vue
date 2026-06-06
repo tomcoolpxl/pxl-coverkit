@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import packageJson from '../../package.json';
 import { useNotificationStore } from '@/stores/notifications';
+import { hasStorageWriteError } from '@/data/storage';
 
 const appVersion = computed(() => packageJson.version);
 const notifications = useNotificationStore();
@@ -28,6 +29,16 @@ const notifications = useNotificationStore();
 
   <v-main>
     <v-container class="py-8">
+      <v-alert
+        v-if="hasStorageWriteError"
+        type="warning"
+        variant="tonal"
+        class="mb-4"
+        closable
+      >
+        Opmerking: Opslaan in lokale browseropslag is mislukt (bijvoorbeeld door een privé-modus of volle browserlimiet). 
+        Wijzigingen worden in het tijdelijke geheugen bewaard en gaan verloren wanneer de pagina wordt vernieuwd.
+      </v-alert>
       <slot />
     </v-container>
   </v-main>

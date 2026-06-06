@@ -4,12 +4,18 @@ import AppShell from './ui/AppShell.vue';
 import { useProgrammesStore } from './stores/programmes';
 import { useCardsStore } from './stores/cards';
 import { useLecturersStore } from './stores/lecturers';
+import { useNotificationStore } from './stores/notifications';
 import { ACTIVE_SEED_YEAR } from './app/activeAcademicYear';
 
 const programmes = useProgrammesStore();
+const notifications = useNotificationStore();
 
 onMounted(async () => {
-  await programmes.loadForYear(ACTIVE_SEED_YEAR);
+  try {
+    await programmes.loadForYear(ACTIVE_SEED_YEAR);
+  } catch (err: any) {
+    notifications.show('Fout bij het laden van studiegids-gegevens: ' + (err.message || err), 10000);
+  }
 
   // Seed observed lecturers from existing cards
   const cardsStore = useCardsStore();

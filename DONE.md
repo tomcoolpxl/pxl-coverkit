@@ -191,3 +191,33 @@ Verified on 2026-06-02 via `npm test` (79 tests, including 2 snapshot tests), `n
 
 - Created `src/pdf/template-nl-blackboard-v1/definition.test.ts` verifying document definitions against snapshots for seeded and manual cards (79/79 tests green).
 - Verified production build compile results.
+
+## Phase 5 — Validation, accessibility, polish, deploy hardening
+
+Verified on 2026-06-02 via `npm test` (84 tests passing), `npm run typecheck`, and `npm run build`.
+
+### Validation & Error Boundaries
+
+- `validateCourseCardData()` — implemented inside `src/pdf/generator.ts` to perform a pre-render validation check. It verifies the CourseCard object fields via Zod, checks that the four required Carlito TTF font files are loaded in the VFS, and checks that base64 image strings (`PXL_LOGO`, `BLACKBOARD_SCREENSHOT`) are present and valid data URIs.
+- Caught seed load errors on mount in `src/App.vue` using a try/catch block and `useNotificationStore()` toast alert displays.
+- Handled local storage write failures (e.g., private browsing mode or quota limits) in the custom key-value storage adapter `src/data/storage.ts` using a reactive `hasStorageWriteError` ref.
+- Integrated a global warning alert banner inside the main container in `src/ui/AppShell.vue` that reactively warns users if their changes cannot be persistent.
+- Verified import JSON structure schema mismatch errors are cleanly handled and formatted into a Dutch explanation via `ImportError` inside `src/data/importExport.ts` and `SettingsPage.vue`.
+
+### Accessibility Pass
+
+- Screen-reader step change announcements — added a visually hidden live region (`aria-live="polite"`) in `src/features/wizard/WizardPage.vue` to alert assistive technologies on stepper stage transitions.
+- Focus indicator configuration — verified `:focus-visible` focus ring styles using the standard PXL gold color in `src/app/styles.css`.
+- Forms semantic structure — confirmed fields use labels, error helper descriptions are associated with inputs, and keyboard navigation tab-orders work.
+
+### Repository & Documentation
+
+- `README.md` — created a comprehensive README detailing app functionalities, local development setup, user operations, and guide runbooks for maintainers.
+- `IMPLEMENTATION_PHASE5.md` — immutable Phase 5 blueprint frozen.
+- `.github/workflows/pages.yml` — verified npm caching configuration, Node 22 build version, and checkout-free GitHub Pages deployments.
+
+### Testing Additions
+
+- `src/data/migrations.test.ts` — created new migration unit tests verifying migration path passes for schema version matching and throws specific `MigrationError` for unsupported ones.
+- `src/pdf/generator.test.ts` — updated tests for validation helper (`validateCourseCardData`) testing valid cases and invalid field handling (e.g. missing course code).
+

@@ -1,3 +1,5 @@
+import { ref } from 'vue';
+
 export interface KeyValueStorage {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -5,6 +7,7 @@ export interface KeyValueStorage {
 }
 
 const memoryFallback = new Map<string, string>();
+export const hasStorageWriteError = ref(false);
 
 function hasLocalStorage(): boolean {
   try {
@@ -30,8 +33,9 @@ export const localStorageAdapter: KeyValueStorage = {
       try {
         globalThis.localStorage.setItem(key, value);
         return;
-      } catch {
-        /* fall through */
+      } catch (err) {
+        console.error('Storage write error:', err);
+        hasStorageWriteError.value = true;
       }
     }
     memoryFallback.set(key, value);

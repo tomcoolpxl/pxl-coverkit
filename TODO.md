@@ -1,32 +1,76 @@
-# TODO — Phase 4 (PDF generation)
+# TODO — Phase 6 (Wizard/UX fixes, PDF layout fixes, multi-part DEEL)
 
-Live work tracking for the current phase. Items move to `DONE.md` only after the verification gate passes for them.
+Live work tracking for the current phase. Blueprint: `IMPLEMENTATION_PHASE6.md`.
+Items move to `DONE.md` only after the verification gate passes for them.
 
-## Tasks
+> No migrations, no backwards compatibility this phase — add fields directly; stale
+> local data is cleared via the new "Omgeving opschonen" debug button.
 
-- [x] Add Carlito font (OFL) under `src/pdf/fonts/`
-  - [x] Implement a small build-time Vite plugin to generate a custom `vfs_fonts` blob
-  - [x] Configure pdfmake to use the custom VFS font blob
-  - [x] Update `vite.config.ts` to include `pdfmake/build/pdfmake` and `pdfmake/build/vfs_fonts` in `optimizeDeps.include`
-- [x] Add required PXL assets (logo, marks) under `src/assets/pdf/`
-  - [x] Import them as base64 in `pdf/template-nl-blackboard-v1/assets.ts`
-- [x] Implement the `pdf/template-nl-blackboard-v1/` module:
-  - [x] `tokens.ts` — sizes, spacing, colours
-  - [x] `definition.ts` — exports `renderExamCoverPdfDefinition(data, template)` returning `TDocumentDefinitions`
-  - [x] `assets.ts` — bundled base64 image assets
-- [x] Cover all visible elements listed in `REQUIREMENTS.md` §"Reference output" in a two-page A4 portrait layout
-- [x] Wire `domain/filename.ts` into the download flow to produce the predictable filename
-- [x] Enable the "Download PDF" buttons on:
-  - [x] Card overview row
-  - [x] Card detail view
-  - [x] Full update view
-- [x] Add snapshot tests for the document definition on seeded and manual card fixtures
+## Part 1 — Wizard / UX ✅ (implemented; typecheck + tests + build green)
+
+- [x] **Programme ordering**: `sortProgrammesByPriority` in `domain/filters.ts`
+      (PBTIN, PBTIW, GRSNE, GRPRO, GRDVO, then rest; skip absent codes) + test;
+      use in `WizardProgrammeStep.vue`.
+- [x] **Deduplicate OLOD list** in `WizardSourceStep.vue`: one item per course,
+      stacked subtitle line per occurrence; search still works.
+- [x] **Examenkans descriptions**: `domain/examChance.ts` (`title`/`value`) + test;
+      use in `WizardReviewStep.vue` + `CardEditPage.vue`. HE has no description.
+- [x] **Start-time presets**: combobox (08:30/13:30/09:00/13:00, default 08:30,
+      editable) in wizard/edit/actualize; fix wizard fallback to `08:30`.
+- [x] **Per-user name**: `userName` in `AppSettings` + schema + settings store;
+      "Jouw naam" field in Settings; default Vaklector + Lectoren on new cards;
+      first-run name prompt when empty.
+- [x] **Allowed-resources presets**: `domain/allowedResources.ts` (Lockdown =
+      default, Blackboard-no-lockdown); preset selector fills editable field;
+      wizard defaults to Lockdown.
+- [x] **Debug tools in Settings**: empty default cards state + `seedPredefined()`;
+      "Omgeving opschonen" (wipe + `localStorage.clear()`, confirm) +
+      "Voorbeeldkaarten aanmaken".
+- [x] **Edit template prefill**: default `templateId` to available option /
+      `template-nl-blackboard-v1` when stored value isn't in the list.
+
+> Verify in-app (`npm start`) at the end of the phase: ordered programme list,
+> deduped OLOD subtitles, examenkans descriptions, editable start-time presets,
+> name-driven defaults + first-run prompt, allowed-resources default, debug
+> clean/reseed buttons.
+
+## Part 2 — PDF layout (`definition.ts`) ✅ (implemented; tests + typecheck + build green)
+
+- [x] Margins `[36,36,36,36]` → `[24,24,24,24]`.
+- [x] Reclaim whitespace: `courseTitle` margin `[0,10,0,15]` → `[0,4,0,8]`
+      (heading↔title); Examengegevens table bottom `15` → `6` +
+      `instructionHeader` top `10` → `2` (Examengegevens↔instruction block).
+- [x] Unify student-table row heights to the Vaklector row (`[18,24,24,24,24,18,24]`
+      → `[18,24,24,24,24,24,24]`).
+- [x] Score box: alignment `center` → `right` (writable space left of slash),
+      margin `[0,10,0,10]` → `[0,14,6,0]` (drop symmetric height, vertically center).
+- [x] Updated snapshot test intentionally (`vitest -u`).
+
+> Visual page-1-fit confirmation still needs an in-browser `npm start` check before
+> moving to DONE.md.
+
+## Part 3 — Multi-part (DEEL) ✅ (implemented; typecheck + tests + build green)
+
+- [x] Data model: `partsCount` / `partIndex` / `partWeights` through `types.ts`,
+      `courseCardSchema`, `CardFormFields` + `buildCourseCard` (defaults `1 / 1 /
+      [100]`), `WizardDraft` + `draftToFormFields`, predefined cards. New
+      `domain/parts.ts` helpers (`partWeightsTotal`, `isValidPartWeights`,
+      `resizePartWeights`, `clampPartIndex`) + `parts.test.ts`.
+- [x] UX: shared `ui/MultiPartEditor.vue` — "Aantal delen" (1–4), "Dit is deel" +
+      per-deel % row with live total; resizing pads/trims weights. Wired into
+      `CardEditPage.vue` (new panel) + `WizardReviewStep.vue`; save/PDF blocked when
+      total ≠ 100%.
+- [x] PDF (`definition.ts`): title `- DEEL n` when `partsCount > 1`;
+      `formatPartsBreakdown` renders Puntenverdeling from the model (current deel
+      marked); `formatDuration(minutes, partsCount)` reflects the part count.
+      New multi-part snapshot + `formatDuration`/`formatPartsBreakdown` unit tests.
+
+> Verify in-app (`npm start`): set Aantal delen = 2, split 60/40, deel 1 → PDF shows
+> `- DEEL 1`, "Deel 1: 60% (dit deel) · Deel 2: 40%", duration "(2 delen)"; total ≠
+> 100% blocks save.
 
 ## Verification Gate
 
-- `npm start` + Vitest green (including document definition snapshots)
-- Manual walkthrough:
-  - Download the PDF for the `42TIN2260 Automation I` baseline card
-  - Verify filename matches the expected pattern
-  - Visually compare the generated PDF to `examples/2526_42TIN2260_Automation_I_Examenvoorblad_S2.pdf`
-  - Verify both pages render in a strict viewer (Acrobat, Chrome PDF viewer)
+- `npm test` green (updated snapshot + new unit tests).
+- `npm start` end-to-end walkthrough per `IMPLEMENTATION_PHASE6.md` passes.
+- Settings debug clean + reseed work.

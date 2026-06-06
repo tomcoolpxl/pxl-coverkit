@@ -29,6 +29,9 @@ export interface CardFormFields {
   roomPlaceCode: string | null;
   maxScore: number;
   allowedResources: string;
+  partsCount?: number;
+  partIndex?: number;
+  partWeights?: number[];
   templateId: string;
 }
 
@@ -127,6 +130,9 @@ export function buildCourseCard(input: BuildCourseCardInput): CourseCard {
     roomPlaceCode: fields.roomPlaceCode,
     maxScore: fields.maxScore,
     allowedResources: fields.allowedResources,
+    partsCount: fields.partsCount ?? 1,
+    partIndex: fields.partIndex ?? 1,
+    partWeights: fields.partWeights ? [...fields.partWeights] : [100],
     templateId: fields.templateId,
     createdAt: generatedAt,
     updatedAt: generatedAt,

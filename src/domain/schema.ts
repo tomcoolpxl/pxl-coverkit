@@ -98,6 +98,9 @@ export const courseCardSchema = z.object({
   roomPlaceCode: z.string().nullable(),
   maxScore: z.number().positive('Maximumscore moet groter zijn dan nul.'),
   allowedResources: z.string().min(1, 'Toegestane hulpmiddelen mogen niet leeg zijn.'),
+  partsCount: z.number().int().min(1).max(4),
+  partIndex: z.number().int().min(1),
+  partWeights: z.array(z.number()),
   templateId: z.string().min(1, 'Sjabloon is verplicht.'),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -111,6 +114,7 @@ export const appSettingsSchema = z.object({
   defaultMaxScore: z.number().positive(),
   defaultExamChance: z.string(),
   defaultDurationMinutes: z.number().int().positive(),
+  userName: z.string().default(''),
 });
 
 export const exportedStateSchema = z.object({

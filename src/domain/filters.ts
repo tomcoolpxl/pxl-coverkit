@@ -1,4 +1,30 @@
-import type { AcademicYear, CourseCard } from './types';
+import type { AcademicYear, CourseCard, Programme } from './types';
+
+// Preferred display order for programmes in the wizard. Codes not listed here are
+// appended after these, sorted alphabetically by name. Listed codes that are
+// absent from the seed are simply skipped, so this stays robust across seeds.
+export const PROGRAMME_PRIORITY: readonly string[] = [
+  'PBTIN',
+  'PBTIW',
+  'GRSNE',
+  'GRPRO',
+  'GRDVO',
+];
+
+export function sortProgrammesByPriority<T extends Pick<Programme, 'code' | 'name'>>(
+  programmes: readonly T[],
+): T[] {
+  const priorityIndex = (code: string) => {
+    const i = PROGRAMME_PRIORITY.indexOf(code);
+    return i === -1 ? Number.POSITIVE_INFINITY : i;
+  };
+  return [...programmes].sort((a, b) => {
+    const ai = priorityIndex(a.code);
+    const bi = priorityIndex(b.code);
+    if (ai !== bi) return ai - bi;
+    return a.name.localeCompare(b.name);
+  });
+}
 
 export interface CardFilterCriteria {
   programmeCode?: string | null;

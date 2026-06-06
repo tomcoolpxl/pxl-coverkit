@@ -15,7 +15,9 @@ export interface CreateCardInput {
   id?: () => string;
 }
 
-const MOCK_CARDS: CourseCard[] = [
+// Predefined demo cards. No longer loaded by default — created on demand via the
+// "Voorbeeldkaarten aanmaken" debug button in Settings.
+export const PREDEFINED_CARDS: CourseCard[] = [
   {
     id: 'mock-1',
     programmeCode: 'PBTIN',
@@ -34,6 +36,9 @@ const MOCK_CARDS: CourseCard[] = [
     roomPlaceCode: 'B312',
     maxScore: 20,
     allowedResources: 'Gesloten boek',
+    partsCount: 1,
+    partIndex: 1,
+    partWeights: [100],
     templateId: 'PXL-Dig-2425',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -59,6 +64,9 @@ const MOCK_CARDS: CourseCard[] = [
     roomPlaceCode: 'A101',
     maxScore: 40,
     allowedResources: 'Geen',
+    partsCount: 1,
+    partIndex: 1,
+    partWeights: [100],
     templateId: 'PXL-Dig-2425',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -84,6 +92,9 @@ const MOCK_CARDS: CourseCard[] = [
     roomPlaceCode: 'Sporthal',
     maxScore: 20,
     allowedResources: 'Rekenmachine, Spiekbriefje',
+    partsCount: 1,
+    partIndex: 1,
+    partWeights: [100],
     templateId: 'PXL-Dig-2425',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -94,7 +105,7 @@ const MOCK_CARDS: CourseCard[] = [
 ];
 
 export const useCardsStore = defineStore('cards', {
-  state: (): CardsState => ({ cards: [...MOCK_CARDS] }),
+  state: (): CardsState => ({ cards: [] }),
   getters: {
     count: (state) => state.cards.length,
     byId:
@@ -132,6 +143,14 @@ export const useCardsStore = defineStore('cards', {
     },
     clear() {
       this.cards = [];
+    },
+    seedPredefined() {
+      this.cards = PREDEFINED_CARDS.map((c) => ({ ...c, lecturers: [...c.lecturers] }));
+      const lecturersStore = useLecturersStore();
+      for (const card of this.cards) {
+        if (card.vaklector) lecturersStore.observeLecturer(card.vaklector);
+        if (card.lecturers) lecturersStore.observeLecturers(card.lecturers);
+      }
     },
   },
   persist: true,

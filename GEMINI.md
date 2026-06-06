@@ -39,3 +39,11 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - The PDF templates use `pdfmake` with custom base64 VFS font and image maps to allow offline browser-side rendering.
 - A custom Vite build-time plugin in `vite.config.ts` dynamically packs the Carlito font files (`src/pdf/fonts/`) into `virtual:pdfmake-vfs`.
 - Large image assets (logos, screenshots) are stored in `src/pdf/template-nl-blackboard-v1/assets.ts` as base64-encoded strings.
+
+## Validation & Accessibility Utilities
+
+- `validateCourseCardData()` in `src/pdf/generator.ts` acts as the pre-rendering guardian, validating CourseCard fields against Zod and verifying that required assets (Carlito fonts, Blackboard screenshots, and PXL logos) are successfully loaded at run time.
+- Visually hidden `aria-live` containers (`.sr-only` class) are configured on multi-step wizard views to announce stage transitions to screen readers.
+- Standard Vuetify input error configurations natively map input fields to their respective validation warnings using `aria-describedby` attributes.
+- Failed browser storage persistence attempts (e.g., private browsing mode) fallback to memory maps and warn users via a global `v-alert` warning inside `AppShell.vue`.
+

@@ -2,11 +2,12 @@
 import { computed, onMounted, watch } from 'vue';
 import { useProgrammesStore } from '@/stores/programmes';
 import { useWizardStore } from '@/stores/wizard';
+import { sortProgrammesByPriority } from '@/domain/filters';
 
 const programmes = useProgrammesStore();
 const wizard = useWizardStore();
 
-const activeProgrammes = computed(() => programmes.activeProgrammes);
+const activeProgrammes = computed(() => sortProgrammesByPriority(programmes.activeProgrammes));
 
 function selectProgramme(code: string) {
   wizard.setProgramme(code);

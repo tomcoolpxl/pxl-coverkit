@@ -9,7 +9,12 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useCardsStore } from '@/stores/cards';
 import { useWizardStore, type WizardDraft, draftToFormFields } from '@/stores/wizard';
 import { buildBaselineFor } from '@/domain/cardFactory';
+import { EXAM_CHANCE_OPTIONS } from '@/domain/examChance';
+import { START_TIME_PRESETS, DEFAULT_START_TIME } from '@/domain/examTime';
+import { ALLOWED_RESOURCES_PRESETS, DEFAULT_ALLOWED_RESOURCES } from '@/domain/allowedResources';
+import { partWeightsTotal } from '@/domain/parts';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
+import MultiPartEditor from '@/ui/MultiPartEditor.vue';
 
 const settings = useSettingsStore();
 const programmes = useProgrammesStore();
@@ -24,22 +29,31 @@ const seedEntry = computed(() =>
 );
 
 function buildInitialDraft(): WizardDraft {
-  if (wizard.draft) return { ...wizard.draft, lecturers: [...wizard.draft.lecturers] };
+  if (wizard.draft)
+    return {
+      ...wizard.draft,
+      lecturers: [...wizard.draft.lecturers],
+      partWeights: [...wizard.draft.partWeights],
+    };
   const baseline = buildBaselineFor(seedEntry.value, {
     defaultMaxScore: settings.defaultMaxScore,
     defaultDurationMinutes: settings.defaultDurationMinutes,
   });
+  const userName = settings.userName.trim();
   return {
     courseCode: baseline.courseCode,
     courseName: baseline.courseName,
     examChance: settings.defaultExamChance,
     examDate: '',
-    startTime: baseline.startTime || '09:00',
+    startTime: baseline.startTime || DEFAULT_START_TIME,
     durationMinutes: baseline.durationMinutes,
-    vaklector: baseline.vaklector,
-    lecturers: [...baseline.lecturers],
-    allowedResources: baseline.allowedResources,
+    vaklector: baseline.vaklector || userName,
+    lecturers: baseline.lecturers.length ? [...baseline.lecturers] : userName ? [userName] : [],
+    allowedResources: baseline.allowedResources || DEFAULT_ALLOWED_RESOURCES,
     maxScore: baseline.maxScore,
+    partsCount: 1,
+    partIndex: 1,
+    partWeights: [100],
     roomPlaceCode: '',
     templateId: settings.defaultTemplateId,
   };
@@ -67,6 +81,18 @@ const reviewSchema = z.object({
 
 const initial = buildInitialDraft();
 
+// Multi-part (DEEL) state sits outside vee-validate (dynamic weights array).
+const partsCount = ref(initial.partsCount);
+const partIndex = ref(initial.partIndex);
+const partWeights = ref<number[]>([...initial.partWeights]);
+
+const partsValid = computed(
+  () =>
+    partsCount.value === 1 ||
+    (partWeights.value.length === partsCount.value &&
+      partWeightsTotal(partWeights.value) === 100),
+);
+
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(reviewSchema),
   initialValues: initial,
@@ -88,11 +114,22 @@ const [allowedResources, allowedResourcesProps] = defineField('allowedResources'
 const [maxScore, maxScoreProps] = defineField('maxScore', vuetifyConfig);
 const [roomPlaceCode, roomPlaceCodeProps] = defineField('roomPlaceCode', vuetifyConfig);
 
-const examChanceOptions = ['S1', 'S2', 'EK1', 'EK2', 'HE'];
+const examChanceOptions = EXAM_CHANCE_OPTIONS;
+const startTimePresets = START_TIME_PRESETS;
+const allowedResourcesPresets = ALLOWED_RESOURCES_PRESETS;
 const submitError = ref<string | null>(null);
+
+function applyAllowedResourcesPreset(presetId: string) {
+  const preset = allowedResourcesPresets.find((p) => p.id === presetId);
+  if (preset) allowedResources.value = preset.text;
+}
 
 const onSave = handleSubmit(async (draftValues) => {
   submitError.value = null;
+  if (!partsValid.value) {
+    submitError.value = 'De puntenverdeling van de delen moet samen 100% zijn.';
+    return;
+  }
   if (!wizard.programmeCode) {
     submitError.value = 'Geen opleiding geselecteerd.';
     return;
@@ -112,6 +149,9 @@ const onSave = handleSubmit(async (draftValues) => {
     lecturers: [...draftValues.lecturers],
     allowedResources: draftValues.allowedResources,
     maxScore: Number(draftValues.maxScore),
+    partsCount: partsCount.value,
+    partIndex: partIndex.value,
+    partWeights: [...partWeights.value],
     roomPlaceCode: draftValues.roomPlaceCode ?? '',
     templateId: settings.defaultTemplateId,
   };
@@ -192,6 +232,8 @@ const sourceLabel = computed(() =>
             v-model="examChance"
             v-bind="examChanceProps"
             :items="examChanceOptions"
+            item-title="title"
+            item-value="value"
             label="Examenkans"
             density="comfortable"
             variant="outlined"
@@ -208,11 +250,13 @@ const sourceLabel = computed(() =>
           />
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field
+          <v-combobox
             v-model="startTime"
             v-bind="startTimeProps"
-            type="time"
+            :items="startTimePresets"
             label="Starttijd"
+            hint="Kies een veelgebruikte tijd of typ een eigen tijd (uu:mm)."
+            persistent-hint
             density="comfortable"
             variant="outlined"
           />
@@ -267,7 +311,20 @@ const sourceLabel = computed(() =>
           />
         </v-col>
 
-        <v-col cols="12">
+        <v-col cols="12" md="5">
+          <v-select
+            :items="allowedResourcesPresets"
+            item-title="title"
+            item-value="id"
+            label="Voorgedefinieerde hulpmiddelen"
+            hint="Vult onderstaand veld; je kan het daarna vrij aanpassen."
+            persistent-hint
+            density="comfortable"
+            variant="outlined"
+            @update:model-value="applyAllowedResourcesPreset"
+          />
+        </v-col>
+        <v-col cols="12" md="7">
           <v-text-field
             v-model="allowedResources"
             v-bind="allowedResourcesProps"
@@ -278,9 +335,22 @@ const sourceLabel = computed(() =>
         </v-col>
       </v-row>
 
+      <div class="mt-2">
+        <MultiPartEditor
+          v-model:parts-count="partsCount"
+          v-model:part-index="partIndex"
+          v-model:weights="partWeights"
+        />
+      </div>
+
       <div class="d-flex justify-space-between mt-4">
         <v-btn variant="text" prepend-icon="mdi-arrow-left" @click="backStep">Terug</v-btn>
-        <v-btn type="submit" color="primary" prepend-icon="mdi-content-save">
+        <v-btn
+          type="submit"
+          color="primary"
+          prepend-icon="mdi-content-save"
+          :disabled="!partsValid"
+        >
           Voorblad opslaan
         </v-btn>
       </div>

@@ -21,13 +21,38 @@ const filteredSeedEntries = computed(() => {
   return programmeSeedEntries.value.filter((entry) => entry.label.toLowerCase().includes(needle));
 });
 
-const breadcrumbsForSelection = computed(() => {
-  const entry = programmeSeedEntries.value.find((e) => e.id === wizard.seedEntryId);
-  if (!entry || !entry.selectionContext) return [];
-  return Object.entries(entry.selectionContext).map(([key, value]) => ({
-    key,
-    label: value.label,
-  }));
+// The studiegids lists the same course once per traject path, so a course can
+// appear many times with identical defaults but different selectionContext. We
+// show each course once and stack every occurrence's context as a subtitle line.
+interface GroupedCourse {
+  id: string; // first occurrence id — defaults are identical across occurrences
+  label: string;
+  contexts: string[]; // one breadcrumb trail per occurrence
+}
+
+function contextTrail(entry: { selectionContext?: Record<string, { label: string }> }): string {
+  if (!entry.selectionContext) return '';
+  return Object.values(entry.selectionContext)
+    .map((ctx) => ctx.label)
+    .join(' › ');
+}
+
+const groupedCourses = computed<GroupedCourse[]>(() => {
+  const byLabel = new Map<string, GroupedCourse>();
+  for (const entry of filteredSeedEntries.value) {
+    const existing = byLabel.get(entry.label);
+    const trail = contextTrail(entry);
+    if (existing) {
+      if (trail && !existing.contexts.includes(trail)) existing.contexts.push(trail);
+    } else {
+      byLabel.set(entry.label, {
+        id: entry.id,
+        label: entry.label,
+        contexts: trail ? [trail] : [],
+      });
+    }
+  }
+  return Array.from(byLabel.values());
 });
 
 function selectSeed(id: string) {
@@ -63,33 +88,23 @@ function backStep() {
       class="mb-2"
     />
 
-    <p v-if="breadcrumbsForSelection.length > 0" class="text-caption text-medium-emphasis mb-2">
-      <span v-for="(crumb, i) in breadcrumbsForSelection" :key="crumb.key">
-        <span>{{ crumb.label }}</span>
-        <span v-if="i < breadcrumbsForSelection.length - 1"> › </span>
-      </span>
-    </p>
-
     <v-card variant="outlined" class="mb-3" max-height="50vh" style="overflow-y: auto">
-      <v-alert v-if="filteredSeedEntries.length === 0" type="info" variant="tonal" class="ma-3">
+      <v-alert v-if="groupedCourses.length === 0" type="info" variant="tonal" class="ma-3">
         Geen OLOD's gevonden voor de huidige zoekopdracht.
       </v-alert>
-      <v-list v-else density="comfortable">
+      <v-list v-else density="comfortable" lines="two">
         <v-list-item
-          v-for="entry in filteredSeedEntries"
-          :key="entry.id"
-          :title="entry.label"
-          :active="wizard.seedEntryId === entry.id"
+          v-for="course in groupedCourses"
+          :key="course.id"
+          :title="course.label"
+          :active="wizard.seedEntryId === course.id"
           prepend-icon="mdi-book-open-page-variant-outline"
-          @click="selectSeed(entry.id)"
+          @click="selectSeed(course.id)"
         >
-          <template #subtitle>
-            <span v-if="entry.selectionContext">
-              <span v-for="(ctx, i) in Object.entries(entry.selectionContext)" :key="ctx[0]">
-                <span>{{ ctx[1].label }}</span>
-                <span v-if="i < Object.entries(entry.selectionContext).length - 1"> › </span>
-              </span>
-            </span>
+          <template v-if="course.contexts.length" #subtitle>
+            <div v-for="trail in course.contexts" :key="trail" class="text-caption">
+              {{ trail }}
+            </div>
           </template>
           <template #append>
             <v-icon>mdi-chevron-right</v-icon>

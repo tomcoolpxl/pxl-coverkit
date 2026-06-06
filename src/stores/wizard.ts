@@ -15,6 +15,9 @@ export interface WizardDraft {
   lecturers: string[];
   allowedResources: string;
   maxScore: number;
+  partsCount: number;
+  partIndex: number;
+  partWeights: number[];
   roomPlaceCode: string;
   templateId: string;
 }
@@ -100,7 +103,11 @@ export const useWizardStore = defineStore('wizard', {
       this.step = STEP_ORDER[idx - 1];
     },
     saveDraft(draft: WizardDraft) {
-      this.draft = { ...draft, lecturers: [...draft.lecturers] };
+      this.draft = {
+        ...draft,
+        lecturers: [...draft.lecturers],
+        partWeights: [...draft.partWeights],
+      };
       this.dirty = true;
     },
     markDirty() {
@@ -135,6 +142,9 @@ export function draftToFormFields(
     roomPlaceCode: draft.roomPlaceCode ? draft.roomPlaceCode : null,
     maxScore: draft.maxScore,
     allowedResources: draft.allowedResources,
+    partsCount: draft.partsCount,
+    partIndex: draft.partIndex,
+    partWeights: [...draft.partWeights],
     templateId: draft.templateId,
   };
 }
