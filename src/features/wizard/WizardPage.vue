@@ -131,7 +131,7 @@ onBeforeUnmount(() => {
     <!-- First-run: ask for the user's name (defaults Vaklector + Lectoren) -->
     <v-dialog v-model="showNamePrompt" max-width="460" persistent>
       <v-card>
-        <v-card-title class="text-h6">Welkom 👋</v-card-title>
+        <v-card-title class="text-h6">Welkom.</v-card-title>
         <v-card-text>
           <p class="mb-4 text-body-2 text-medium-emphasis">
             Wat is je voor- en achternaam? We vullen die automatisch in als vaklector en lector op nieuwe
