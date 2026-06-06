@@ -102,7 +102,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             ],
           ],
         },
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 6],
       },
 
       // Course Title Line
@@ -115,7 +115,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       {
         table: {
           widths: [148, '*'],
-          heights: [18, 24, 24, 24, 24, 24, 24],
+          heights: [18, 21, 21, 21, 21, 21, 21],
           body: [
             [{ text: 'Student', style: 'tableLabelBold', fillColor: '#EAEAEA', colSpan: 2 }, {}],
             [{ text: 'Naam student', style: 'tableLabelBold' }, { text: '' }],
@@ -132,7 +132,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             ],
           ],
         },
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 8],
       },
 
       // Exam Data Section
@@ -199,7 +199,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             style: 'instructionText',
           },
         ],
-        margin: [0, 0, 0, 10],
+        margin: [0, 0, 0, 6],
       },
 
       // Warning Box
@@ -226,7 +226,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           vLineColor: () => colors.red,
           fillColor: () => '#F2DEDE',
         },
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 8],
       },
 
       // Confirmation Section (Left boxes, Right image)
@@ -368,7 +368,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       courseTitle: {
         fontSize: 24,
         bold: true,
-        margin: [0, 4, 0, 8],
+        margin: [0, 2, 0, 4],
       },
       tableLabelBold: {
         fontSize: 11,

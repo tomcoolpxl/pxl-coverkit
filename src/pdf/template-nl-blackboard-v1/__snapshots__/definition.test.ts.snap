@@ -8,7 +8,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        15,
+        6,
       ],
       "table": {
         "body": [
@@ -87,7 +87,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -171,12 +171,12 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         ],
         "heights": [
           18,
-          24,
-          24,
-          24,
-          24,
-          24,
-          24,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
         ],
         "widths": [
           148,
@@ -293,7 +293,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        10,
+        6,
       ],
       "ul": [
         {
@@ -331,7 +331,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -662,9 +662,9 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
       "fontSize": 24,
       "margin": [
         0,
-        4,
+        2,
         0,
-        8,
+        4,
       ],
     },
     "headerDept": {
@@ -783,7 +783,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        6,
       ],
       "table": {
         "body": [
@@ -862,7 +862,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -946,12 +946,12 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         ],
         "heights": [
           18,
-          24,
-          24,
-          24,
-          24,
-          24,
-          24,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
         ],
         "widths": [
           148,
@@ -1068,7 +1068,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        10,
+        6,
       ],
       "ul": [
         {
@@ -1106,7 +1106,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -1437,9 +1437,9 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "fontSize": 24,
       "margin": [
         0,
-        4,
+        2,
         0,
-        8,
+        4,
       ],
     },
     "headerDept": {
@@ -1558,7 +1558,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        6,
       ],
       "table": {
         "body": [
@@ -1637,7 +1637,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -1721,12 +1721,12 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         ],
         "heights": [
           18,
-          24,
-          24,
-          24,
-          24,
-          24,
-          24,
+          21,
+          21,
+          21,
+          21,
+          21,
+          21,
         ],
         "widths": [
           148,
@@ -1843,7 +1843,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        10,
+        6,
       ],
       "ul": [
         {
@@ -1881,7 +1881,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        15,
+        8,
       ],
       "table": {
         "body": [
@@ -2212,9 +2212,9 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "fontSize": 24,
       "margin": [
         0,
-        4,
+        2,
         0,
-        8,
+        4,
       ],
     },
     "headerDept": {
