@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AcademicYear } from '@/domain/types';
 import {
+  BROWSER_PROXY_REQUIRED_MESSAGE,
   DEPARTMENT_CONTROL,
   DEFAULT_OLOD_PROGRESS_ESTIMATE,
   OPLEIDING_CONTROL,
   buildSeedDocumentFromStudiegidsTree,
+  createFetchStudiegidsTransport,
   createProxyStudiegidsTransport,
   extractHiddenFields,
   extractOlodNames,
@@ -173,6 +175,18 @@ describe('studiegids live helpers', () => {
         }),
       }),
     );
+    vi.unstubAllGlobals();
+  });
+
+  it('does not attempt direct browser fetches without a configured proxy', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const transport = createFetchStudiegidsTransport();
+
+    await expect(transport.get(studiegidsUrl('2026-27'))).rejects.toThrow(
+      BROWSER_PROXY_REQUIRED_MESSAGE,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 });

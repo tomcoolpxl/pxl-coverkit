@@ -8,6 +8,8 @@ const CONTROL_PREFIX = 'ctl00$ContentPlaceHolderPXL$ddl';
 const DEFAULT_DEPARTMENT_LABEL = 'PXL-Digital';
 const DEFAULT_MAX_SCORE = 20;
 export const DEFAULT_OLOD_PROGRESS_ESTIMATE = 400;
+export const BROWSER_PROXY_REQUIRED_MESSAGE =
+  'Live studiegids ophalen vanuit de browser kan niet rechtstreeks door CORS. Configureer VITE_STUDIEGIDS_PROXY_URL voor live import; de app valt terug op de ingebouwde zoekhulp.';
 
 const hiddenFieldNames = ['__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION'] as const;
 const knownControlKeys: Record<string, string> = {
@@ -96,6 +98,9 @@ export function createFetchStudiegidsTransport(): StudiegidsTransport {
   if (proxyUrl) {
     return createProxyStudiegidsTransport(proxyUrl);
   }
+  if (isBrowserRuntime()) {
+    return createBrowserProxyRequiredTransport();
+  }
   return {
     async get(url) {
       return fetchText(url);
@@ -110,6 +115,20 @@ export function createFetchStudiegidsTransport(): StudiegidsTransport {
         body,
       });
     },
+  };
+}
+
+export function isBrowserRuntime(): boolean {
+  return typeof window !== 'undefined' && typeof document !== 'undefined';
+}
+
+function createBrowserProxyRequiredTransport(): StudiegidsTransport {
+  async function rejectBrowserFetch(): Promise<never> {
+    throw new StudiegidsLiveError(BROWSER_PROXY_REQUIRED_MESSAGE);
+  }
+  return {
+    get: rejectBrowserFetch,
+    post: rejectBrowserFetch,
   };
 }
 

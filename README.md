@@ -80,7 +80,7 @@ De build-output verschijnt in de `dist/` map en kan direct gehost worden op een 
 
 De standaard studiegidsdata is ingebakken in de applicatie als statisch JSON-bestand in `public/data/`. Op dit moment is alleen `public/data/programmes.seed.2025-26.json` een runtime preseed. Andere jaren worden in **Instellingen** pas live opgehaald wanneer de gebruiker expliciet op **Laden** klikt.
 
-Live ophalen vanuit GitHub Pages kan door CORS of PXL-requestfiltering geblokkeerd worden. Configureer `VITE_STUDIEGIDS_PROXY_URL` met een same-origin proxy-endpoint als live scraping in productie moet werken. De app stuurt `POST` JSON naar die proxy:
+Live ophalen vanuit GitHub Pages werkt niet rechtstreeks door browser-CORS op `studiegids.pxl.be`. Zonder proxy probeert de app geen rechtstreekse browseraanvraag en valt ze terug op de ingebouwde `2025-26` seed. Configureer `VITE_STUDIEGIDS_PROXY_URL` met een same-origin proxy-endpoint als live scraping in productie moet werken. De app stuurt `POST` JSON naar die proxy:
 
 ```json
 {

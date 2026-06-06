@@ -41,6 +41,7 @@ const seedLog = ref<string[]>([]);
 const loadingSeed = ref(false);
 const seedProgress = ref(0);
 const progressLabel = ref('');
+const studiegidsProxyConfigured = Boolean(import.meta.env.VITE_STUDIEGIDS_PROXY_URL);
 
 const cardCount = computed(() => cards.count);
 const seedConsoleLines = computed(() => seedLog.value.slice(-80));
@@ -52,7 +53,9 @@ const seedOptions = computed(() =>
     subtitle:
       year === ACTIVE_SEED_YEAR
         ? 'Ingebouwde seed, direct beschikbaar'
-        : `Live ophalen uit studiegids.pxl.be op aanvraag, voortgang geschat op ${DEFAULT_OLOD_PROGRESS_ESTIMATE} OLOD's`,
+        : studiegidsProxyConfigured
+          ? `Live ophalen uit studiegids.pxl.be op aanvraag, voortgang geschat op ${DEFAULT_OLOD_PROGRESS_ESTIMATE} OLOD's`
+          : `Live ophalen vereist een same-origin proxy; zonder proxy valt Laden terug op ${ACTIVE_SEED_YEAR}`,
   })),
 );
 
@@ -228,13 +231,14 @@ onMounted(() => {
     <v-card class="mb-6 pa-6" variant="outlined">
       <h2 class="text-h6 mb-2">Studiegidszoekhulp</h2>
       <p class="text-caption text-medium-emphasis">
-        Kies welk gebundeld studiegidsjaar wordt gebruikt om OLOD-codes en vaknamen voor nieuwe
-        voorbladen voor te stellen. Bestaande voorbladen blijven gewone opgeslagen tekstvelden; je
-        mag dus veilig wisselen tussen jaren.
+        Kies welk studiegidsjaar wordt gebruikt om OLOD-codes en vaknamen voor nieuwe voorbladen
+        voor te stellen. Bestaande voorbladen blijven gewone opgeslagen tekstvelden; je mag dus
+        veilig wisselen tussen jaren.
       </p>
       <p class="text-caption text-medium-emphasis mt-2">
-        Live ophalen kan door browserbeveiliging of PXL-requestfiltering mislukken. Dan valt de app
-        automatisch terug op de ingebouwde {{ ACTIVE_SEED_YEAR }}-gegevens.
+        Live ophalen vanuit GitHub Pages vereist een same-origin proxy, omdat studiegids.pxl.be
+        browser-CORS niet toestaat. Zonder proxy probeert de app geen rechtstreekse browseraanvraag
+        en valt Laden automatisch terug op de ingebouwde {{ ACTIVE_SEED_YEAR }}-gegevens.
       </p>
       <div class="d-flex ga-3 align-start flex-wrap mt-4">
         <v-select
