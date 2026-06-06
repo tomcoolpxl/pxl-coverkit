@@ -55,4 +55,22 @@ describe('partTitleSuffix', () => {
     expect(partTitleSuffix(2, 1)).toBe(' - DEEL 1');
     expect(partTitleSuffix(3, 2)).toBe(' - DEEL 2');
   });
+
+  it('defaults to nl (DEEL) when no language argument is given', () => {
+    expect(partTitleSuffix(2, 1)).toBe(' - DEEL 1');
+  });
+
+  it('renders " - PART N" for English', () => {
+    expect(partTitleSuffix(2, 1, 'en')).toBe(' - PART 1');
+    expect(partTitleSuffix(3, 2, 'en')).toBe(' - PART 2');
+  });
+
+  it('renders " - DEEL N" for explicit nl', () => {
+    expect(partTitleSuffix(2, 1, 'nl')).toBe(' - DEEL 1');
+  });
+
+  it('is empty for single-part covers in any language', () => {
+    expect(partTitleSuffix(1, 1, 'en')).toBe('');
+    expect(partTitleSuffix(1, 1, 'nl')).toBe('');
+  });
 });

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any, no-empty */
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useForm } from 'vee-validate';
@@ -118,6 +119,7 @@ function applyAllowedResourcesPreset(presetId: string) {
 const partsCount = ref(card.value?.partsCount ?? 1);
 const partIndex = ref(card.value?.partIndex ?? 1);
 const partWeights = ref<number[]>(card.value ? [...card.value.partWeights] : [100]);
+const isEnglish = ref(card.value?.language === 'en');
 
 const partsValid = computed(
   () =>
@@ -143,7 +145,8 @@ const isDirty = computed(() => {
     partsCount.value !== card.value.partsCount ||
     partIndex.value !== card.value.partIndex ||
     JSON.stringify(partWeights.value) !== JSON.stringify(card.value.partWeights) ||
-    values.templateId !== card.value.templateId
+    values.templateId !== card.value.templateId ||
+    (isEnglish.value ? 'en' : 'nl') !== card.value.language
   );
 });
 
@@ -167,7 +170,7 @@ const onSave = handleSubmit(async (formValues) => {
       courseName: formValues.courseName,
       academicYear: card.value.academicYear,
       examChance: formValues.examChance,
-      language: 'nl',
+      language: isEnglish.value ? 'en' : 'nl',
       examDate: formValues.examDate,
       startTime: formValues.startTime,
       durationMinutes: Number(formValues.durationMinutes),
@@ -208,7 +211,7 @@ async function downloadCardPdf() {
         courseName: values.courseName,
         academicYear: card.value.academicYear,
         examChance: values.examChance,
-        language: 'nl',
+        language: isEnglish.value ? 'en' : 'nl',
         examDate: values.examDate,
         startTime: values.startTime,
         durationMinutes: Number(values.durationMinutes),
@@ -517,13 +520,12 @@ function formatExamDate(iso?: string): string {
                     />
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      model-value="Nederlands (nl)"
-                      label="Taal"
-                      readonly
-                      disabled
-                      variant="outlined"
-                      density="comfortable"
+                    <v-switch
+                      v-model="isEnglish"
+                      color="primary"
+                      inset
+                      hide-details
+                      :label="isEnglish ? 'Engelstalig voorblad (EN)' : 'Nederlandstalig voorblad (NL)'"
                     />
                   </v-col>
                 </v-row>
@@ -563,12 +565,13 @@ function formatExamDate(iso?: string): string {
                 <v-chip size="x-small" variant="tonal" color="secondary">{{
                   values.examChance || '—'
                 }}</v-chip>
+                <v-chip v-if="isEnglish" size="x-small" variant="tonal" color="info">EN</v-chip>
               </div>
               <div class="text-body-2 text-medium-emphasis">
                 {{ values.courseCode || 'Vakcode' }}
               </div>
               <h3 class="text-h6 mb-1 text-truncate">
-                {{ values.courseName || 'Vaknaam' }}{{ partTitleSuffix(partsCount, partIndex) }}
+                {{ values.courseName || 'Vaknaam' }}{{ partTitleSuffix(partsCount, partIndex, isEnglish ? 'en' : 'nl') }}
               </h3>
               <div class="text-body-2 mb-2">
                 <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>

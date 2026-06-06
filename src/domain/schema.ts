@@ -85,7 +85,7 @@ export const courseCardSchema = z.object({
   courseName: z.string().min(1, 'Vaknaam is verplicht.'),
   academicYear: academicYearSchema,
   examChance: z.string().min(1, 'Examenkans is verplicht.'),
-  language: z.literal('nl'),
+  language: z.enum(['nl', 'en']),
   examDate: z.string().min(1, 'Examendatum is verplicht.'),
   startTime: z.string().min(1, 'Starttijd is verplicht.'),
   durationMinutes: z

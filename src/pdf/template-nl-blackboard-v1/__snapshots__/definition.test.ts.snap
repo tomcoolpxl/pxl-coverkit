@@ -501,15 +501,45 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+          "text": "Pen, laptop + stroomadapter + verlengkabel + muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
         },
         {
           "style": "page2ListItem",
-          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
+          "text": "Telefoons EN smartwatches UITschakelen en omgekeerd op de hoek van de tafel leggen.",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
+      "style": "page2Heading",
+      "text": "Voor de aanvang van het examen",
+    },
+    {
+      "margin": [
+        0,
+        0,
+        0,
+        10,
+      ],
+      "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek.",
+        },
+      ],
+    },
+    {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Starten van het examen",
     },
@@ -523,15 +553,17 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Laatste gelegenheid voor toiletbezoek",
-        },
-        {
-          "style": "page2ListItem",
-          "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
+          "text": "Surf naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Tijdens het examen",
     },
@@ -554,11 +586,23 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
+      "margin": undefined,
       "ul": [
+        {
+          "bold": true,
+          "style": "page2ListItem",
+          "text": "TE LAAT INDIENEN = ONGELDIG EXAMEN",
+        },
         {
           "style": "page2ListItem",
           "text": "Klik op Verzenden",
@@ -1244,15 +1288,45 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+          "text": "Pen, laptop + stroomadapter + verlengkabel + muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
         },
         {
           "style": "page2ListItem",
-          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
+          "text": "Telefoons EN smartwatches UITschakelen en omgekeerd op de hoek van de tafel leggen.",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
+      "style": "page2Heading",
+      "text": "Voor de aanvang van het examen",
+    },
+    {
+      "margin": [
+        0,
+        0,
+        0,
+        10,
+      ],
+      "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek.",
+        },
+      ],
+    },
+    {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Starten van het examen",
     },
@@ -1266,15 +1340,17 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Laatste gelegenheid voor toiletbezoek",
-        },
-        {
-          "style": "page2ListItem",
-          "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
+          "text": "Surf naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Tijdens het examen",
     },
@@ -1297,11 +1373,23 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
+      "margin": undefined,
       "ul": [
+        {
+          "bold": true,
+          "style": "page2ListItem",
+          "text": "TE LAAT INDIENEN = ONGELDIG EXAMEN",
+        },
         {
           "style": "page2ListItem",
           "text": "Klik op Verzenden",
@@ -1987,15 +2075,45 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+          "text": "Pen, laptop + stroomadapter + verlengkabel + muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
         },
         {
           "style": "page2ListItem",
-          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
+          "text": "Telefoons EN smartwatches UITschakelen en omgekeerd op de hoek van de tafel leggen.",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
+      "style": "page2Heading",
+      "text": "Voor de aanvang van het examen",
+    },
+    {
+      "margin": [
+        0,
+        0,
+        0,
+        10,
+      ],
+      "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek.",
+        },
+      ],
+    },
+    {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Starten van het examen",
     },
@@ -2009,15 +2127,17 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Laatste gelegenheid voor toiletbezoek",
-        },
-        {
-          "style": "page2ListItem",
-          "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
+          "text": "Surf naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
         },
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Tijdens het examen",
     },
@@ -2040,11 +2160,23 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       ],
     },
     {
+      "margin": [
+        0,
+        15,
+        0,
+        5,
+      ],
       "style": "page2Heading",
       "text": "Als je de toets gaat inzenden en de kopij gaat afgeven",
     },
     {
+      "margin": undefined,
       "ul": [
+        {
+          "bold": true,
+          "style": "page2ListItem",
+          "text": "TE LAAT INDIENEN = ONGELDIG EXAMEN",
+        },
         {
           "style": "page2ListItem",
           "text": "Klik op Verzenden",

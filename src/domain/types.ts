@@ -1,4 +1,4 @@
-export type Language = 'nl';
+export type Language = 'nl' | 'en';
 
 export type CardSource = 'manual' | 'seeded';
 

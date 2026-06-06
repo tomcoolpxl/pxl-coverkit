@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
-import type { CourseCard } from '@/domain/types';
+import type { CourseCard, Language } from '@/domain/types';
 import { partTitleSuffix } from '@/domain/parts';
 import { PXL_LOGO, BLACKBOARD_SCREENSHOT } from './assets';
 import { colors } from './tokens';
+import { templateStrings } from './strings';
 
 // Formatter helpers
 function formatDate(dateStr: string): string {
@@ -14,45 +16,117 @@ function formatDate(dateStr: string): string {
   return dateStr;
 }
 
-function formatTimeForPdf(timeStr: string): string {
+function formatTimeForPdf(timeStr: string, lang: Language = 'nl'): string {
   if (!timeStr) return '';
+  const sep = templateStrings[lang].timeSeparator;
   const parts = timeStr.split(':');
   if (parts.length === 2) {
     const hours = parseInt(parts[0], 10);
     const minutes = parts[1];
-    return `${hours}u${minutes}`;
+    return `${hours}${sep}${minutes}`;
   }
-  return timeStr.replace(':', 'u');
+  return timeStr.replace(':', sep);
 }
 
-export function formatDuration(minutes: number, partsCount = 1): string {
-  const deel = partsCount === 1 ? '(1 deel)' : `(${partsCount} delen)`;
-  if (minutes === 80) return '1 uur 20 minuten (inclusief tijd faciliteiten)';
-  if (minutes === 90) return `90 minuten ${deel}`;
-  if (minutes === 120) return `120 minuten ${deel}`;
-  if (minutes < 60) return `${minutes} minuten ${deel}`;
+export function formatDuration(minutes: number, partsCount = 1, lang: Language = 'nl'): string {
+  const s = templateStrings[lang];
+  const deel = s.durationParts(partsCount);
+  if (minutes === 80) {
+    return `1 ${s.durationHour} 20 ${s.durationMinutes} ${s.durationFacilitiesNote}`;
+  }
+  if (minutes === 90 || minutes === 120) {
+    return `${minutes} ${s.durationMinutes} ${deel}`;
+  }
+  if (minutes < 60) return `${minutes} ${s.durationMinutes} ${deel}`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  if (mins === 0) return `${hours} uur ${deel}`;
-  return `${hours} uur ${mins} minuten ${deel}`;
+  const hourWord = hours === 1 ? s.durationHour : s.durationHours;
+  if (mins === 0) return `${hours} ${hourWord} ${deel}`;
+  return `${hours} ${hourWord} ${mins} ${s.durationMinutes} ${deel}`;
 }
 
 // "Puntenverdeling" cell text. Single-part keeps the legacy "1 deel, 100%" wording;
 // multi-part lists each deel's weight and marks the deel this cover is for.
 export function formatPartsBreakdown(data: CourseCard): string {
-  if (data.partsCount <= 1) return '1 deel, 100%';
+  const s = templateStrings[data.language];
+  if (data.partsCount <= 1) return s.breakdownSinglePart;
   return data.partWeights
-    .map((w, i) => `Deel ${i + 1}: ${w}%${i + 1 === data.partIndex ? ' (dit deel)' : ''}`)
+    .map(
+      (w, i) =>
+        `${s.breakdownPartLabel} ${i + 1}: ${w}%${i + 1 === data.partIndex ? ` (${s.breakdownThisPart})` : ''}`,
+    )
     .join(' · ');
 }
 
 export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinitions {
+  const s = templateStrings[data.language];
   const formattedDate = formatDate(data.examDate);
-  const timeRange = `${formatTimeForPdf(data.startTime)} – ${formatTimeForPdf(data.endTime || '')}`;
+  const timeRange = `${formatTimeForPdf(data.startTime, data.language)} – ${formatTimeForPdf(data.endTime || '', data.language)}`;
   const lecturersText = data.lecturers.join(', ');
-  const durationText = formatDuration(data.durationMinutes, data.partsCount);
+  const durationText = formatDuration(data.durationMinutes, data.partsCount, data.language);
   const partsBreakdown = formatPartsBreakdown(data);
-  const titleSuffix = partTitleSuffix(data.partsCount, data.partIndex);
+  const titleSuffix = partTitleSuffix(data.partsCount, data.partIndex, data.language);
+
+  // Build the page-2 procedure content dynamically from the string dictionary
+  const page2Content: any[] = [
+    { text: '', pageBreak: 'before' },
+    { text: s.page2Title, style: 'page2Title', margin: [0, 0, 0, 10] },
+  ];
+
+  for (let si = 0; si < s.page2Sections.length; si++) {
+    const section = s.page2Sections[si];
+    // First heading gets different margin to match original layout
+    const headingMargin =
+      si === 0 ? [0, 0, 0, 5] : [0, 15, 0, 5];
+    page2Content.push({
+      text: section.heading,
+      style: 'page2Heading',
+      margin: headingMargin,
+    });
+
+    const listItems: any[] = [];
+    for (const item of section.items) {
+      if (item.sub) {
+        if (item.text) {
+          const li: any = {
+            text: item.text,
+            style: 'page2ListItem',
+          };
+          if (item.bold) {
+            li.bold = true;
+          }
+          listItems.push(li);
+        }
+        listItems.push({
+          ul: item.sub.map((subItem) => {
+            const sub: any = {
+              text: subItem.text,
+              style: 'page2ListItem',
+            };
+            if (subItem.bold) {
+              sub.bold = true;
+            }
+            return sub;
+          }),
+          type: 'square',
+        });
+      } else {
+        const li: any = {
+          text: item.text,
+          style: 'page2ListItem',
+        };
+        if (item.bold) {
+          li.bold = true;
+        }
+        listItems.push(li);
+      }
+    }
+
+    page2Content.push({
+      ul: listItems,
+      margin: si < s.page2Sections.length - 1 ? [0, 0, 0, 10] : undefined,
+    });
+  }
 
   return {
     pageSize: 'A4',
@@ -82,10 +156,10 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
               },
               {
                 stack: [
-                  { text: 'Hogeschool PXL – departement PXL-Digital', style: 'headerDept' },
-                  { text: `Opleiding ${data.programmeCode}`, style: 'headerInfo' },
+                  { text: s.headerDept, style: 'headerDept' },
+                  { text: `${s.programmePrefix} ${data.programmeCode}`, style: 'headerInfo' },
                   {
-                    text: `Academiejaar ${data.academicYear} ${data.examChance}`,
+                    text: `${s.academicYearPrefix} ${data.academicYear} ${data.examChance}`,
                     style: 'headerInfo',
                   },
                 ],
@@ -136,24 +210,24 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           heights: [18, 21, 21, 21, 21, 21, 21, 18, 18, 18, 18, 18, 18, 30],
           body: [
             [
-              { text: 'Student', style: 'tableLabelBold', fillColor: colors.paleGray, colSpan: 2 },
+              { text: s.student, style: 'tableLabelBold', fillColor: colors.paleGray, colSpan: 2 },
               {},
             ],
-            [{ text: 'Naam student', style: 'tableLabelBold' }, { text: '' }],
-            [{ text: 'Voornaam student', style: 'tableLabelBold' }, { text: '' }],
-            [{ text: 'Studentennummer', style: 'tableLabelBold' }, { text: '' }],
-            [{ text: 'Klasgroep', style: 'tableLabelBold' }, { text: '' }],
+            [{ text: s.lastName, style: 'tableLabelBold' }, { text: '' }],
+            [{ text: s.firstName, style: 'tableLabelBold' }, { text: '' }],
+            [{ text: s.studentNumber, style: 'tableLabelBold' }, { text: '' }],
+            [{ text: s.classGroup, style: 'tableLabelBold' }, { text: '' }],
             [
-              { text: 'Vaklector', style: 'tableLabelBold' },
+              { text: s.courseLecturer, style: 'tableLabelBold' },
               { text: data.vaklector, style: 'tableValue', margin: [0, 4, 0, 0] },
             ],
             [
-              { text: 'Examenlokaal - Plaatscode', style: 'tableLabelBold' },
+              { text: s.examRoomSeat, style: 'tableLabelBold' },
               { text: data.roomPlaceCode || '', style: 'tableValue', margin: [0, 4, 0, 0] },
             ],
             [
               {
-                text: 'Examengegevens',
+                text: s.examDetails,
                 style: 'tableLabelBold',
                 fillColor: colors.paleGray,
                 colSpan: 2,
@@ -161,27 +235,27 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
               {},
             ],
             [
-              { text: 'Datum', style: 'tableLabelRegular' },
+              { text: s.date, style: 'tableLabelRegular' },
               { text: formattedDate, style: 'tableValue' },
             ],
             [
-              { text: 'Tijdstip (aanvang - einde)', style: 'tableLabelRegular' },
+              { text: s.timeRange, style: 'tableLabelRegular' },
               { text: timeRange, style: 'tableValue' },
             ],
             [
-              { text: 'Lectoren', style: 'tableLabelRegular' },
+              { text: s.lecturers, style: 'tableLabelRegular' },
               { text: lecturersText, style: 'tableValue' },
             ],
             [
-              { text: 'Puntenverdeling', style: 'tableLabelRegular' },
+              { text: s.gradingBreakdown, style: 'tableLabelRegular' },
               { text: partsBreakdown, style: 'tableValue' },
             ],
             [
-              { text: 'Tijdsverdeling', style: 'tableLabelRegular' },
+              { text: s.timeAllocation, style: 'tableLabelRegular' },
               { text: durationText, style: 'tableValue' },
             ],
             [
-              { text: 'Toegelaten hulpmiddelen', style: 'tableLabelRegular' },
+              { text: s.permittedResources, style: 'tableLabelRegular' },
               { text: data.allowedResources, style: 'tableValue', margin: [0, 2, 0, 2] },
             ],
           ],
@@ -191,35 +265,23 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
 
       // Blackboard Instruction Block on Page 1
       {
-        text: 'ONMIDDELLIJK NA HET VOLTOOIEN VAN ELK DEEL VUL JE HET bevestigingsnummer EN het inzendingstijdstip VAN JE BLACKBOARD EXAMEN IN OP DE VOLGENDE PAGINA.',
+        text: s.instructionHeader,
         style: 'instructionHeader',
       },
       {
-        ul: [
-          {
-            text: 'Start het examen op Blackboard onmiddellijk wanneer de toezichter hier toestemming voor geeft.',
-            style: 'instructionText',
-          },
-          { text: 'Je krijgt de toegangscode.', style: 'instructionText' },
-          {
-            text: 'Blanco afgeven? Schrijf “blanco afgegeven” bovenaan deze kopij, samen met je handtekening.',
-            style: 'instructionText',
-          },
-          {
-            text: 'Noteer op deze pagina de eerste 8 karakters van het bevestigingsnummer en het inzendingstijdstip.',
-            style: 'instructionTextBold',
-          },
-          {
-            text: 'Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.',
-            style: 'instructionText',
-          },
-          {
-            text: 'Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.',
-            bold: true,
-            decoration: 'underline',
-            style: 'instructionText',
-          },
-        ],
+        ul: s.instructions.map((instr) => {
+          const item: any = {
+            text: instr.text,
+            style: instr.bold && !instr.decoration ? 'instructionTextBold' : 'instructionText',
+          };
+          if (instr.bold && instr.decoration) {
+            item.bold = true;
+          }
+          if (instr.decoration) {
+            item.decoration = instr.decoration;
+          }
+          return item;
+        }),
         margin: [0, 0, 0, 8],
       },
 
@@ -229,12 +291,12 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
           {
             width: '*',
             stack: [
-              { text: 'In te vullen door student', style: 'confirmTitle', margin: [0, 0, 0, 5] },
+              { text: s.confirmTitle, style: 'confirmTitle', margin: [0, 0, 0, 5] },
               {
-                text: 'Noteer hier het inzendingstijdstip en de eerste acht karakters van het bevestigingsnummer dat je ziet bij het inzenden van je toets',
+                text: s.confirmNote,
                 style: 'confirmNote',
               },
-              { text: 'bevestigingsnummer', fontSize: 10, margin: [0, 0, 0, 4] },
+              { text: s.confirmationNumber, fontSize: 10, margin: [0, 0, 0, 4] },
               {
                 table: {
                   widths: [20, 20, 20, 20, 20, 20, 20, 20],
@@ -243,7 +305,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
                 },
                 margin: [0, 0, 0, 10],
               },
-              { text: 'Inzendingstijdstip', fontSize: 10, margin: [0, 0, 0, 4] },
+              { text: s.submissionTime, fontSize: 10, margin: [0, 0, 0, 4] },
               {
                 columns: [
                   {
@@ -256,7 +318,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
                   },
                   {
                     width: 'auto',
-                    text: 'u',
+                    text: s.timeSeparator,
                     fontSize: 18,
                     margin: [6, 0, 6, 0],
                   },
@@ -281,81 +343,8 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
         ],
       },
 
-      // Page 2: Blackboard procedure instructions
-      { text: '', pageBreak: 'before' },
-      { text: 'Examenprocedures', style: 'page2Title', margin: [0, 0, 0, 10] },
-      { text: 'Je komt het examenlokaal binnen', style: 'page2Heading', margin: [0, 0, 0, 5] },
-      {
-        ul: [
-          {
-            text: 'Jassen, handtassen en boekentassen achteraan groeperen; als het lokaal zich hier niet toe leent, vooraan groeperen',
-            style: 'page2ListItem',
-          },
-          {
-            text: 'Pen, laptop + stroomadapter + verlengkabel + muis, studentenkaart, examensteekkaart, drinkfles op de tafel',
-            style: 'page2ListItem',
-          },
-          {
-            text: 'Telefoons EN smartwatches UITschakelen en omgekeerd op de hoek van de tafel leggen.',
-            style: 'page2ListItem',
-          },
-        ],
-        margin: [0, 0, 0, 10],
-      },
-      { text: 'Voor de aanvang van het examen', style: 'page2Heading' },
-      {
-        ul: [
-          { text: 'Laatste gelegenheid voor toiletbezoek.', style: 'page2ListItem' },
-        ],
-        margin: [0, 0, 0, 10],
-      },
-      { text: 'Starten van het examen', style: 'page2Heading' },
-      {
-        ul: [
-          {
-            text: 'Surf naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter',
-            style: 'page2ListItem',
-          },
-        ],
-        margin: [0, 0, 0, 10],
-      },
-      { text: 'Tijdens het examen', style: 'page2Heading' },
-      {
-        ul: [
-          { text: 'Laat het Blackboard-examen open staan', style: 'page2ListItem' },
-          { text: 'Let op de tijdsduur van het examen', style: 'page2ListItem' },
-        ],
-        margin: [0, 0, 0, 10],
-      },
-      { text: 'Als je de toets gaat inzenden en de kopij gaat afgeven', style: 'page2Heading' },
-      {
-        ul: [
-          { text: 'TE LAAT INDIENEN = ONGELDIG EXAMEN', style: 'page2ListItem', bold: true },
-          { text: 'Klik op Verzenden', style: 'page2ListItem' },
-          {
-            ul: [
-              {
-                text: "klikken op 'Opslaan en Afsluiten' resulteert in een ongeldig examen!",
-                bold: true,
-                style: 'page2ListItem',
-              },
-            ],
-            type: 'square',
-          },
-          { text: 'Klik het inzendingsschermpje niet weg!', style: 'page2ListItem' },
-          {
-            ul: [
-              {
-                text: 'Schrijf de eerste 8 karakters van de inzendingscode op de examenkopij',
-                style: 'page2ListItem',
-              },
-              { text: 'Schrijf de inzendingstijd op de examenkopij', style: 'page2ListItem' },
-            ],
-            type: 'square',
-          },
-          { text: 'Je mag nu het inzendingsschermpje sluiten', style: 'page2ListItem' },
-        ],
-      },
+      // Page 2: Procedure instructions (built dynamically from strings)
+      ...page2Content,
     ],
     styles: {
       headerDept: {

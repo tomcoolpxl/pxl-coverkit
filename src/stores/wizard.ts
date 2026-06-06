@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import type { CardFormFields } from '@/domain/cardFactory';
-import type { AcademicYear } from '@/domain/types';
+import type { AcademicYear, Language } from '@/domain/types';
 
 export type WizardStep = 'programme' | 'source' | 'review';
 
@@ -20,6 +20,7 @@ export interface WizardDraft {
   partWeights: number[];
   roomPlaceCode: string;
   templateId: string;
+  language: Language;
 }
 
 interface WizardState {
@@ -133,7 +134,7 @@ export function draftToFormFields(
     courseName: draft.courseName,
     academicYear,
     examChance: draft.examChance,
-    language: 'nl',
+    language: draft.language,
     examDate: draft.examDate,
     startTime: draft.startTime,
     durationMinutes: draft.durationMinutes,

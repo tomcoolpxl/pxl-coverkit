@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import pdfMake from 'pdfmake/build/pdfmake';
 import type { CourseCard } from '@/domain/types';
 import { courseCardSchema } from '@/domain/schema';
@@ -73,6 +74,7 @@ export function downloadPdf(card: CourseCard): Promise<void> {
     courseCode: card.courseCode,
     courseName: card.courseName,
     examChance: card.examChance,
+    language: card.language,
   });
 
   return pdfMake.createPdf(docDefinition).download(filename);

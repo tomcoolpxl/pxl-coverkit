@@ -56,6 +56,7 @@ function buildInitialDraft(): WizardDraft {
     partWeights: [100],
     roomPlaceCode: '',
     templateId: settings.defaultTemplateId,
+    language: 'nl' as const,
   };
 }
 
@@ -85,6 +86,7 @@ const initial = buildInitialDraft();
 const partsCount = ref(initial.partsCount);
 const partIndex = ref(initial.partIndex);
 const partWeights = ref<number[]>([...initial.partWeights]);
+const isEnglish = ref(initial.language === 'en');
 
 const partsValid = computed(
   () =>
@@ -154,6 +156,7 @@ const onSave = handleSubmit(async (draftValues) => {
     partWeights: [...partWeights.value],
     roomPlaceCode: draftValues.roomPlaceCode ?? '',
     templateId: settings.defaultTemplateId,
+    language: isEnglish.value ? 'en' : 'nl',
   };
   wizard.saveDraft(draft);
   try {
@@ -340,6 +343,16 @@ const sourceLabel = computed(() =>
           v-model:parts-count="partsCount"
           v-model:part-index="partIndex"
           v-model:weights="partWeights"
+        />
+      </div>
+
+      <div class="mt-4">
+        <v-switch
+          v-model="isEnglish"
+          color="primary"
+          inset
+          hide-details
+          :label="isEnglish ? 'Engelstalig voorblad (EN)' : 'Nederlandstalig voorblad (NL)'"
         />
       </div>
 

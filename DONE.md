@@ -289,3 +289,29 @@ Verified on 2026-06-02 via `npm test` (84 tests passing), `npm run typecheck`, a
 - `npm test` green (updated snapshot + new unit tests).
 - `npm start` end-to-end walkthrough per `IMPLEMENTATION_PHASE6.md` passes.
 - Settings debug clean + reseed work.
+
+## Phase 6 — English-language exam covers ✅ (implemented; tests + typecheck + build green)
+
+Verified on 2026-06-06 via `npm test` (109 tests), `npm run typecheck`, and `npm run build`.
+
+### Model and Domain layer
+- **Language Union Type**: Widened `Language` from `'nl'` to `'nl' | 'en'` in `types.ts`, fully backward compatible.
+- **Zod Schema**: Updated `courseCardSchema` to accept `'en'` next to `'nl'` via `z.enum(['nl', 'en'])`.
+- **Parts Title Suffix**: Added support for language-specific suffixes (`PART` for English, `DEEL` for Dutch) in `parts.ts` + specs.
+- **Filename Suffix**: Appended `_EN` suffix for English card filenames in `filename.ts` + specs.
+
+### PDF Rendering & String Dictionary
+- **Bilingual Dictionary**: Created `strings.ts` holding `TemplateStrings` mappings for `nl` and `en` translations (incorporating the confirmed English terminology such as "PXL University of Applied Sciences and Arts").
+- **Definition Refactoring**: Refactored `definition.ts` to dynamically fetch labels and paragraph blocks from `templateStrings[data.language]`, rendering Page 1 headers, Blackboard instruction lists, confirmation fields, and Page 2 procedure items with identical pixel fidelity.
+- **Localized Format Helpers**: Added language parameter support to formatting helpers (`formatDuration`, `formatPartsBreakdown`, time separator).
+
+### UI Integration
+- **Wizard Review Step**: Added an inset `v-switch` toggle switch to choose between English and Dutch cover sheets, defaulting to Dutch, and threading the language parameter upon saving.
+- **Card Edit Page**: Replaced the read-only disabled "Taal" text field with the `v-switch` toggle, dynamically showing an "EN" badge on the live card preview, and passing the chosen language during saving and PDF downloading.
+- **Card Detail Page**: Shows a dynamic "Engels (en)" or "Nederlands (nl)" label under "Taal" and localizes the parts suffix.
+- **Card Overview Page**: Displays an "EN" badge chip in the card card row next to `examChance` for English covers.
+
+### Verification Gate
+- `npm test` green (109/109 tests passing, including regenerated snapshots).
+- `npm run typecheck` clean (vue-tsc --noEmit).
+- `npm run build` successful production bundle.

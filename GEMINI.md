@@ -47,3 +47,10 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - Standard Vuetify input error configurations natively map input fields to their respective validation warnings using `aria-describedby` attributes.
 - Failed browser storage persistence attempts (e.g., private browsing mode) fallback to memory maps and warn users via a global `v-alert` warning inside `AppShell.vue`.
 
+## Bilingual Templates & English-Language Covers
+
+- We maintain one layout structure in `template-nl-blackboard-v1` and handle Dutch (`nl`) and English (`en`) via a strings dictionary mapping in `src/pdf/template-nl-blackboard-v1/strings.ts`. The `templateId` remains unchanged as `template-nl-blackboard-v1` for backward compatibility.
+- Language is set per card as an attribute (`language: 'nl' | 'en'`). The wizard review step and edit page feature a bilingual toggle switch.
+- English covers display an "EN" badge chip on the card surfaces and append `_EN` before the file extension in the downloaded PDF filename.
+- Formatting helper functions (`formatDuration`, `formatPartsBreakdown`, time separator) accept a `Language` argument to output localized details.
+

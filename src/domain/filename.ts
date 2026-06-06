@@ -1,4 +1,4 @@
-import type { AcademicYear } from './types';
+import type { AcademicYear, Language } from './types';
 import { shortAcademicYear } from './academicYear';
 
 export interface FilenameInput {
@@ -6,6 +6,7 @@ export interface FilenameInput {
   courseCode: string;
   courseName: string;
   examChance: string;
+  language: Language;
 }
 
 export function slugifyCourseName(name: string): string {
@@ -26,5 +27,7 @@ export function buildPdfFilename(input: FilenameInput): string {
   if (!code) throw new Error('Vakcode is verplicht voor bestandsnaam.');
   if (!slug) throw new Error('Vaknaam is verplicht voor bestandsnaam.');
   if (!chance) throw new Error('Examenkans is verplicht voor bestandsnaam.');
-  return `${year}_${code}_${slug}_Examenvoorblad_${chance}.pdf`;
+  const langSuffix = input.language === 'en' ? '_EN' : '';
+  return `${year}_${code}_${slug}_Examenvoorblad_${chance}${langSuffix}.pdf`;
 }
+

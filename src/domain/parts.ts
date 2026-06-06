@@ -1,3 +1,5 @@
+import type { Language } from './types';
+
 // Multi-part (DEEL) exam support. A cover can be split into up to four parts; the
 // per-part weights are percentages that must sum to 100. A single-part exam keeps
 // the canonical shape `partsCount = 1`, `partIndex = 1`, `partWeights = [100]`.
@@ -26,7 +28,11 @@ export function clampPartIndex(partIndex: number, partsCount: number): number {
   return partIndex;
 }
 
-// Title suffix shown for multi-part covers (e.g. " - DEEL 1"). Empty for single-part.
-export function partTitleSuffix(partsCount: number, partIndex: number): string {
-  return partsCount > 1 ? ` - DEEL ${partIndex}` : '';
+// Title suffix shown for multi-part covers (e.g. " - DEEL 1" / " - PART 1").
+// Empty for single-part. Default language is 'nl' so existing callers are untouched.
+export function partTitleSuffix(partsCount: number, partIndex: number, lang: Language = 'nl'): string {
+  if (partsCount <= 1) return '';
+  const word = lang === 'en' ? 'PART' : 'DEEL';
+  return ` - ${word} ${partIndex}`;
 }
+

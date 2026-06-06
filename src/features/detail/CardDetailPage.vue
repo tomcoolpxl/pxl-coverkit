@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCardsStore } from '@/stores/cards';
@@ -148,7 +149,7 @@ async function downloadCardPdf() {
         <v-card variant="outlined" class="pa-6 mb-6">
           <div class="d-flex align-center mb-4 ga-2">
             <h1 class="text-h4 font-weight-bold">
-              {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex) }}
+              {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex, card.language) }}
             </h1>
             <v-chip color="primary" variant="tonal" class="text-subtitle-2">
               {{ card.programmeCode }}
@@ -173,7 +174,7 @@ async function downloadCardPdf() {
             </v-col>
             <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">Taal</div>
-              <div class="text-body-1">Nederlands (nl)</div>
+              <div class="text-body-1">{{ card.language === 'en' ? 'Engels (en)' : 'Nederlands (nl)' }}</div>
             </v-col>
           </v-row>
 
