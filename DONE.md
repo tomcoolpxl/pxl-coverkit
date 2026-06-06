@@ -361,3 +361,11 @@ Verified on 2026-06-06 via `npm run build` and `npm start` (root placeholders se
 
 - Added inert `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` so GitHub Pages can serve those root-level filenames when browser/content-script environments request them.
 - The placeholder files contain no runtime behavior; they only prevent root-file 404 noise for those known filenames.
+
+## Live Import Failure Diagnostics
+
+Verified on 2026-06-06 via `npm test` (126 tests), `npm run typecheck`, `npm run build`, `npm run lint` (0 errors, existing Vue style warnings), and `npm start`.
+
+- Settings live-import fallback alerts now include the concrete failure cause instead of only saying which fallback year loaded.
+- The live-import event log prefixes the cause with `Oorzaak:` and adds a no-proxy diagnosis when `VITE_STUDIEGIDS_PROXY_URL` is absent.
+- The app emits a namespaced console warning, `[pxl-coverkit] Studiegids live import failed`, with requested year, fallback year, proxy state, and reason.

@@ -120,17 +120,26 @@ async function loadSelectedSeedYear() {
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Onbekende fout bij live import.';
-    appendSeedLog(message);
+    appendSeedLog(`Oorzaak: ${message}`);
+    if (!studiegidsProxyConfigured && requestedYear !== ACTIVE_SEED_YEAR) {
+      appendSeedLog('Diagnose: geen VITE_STUDIEGIDS_PROXY_URL geconfigureerd; browser-fetch is daarom overgeslagen.');
+    }
     appendSeedLog(`Val terug op ingebouwde standaard ${ACTIVE_SEED_YEAR}.`);
     const loadedYear = await programmes.loadWithFallback(ACTIVE_SEED_YEAR, ACTIVE_SEED_YEAR, {
       force: true,
       log: appendSeedLog,
     });
+    console.warn('[pxl-coverkit] Studiegids live import failed', {
+      requestedYear,
+      fallbackYear: loadedYear ?? ACTIVE_SEED_YEAR,
+      proxyConfigured: studiegidsProxyConfigured,
+      reason: message,
+    });
     settings.activeSeedYear = loadedYear ?? ACTIVE_SEED_YEAR;
     selectedSeedYear.value = loadedYear ?? ACTIVE_SEED_YEAR;
     seedStatus.value = {
       kind: 'error',
-      message: `Live import voor ${requestedYear} mislukte; ${loadedYear ?? ACTIVE_SEED_YEAR} werd geladen.`,
+      message: `Live import voor ${requestedYear} mislukte. Oorzaak: ${message} ${loadedYear ?? ACTIVE_SEED_YEAR} werd geladen.`,
     };
   } finally {
     loadingSeed.value = false;

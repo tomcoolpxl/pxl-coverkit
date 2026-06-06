@@ -45,7 +45,10 @@ const vuetifyStubs = {
     template:
       '<select @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="item in items" :key="item.value" :value="item.value">{{ item.title }}</option></select>',
   },
-  VBtn: { template: '<button type="button" @click="$emit(\'click\')"><slot /></button>' },
+  VBtn: {
+    emits: ['click'],
+    template: '<button type="button" @click="$emit(\'click\')"><slot /></button>',
+  },
   VProgressLinear: { template: '<div data-test="progress" />' },
   VAlert: { template: '<div role="alert"><slot /></div>' },
   VTextField: { template: '<input />' },
@@ -88,6 +91,7 @@ describe('SettingsPage studiegids helper loading', () => {
 
   it('falls back to built-in values when live scraping fails', async () => {
     liveMocks.scrapeProgrammesSeed.mockRejectedValueOnce(new Error('CORS blocked'));
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const programmes = useProgrammesStore();
     vi.spyOn(programmes, 'loadWithFallback').mockImplementation(async () => {
       programmes.replaceWithSeed(seed('2025-26'));
@@ -112,6 +116,16 @@ describe('SettingsPage studiegids helper loading', () => {
     expect(programmes.loadedYear).toBe('2025-26');
     expect(settings.activeSeedYear).toBe('2025-26');
     expect(wrapper.text()).toContain('Live import voor 2026-27 mislukte');
+    expect(wrapper.text()).toContain('Oorzaak: CORS blocked');
     expect(wrapper.text()).toContain('Val terug op ingebouwde standaard 2025-26.');
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[pxl-coverkit] Studiegids live import failed',
+      expect.objectContaining({
+        requestedYear: '2026-27',
+        fallbackYear: '2025-26',
+        reason: 'CORS blocked',
+      }),
+    );
+    warnSpy.mockRestore();
   });
 });

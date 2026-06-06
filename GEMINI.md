@@ -37,6 +37,7 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - The Settings studiegids helper may offer only the previous, current, and next academic year from the September 20 rollover rule. Non-built-in years must be loaded by the on-demand TypeScript live scraper (`src/data/studiegidsLive.ts`) with progress logging, not by adding more runtime public seed files.
 - A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
 - The live scraper URL is built dynamically from the selected academic year. Direct browser fetches to `studiegids.pxl.be` are not allowed without CORS, so browser runtimes must fail before `fetch()` when no `VITE_STUDIEGIDS_PROXY_URL` is configured and fall back to `ACTIVE_SEED_YEAR`.
+- Settings live-import failures must show the concrete cause in the visible alert/log and emit a `[pxl-coverkit] Studiegids live import failed` console warning with requested year, fallback year, proxy state, and reason.
 - Academic-year labels and chips use the shared `academic-year-*` CSS classes so they stay in the PXL gold family while meeting readable contrast on light surfaces.
 - `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` are intentional inert placeholders. Some browser/content-script environments request these root files on GitHub Pages; serving placeholders prevents visible 404 noise without changing app behavior.
 
