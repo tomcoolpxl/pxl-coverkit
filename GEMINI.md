@@ -2,67 +2,42 @@
 
 This repository builds the PXL Cover Kit web app.
 
-`REQUIREMENTS.md` is the current project truth.
+**`ARCHITECTURE.md` is the technical source of truth** — read it before working
+on the codebase. `README.md` is the user-facing introduction. This file holds
+only the cross-tool workflow rules and a few operational reminders not covered
+there.
 
 ## Project Workflow
 
-- Work directly on `main`. No per-phase branches, no pull requests. Commit and push when work is verified.
+- Work directly on `main`. No per-phase branches, no pull requests. Commit and
+  push when work is verified.
 - Keep work small enough for one review cycle.
-- Stay inside the accepted requirements.
 - Ask before broad refactors, test removal, or directory-structure changes.
-- When `IMPLEMENTATION_PLAN.md`, `TODO.md`, and `DONE.md` exist, use them as the project-state workflow files.
-- Use `IMPLEMENTATION_PHASE[N].md` as the immutable blueprint for each phase.
-- **Runnable State**: Maintain a `package.json` with a `start` script.
-- **Verification**: Always verify the "runnable" state via `npm start` before marking a task as done.
-- **GitHub Pages Deployments**: Keep the Pages `deploy` job checkout-free unless a later step strictly requires a repository worktree; `actions/deploy-pages` only needs the uploaded artifact, and avoiding checkout prevents post-job git cleanup failures.
-- Keep disposable logs and Python cache artifacts out of the repository via `.gitignore`.
-- Refresh `TODO.md` from the current plan phase.
-- Update `TODO.md` and `DONE.md` after implementation.
-- When `DONE.md` exists, it holds only verified work.
-- adapt this file at the end of each implementation round!
+- **Runnable State**: keep `package.json` with a working `start` script.
+- **Verification**: verify the runnable state (`npm start`, `npm test`,
+  `npm run typecheck`, `npm run build`) before marking a task done.
+- **GitHub Pages deploy**: keep the Pages `deploy` job checkout-free unless a
+  later step strictly requires a worktree; `actions/deploy-pages` only needs the
+  uploaded artifact, and avoiding checkout prevents post-job git-cleanup
+  failures.
+- Keep disposable logs and Python cache artifacts out of the repo via
+  `.gitignore`.
 
-## examples
+## Operational reminders
 
-Old examples of the manual workflow this project is to replace: in `/examples` directory
+- Seed data is pre-generated offline and bundled as static JSON; there is **no**
+  live in-browser scraping. See `ARCHITECTURE.md` §6 and §10 for the format,
+  the bundled three-year window + index, and the regeneration runbook.
+- Use `requests` (not `urllib`) for studiegids transport in the Python scripts;
+  the endpoint rejected the `urllib` client during validation.
+- Do not combine academic years in one seed file — generate and replace one
+  academic-year seed at a time.
+- The active academic year has no UI control; it is driven by
+  `public/data/programmes.seed.index.json` (`ACTIVE_SEED_YEAR` is only a
+  fallback) and bumped by a maintainer commit.
+- `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` are
+  intentional inert placeholders to silence root-file 404 noise — leave them.
 
-## Seed Data Utilities
+## Examples
 
-- `scripts/scrape_studiegids_tree.py` crawls the public PXL studiegids tree for one academic year and outputs one raw JSON snapshot.
-- `scripts/scrape_studiegids_tree.py` defaults to the `PXL-Digital` department when no department filter is provided; pass an explicit department filter if you intentionally want a different scope.
-- The crawler is validated against both `2025-26` and `2026-27` entry pages, and the known PBTIN path works through `Modeltraject -> Trajectschijf -> Deeltraject`.
-- Use `requests` for studiegids transport; the endpoint rejected the earlier `urllib` client during validation.
-- `scripts/build_programmes_seed.py` converts one raw crawl file into one year-specific seed file.
-- Do not combine academic years in one output file; generate and replace one academic-year seed file at a time.
-- There is NO live in-browser scraping. A static GitHub Pages site cannot scrape `studiegids.pxl.be`: it sends no CORS header, and PXL's F5 WAF rejects public-proxy IPs (`Request Rejected`). All studiegids data is pre-generated offline and bundled as static JSON.
-- Exactly three academic years are bundled in `public/data/` (previous, current, next by the September 20 rollover rule), plus `programmes.seed.index.json` listing those years and the current one.
-- The app reads `programmes.seed.index.json` at startup (`loadSeedIndex` → `useProgrammesStore().setIndex`) and loads the remembered year if it is still bundled, otherwise the index's `currentYear`. `ACTIVE_SEED_YEAR` in `src/app/activeAcademicYear.ts` is only the fallback used if the index can't be loaded.
-- The Settings studiegids helper offers exactly the bundled years from the index; "Laden" loads the selected bundled seed via `useProgrammesStore().loadForYear`. No progress bar, no event log, no proxy/CORS messaging.
-- A user's selected helper year only affects OLOD-code and course-title lookup for new cards; saved cards keep copied string fields and are safe when switching helper years.
-- Deferred: a September-20 GitHub Actions job to re-run the scraper and commit only the three seed files + index. Caveat: GitHub runner IPs are datacenter IPs the WAF may also reject, so generating locally and committing remains the reliable refresh path.
-- Academic-year labels and chips use the shared `academic-year-*` CSS classes so they stay in the PXL gold family while meeting readable contrast on light surfaces.
-- `public/cssrule.css`, `public/jsrule.js`, and `public/extendedcss.js` are intentional inert placeholders. Some browser/content-script environments request these root files on GitHub Pages; serving placeholders prevents visible 404 noise without changing app behavior.
-
-## PDF Generation Utilities
-
-- The PDF templates use `pdfmake` with custom base64 VFS font and image maps to allow offline browser-side rendering.
-- A custom Vite build-time plugin in `vite.config.ts` dynamically packs the Carlito font files (`src/pdf/fonts/`) into `virtual:pdfmake-vfs`.
-- Large image assets (logos, screenshots) are stored in `src/pdf/template-nl-blackboard-v1/assets.ts` as base64-encoded strings.
-
-## Validation & Accessibility Utilities
-
-- `validateCourseCardData()` in `src/pdf/generator.ts` acts as the pre-rendering guardian, validating CourseCard fields against Zod and verifying that required assets (Carlito fonts, Blackboard screenshots, and PXL logos) are successfully loaded at run time.
-- Visually hidden `aria-live` containers (`.sr-only` class) are configured on multi-step wizard views to announce stage transitions to screen readers.
-- Standard Vuetify input error configurations natively map input fields to their respective validation warnings using `aria-describedby` attributes.
-- Failed browser storage persistence attempts (e.g., private browsing mode) fallback to memory maps and warn users via a global `v-alert` warning inside `AppShell.vue`.
-
-## Bilingual Templates & English-Language Covers
-
-- We maintain one layout structure in `template-nl-blackboard-v1` and handle Dutch (`nl`) and English (`en`) via a strings dictionary mapping in `src/pdf/template-nl-blackboard-v1/strings.ts`. The `templateId` remains unchanged as `template-nl-blackboard-v1` for backward compatibility.
-- Language is set per card as an attribute (`language: 'nl' | 'en'`). The wizard review step and edit page feature a bilingual toggle switch.
-- English covers display an "EN" badge chip on the card surfaces and append `_EN` before the file extension in the downloaded PDF filename.
-- Formatting helper functions (`formatDuration`, `formatPartsBreakdown`, time separator) accept a `Language` argument to output localized details.
-
-## Code Review Outcomes & Type Safety Improvements (June 2026)
-
-- Eliminated all 6 `no-explicit-any` ESLint compiler errors across `src/App.vue`, `src/features/delete/DeleteDialog.vue`, `src/features/settings/SettingsPage.vue`, `src/ui/LecturerAutocomplete.vue`, and `src/data/migrations.test.ts` by introducing type-safe error checking, dynamic return type utilities, explicit types, and correct test assertions.
-- Adjusted the global CSS focus visible outline color to `#030203` to satisfy WCAG AA 3:1 minimum contrast standards against the light cream background.
+Old examples of the manual workflow this project replaces live in `/examples`.

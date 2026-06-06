@@ -17,7 +17,7 @@ describe('slugifyCourseName', () => {
 });
 
 describe('buildPdfFilename', () => {
-  it('matches the reference pattern from REQUIREMENTS.md', () => {
+  it('matches the reference filename pattern (ARCHITECTURE.md §7)', () => {
     expect(
       buildPdfFilename({
         academicYear: '2025-26',

@@ -40,7 +40,7 @@ Een verzorgd, uniform examenvoorblad — klaar om te printen of digitaal te vers
 
 ## Studiegidsdata
 
-De studiegidsdata zit ingebakken in de app als statische bestanden: telkens drie academiejaren (vorig, huidig, volgend). Er is geen live ophalen uit `studiegids.pxl.be` — een statische site kan dat niet rechtstreeks. Beheerders vernieuwen de data offline; details staan in [`SEED_DATA_FORMAT.md`](SEED_DATA_FORMAT.md) en de beheerstappen in [`GEMINI.md`](GEMINI.md).
+De studiegidsdata zit ingebakken in de app als statische bestanden: telkens drie academiejaren (vorig, huidig, volgend). Er is geen live ophalen uit `studiegids.pxl.be` — een statische site kan dat niet rechtstreeks. Beheerders vernieuwen de data offline; het seedformaat en de beheerstappen staan in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Lokaal draaien
 
