@@ -292,7 +292,7 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         0,
         0,
-        6,
+        8,
       ],
       "ul": [
         {
@@ -315,44 +315,13 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
           "style": "instructionText",
           "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
+        {
+          "bold": true,
+          "decoration": "underline",
+          "style": "instructionText",
+          "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
+        },
       ],
-    },
-    {
-      "layout": {
-        "fillColor": [Function],
-        "hLineColor": [Function],
-        "hLineWidth": [Function],
-        "vLineColor": [Function],
-        "vLineWidth": [Function],
-      },
-      "margin": [
-        0,
-        0,
-        0,
-        8,
-      ],
-      "table": {
-        "body": [
-          [
-            {
-              "alignment": "center",
-              "bold": true,
-              "color": "#B3261E",
-              "fontSize": 8,
-              "margin": [
-                0,
-                4,
-                0,
-                4,
-              ],
-              "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
-            },
-          ],
-        ],
-        "widths": [
-          "*",
-        ],
-      },
     },
     {
       "columns": [
@@ -501,7 +470,17 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
     {
       "margin": [
         0,
+        0,
+        0,
         10,
+      ],
+      "style": "page2Title",
+      "text": "Examenprocedures",
+    },
+    {
+      "margin": [
+        0,
+        0,
         0,
         5,
       ],
@@ -518,11 +497,15 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Jassen en tassen vooraan of achteraan in het klaslokaal",
+          "text": "Jassen, handtassen en boekentassen achteraan groeperen; als het lokaal zich hier niet toe leent, vooraan groeperen",
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, uitgeschakelde GSM omgekeerd op de bank, drinkfles op de tafel",
+          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+        },
+        {
+          "style": "page2ListItem",
+          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
         },
       ],
     },
@@ -538,6 +521,10 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         10,
       ],
       "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek",
+        },
         {
           "style": "page2ListItem",
           "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
@@ -719,6 +706,10 @@ exports[`renderExamCoverPdfDefinition > should render a multi-part (DEEL) card w
         0,
         1,
       ],
+    },
+    "page2Title": {
+      "bold": true,
+      "fontSize": 18,
     },
     "tableLabelBold": {
       "bold": true,
@@ -1044,7 +1035,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        6,
+        8,
       ],
       "ul": [
         {
@@ -1067,44 +1058,13 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
           "style": "instructionText",
           "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
+        {
+          "bold": true,
+          "decoration": "underline",
+          "style": "instructionText",
+          "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
+        },
       ],
-    },
-    {
-      "layout": {
-        "fillColor": [Function],
-        "hLineColor": [Function],
-        "hLineWidth": [Function],
-        "vLineColor": [Function],
-        "vLineWidth": [Function],
-      },
-      "margin": [
-        0,
-        0,
-        0,
-        8,
-      ],
-      "table": {
-        "body": [
-          [
-            {
-              "alignment": "center",
-              "bold": true,
-              "color": "#B3261E",
-              "fontSize": 8,
-              "margin": [
-                0,
-                4,
-                0,
-                4,
-              ],
-              "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
-            },
-          ],
-        ],
-        "widths": [
-          "*",
-        ],
-      },
     },
     {
       "columns": [
@@ -1253,7 +1213,17 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
     {
       "margin": [
         0,
+        0,
+        0,
         10,
+      ],
+      "style": "page2Title",
+      "text": "Examenprocedures",
+    },
+    {
+      "margin": [
+        0,
+        0,
         0,
         5,
       ],
@@ -1270,11 +1240,15 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Jassen en tassen vooraan of achteraan in het klaslokaal",
+          "text": "Jassen, handtassen en boekentassen achteraan groeperen; als het lokaal zich hier niet toe leent, vooraan groeperen",
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, uitgeschakelde GSM omgekeerd op de bank, drinkfles op de tafel",
+          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+        },
+        {
+          "style": "page2ListItem",
+          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
         },
       ],
     },
@@ -1290,6 +1264,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         10,
       ],
       "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek",
+        },
         {
           "style": "page2ListItem",
           "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
@@ -1471,6 +1449,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         1,
       ],
+    },
+    "page2Title": {
+      "bold": true,
+      "fontSize": 18,
     },
     "tableLabelBold": {
       "bold": true,
@@ -1796,7 +1778,7 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         0,
         0,
-        6,
+        8,
       ],
       "ul": [
         {
@@ -1819,44 +1801,13 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
           "style": "instructionText",
           "text": "Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.",
         },
+        {
+          "bold": true,
+          "decoration": "underline",
+          "style": "instructionText",
+          "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
+        },
       ],
-    },
-    {
-      "layout": {
-        "fillColor": [Function],
-        "hLineColor": [Function],
-        "hLineWidth": [Function],
-        "vLineColor": [Function],
-        "vLineWidth": [Function],
-      },
-      "margin": [
-        0,
-        0,
-        0,
-        8,
-      ],
-      "table": {
-        "body": [
-          [
-            {
-              "alignment": "center",
-              "bold": true,
-              "color": "#B3261E",
-              "fontSize": 8,
-              "margin": [
-                0,
-                4,
-                0,
-                4,
-              ],
-              "text": "Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.",
-            },
-          ],
-        ],
-        "widths": [
-          "*",
-        ],
-      },
     },
     {
       "columns": [
@@ -2005,7 +1956,17 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
     {
       "margin": [
         0,
+        0,
+        0,
         10,
+      ],
+      "style": "page2Title",
+      "text": "Examenprocedures",
+    },
+    {
+      "margin": [
+        0,
+        0,
         0,
         5,
       ],
@@ -2022,11 +1983,15 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
       "ul": [
         {
           "style": "page2ListItem",
-          "text": "Jassen en tassen vooraan of achteraan in het klaslokaal",
+          "text": "Jassen, handtassen en boekentassen achteraan groeperen; als het lokaal zich hier niet toe leent, vooraan groeperen",
         },
         {
           "style": "page2ListItem",
-          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, uitgeschakelde GSM omgekeerd op de bank, drinkfles op de tafel",
+          "text": "Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, drinkfles op de tafel",
+        },
+        {
+          "style": "page2ListItem",
+          "text": "Gsm’s en smartwatches uitschakelen en omgekeerd voor zich op de tafel leggen",
         },
       ],
     },
@@ -2042,6 +2007,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         10,
       ],
       "ul": [
+        {
+          "style": "page2ListItem",
+          "text": "Laatste gelegenheid voor toiletbezoek",
+        },
         {
           "style": "page2ListItem",
           "text": "Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter",
@@ -2223,6 +2192,10 @@ exports[`renderExamCoverPdfDefinition > should render correct pdf definition for
         0,
         1,
       ],
+    },
+    "page2Title": {
+      "bold": true,
+      "fontSize": 18,
     },
     "tableLabelBold": {
       "bold": true,

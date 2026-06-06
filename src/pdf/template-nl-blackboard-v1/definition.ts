@@ -213,34 +213,13 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
             text: 'Dit nummer en tijdstip krijg je te zien in een pop-up die verschijnt nadat je je toets hebt ingezonden.',
             style: 'instructionText',
           },
+          {
+            text: 'Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.',
+            bold: true,
+            decoration: 'underline',
+            style: 'instructionText',
+          },
         ],
-        margin: [0, 0, 0, 6],
-      },
-
-      // Warning Box
-      {
-        table: {
-          widths: ['*'],
-          body: [
-            [
-              {
-                text: 'Bij het niet correct invullen van het bevestigingsnummer en/of het inzendingstijdstip kan je examen als ongeldig beschouwd worden.',
-                color: colors.red,
-                bold: true,
-                fontSize: 8,
-                alignment: 'center',
-                margin: [0, 4, 0, 4],
-              },
-            ],
-          ],
-        },
-        layout: {
-          hLineWidth: () => 1,
-          vLineWidth: () => 1,
-          hLineColor: () => colors.red,
-          vLineColor: () => colors.red,
-          fillColor: () => '#F2DEDE',
-        },
         margin: [0, 0, 0, 8],
       },
 
@@ -304,17 +283,29 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
 
       // Page 2: Blackboard procedure instructions
       { text: '', pageBreak: 'before' },
-      { text: 'Je komt het examenlokaal binnen', style: 'page2Heading', margin: [0, 10, 0, 5] },
+      { text: 'Examenprocedures', style: 'page2Title', margin: [0, 0, 0, 10] },
+      { text: 'Je komt het examenlokaal binnen', style: 'page2Heading', margin: [0, 0, 0, 5] },
       {
         ul: [
           {
-            text: 'Jassen en tassen vooraan of achteraan in het klaslokaal',
+            text: 'Jassen, handtassen en boekentassen achteraan groeperen; als het lokaal zich hier niet toe leent, vooraan groeperen',
             style: 'page2ListItem',
           },
           {
-            text: 'Pen, laptop+stroomadapter+verlengkabel+muis, studentenkaart, examensteekkaart, uitgeschakelde GSM omgekeerd op de bank, drinkfles op de tafel',
+            text: 'Pen, laptop + stroomadapter + verlengkabel + muis, studentenkaart, examensteekkaart, drinkfles op de tafel',
             style: 'page2ListItem',
           },
+          {
+            text: 'Telefoons EN smartwatches UITschakelen en omgekeerd op de hoek van de tafel leggen.',
+            style: 'page2ListItem',
+          },
+        ],
+        margin: [0, 0, 0, 10],
+      },
+      { text: 'Voor de aanvang van het examen', style: 'page2Heading' },
+      {
+        ul: [
+          { text: 'Laatste gelegenheid voor toiletbezoek.', style: 'page2ListItem' },
         ],
         margin: [0, 0, 0, 10],
       },
@@ -322,7 +313,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       {
         ul: [
           {
-            text: 'Ga naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter',
+            text: 'Surf naar de toets op Blackboard en wacht tot je de code krijgt van de toezichter',
             style: 'page2ListItem',
           },
         ],
@@ -339,6 +330,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
       { text: 'Als je de toets gaat inzenden en de kopij gaat afgeven', style: 'page2Heading' },
       {
         ul: [
+          { text: 'TE LAAT INDIENEN = ONGELDIG EXAMEN', style: 'page2ListItem', bold: true },
           { text: 'Klik op Verzenden', style: 'page2ListItem' },
           {
             ul: [
@@ -416,6 +408,10 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
         bold: true,
         italics: true,
         margin: [0, 0, 0, 8],
+      },
+      page2Title: {
+        fontSize: 18,
+        bold: true,
       },
       page2Heading: {
         fontSize: 12,
