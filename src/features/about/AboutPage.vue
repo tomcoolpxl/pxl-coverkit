@@ -21,6 +21,46 @@ import packageJson from '../../../package.json';
       {{ packageJson.version }}.
     </p>
 
+    <h2 class="text-h6 mt-6 mb-2">Aan de slag</h2>
+    <ol class="text-body-2 mb-2 ps-5">
+      <li class="mb-1">
+        Klik op <strong>Nieuw voorblad</strong> en kies je <strong>opleiding</strong>.
+      </li>
+      <li class="mb-1">
+        Zoek het <strong>opleidingsonderdeel (OLOD)</strong> in de lijst, of kies
+        <strong>handmatige invoer</strong> als het er niet bij staat.
+      </li>
+      <li class="mb-1">
+        Vul de <strong>examengegevens</strong> aan: datum, startuur, duur, examenkans en toegestane
+        hulpmiddelen. Verplichte velden geven een melding tot ze ingevuld zijn.
+      </li>
+      <li class="mb-1">
+        Klik op <strong>Opslaan</strong> — het voorblad verschijnt op het overzicht.
+      </li>
+      <li>
+        Gebruik de knop <strong>PDF</strong> op de kaart om je voorblad te downloaden en te printen.
+      </li>
+    </ol>
+
+    <h2 class="text-h6 mt-6 mb-2">Goed om te weten</h2>
+    <ul class="text-body-2 mb-2 ps-5">
+      <li class="mb-1">
+        <strong>Actualiseren</strong> rolt een bestaand voorblad door naar een nieuw academiejaar met
+        een nieuwe datum en uur — handig om niet alles opnieuw in te voeren.
+      </li>
+      <li class="mb-1">
+        <strong>Bewerken</strong> opent alle velden van een voorblad; <strong>Verwijderen</strong>
+        vraagt eerst een bevestiging.
+      </li>
+      <li class="mb-1">
+        Schakel per voorblad tussen een <strong>Nederlandse en Engelse</strong> versie.
+      </li>
+      <li>
+        Via <strong>Instellingen</strong> kan je je voorbladen als back-up exporteren en op een
+        andere computer of browser weer importeren.
+      </li>
+    </ul>
+
     <h2 class="text-h6 mt-6 mb-2">Privacy</h2>
     <p class="text-body-2">
       Alle gegevens blijven lokaal in je browser. Er wordt niets naar een server gestuurd. Als je de
