@@ -115,7 +115,7 @@ function createPredefinedCards() {
       </p>
       <p v-else class="text-body-1 mb-1 text-medium-emphasis">—</p>
       <p class="text-caption text-medium-emphasis">
-        Komt uit de bundelde studiegids-seed; wordt één keer per jaar door een onderhouder
+        Komt uit de gebundelde studiegids-seed; wordt één keer per jaar door een onderhouder
         vervangen.
       </p>
       <p v-if="programmes.loading" class="text-body-2 text-medium-emphasis mt-3">
@@ -148,8 +148,8 @@ function createPredefinedCards() {
     <v-card class="mb-6 pa-6" variant="outlined">
       <h2 class="text-h6 mb-2">Lokale data — import / export</h2>
       <p class="text-body-2 text-medium-emphasis mb-4">
-        Back-up of verhuis je eigen voorbladen en lokale overrides tussen browsers. Studiegidsdata
-        zit in de app en hoef je niet te importeren.
+        Back-up of verhuis je naam, je eigen voorbladen en lokale overrides tussen browsers.
+        Studiegidsdata zit in de app en hoef je niet te importeren.
       </p>
       <p class="text-body-2 mb-4">
         Lokale data: <strong>{{ cardCount }}</strong> voorblad(en).
@@ -188,7 +188,11 @@ function createPredefinedCards() {
         <v-btn color="error" prepend-icon="mdi-delete-sweep" @click="showConfirmCleanDialog = true">
           Omgeving opschonen
         </v-btn>
-        <v-btn variant="outlined" prepend-icon="mdi-card-plus-outline" @click="createPredefinedCards">
+        <v-btn
+          variant="outlined"
+          prepend-icon="mdi-card-plus-outline"
+          @click="createPredefinedCards"
+        >
           Voorbeeldkaarten aanmaken
         </v-btn>
       </div>
@@ -198,8 +202,7 @@ function createPredefinedCards() {
       <h2 class="text-h6 mb-2">Over</h2>
       <p class="text-body-2 mb-1">Versie {{ packageJson.version }}</p>
       <p class="text-body-2 text-medium-emphasis">
-        PDF-lettertype: Carlito (SIL Open Font License). Volledige licenties op de
-        <router-link :to="{ name: 'about' }">Over-pagina</router-link>.
+        Meer info en contact op de <router-link :to="{ name: 'about' }">Over-pagina</router-link>.
       </p>
     </v-card>
 
@@ -254,9 +257,7 @@ function createPredefinedCards() {
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="showConfirmCleanDialog = false">Annuleren</v-btn>
-          <v-btn color="error" variant="elevated" @click="cleanEnvironment">
-            Ja, wis alles
-          </v-btn>
+          <v-btn color="error" variant="elevated" @click="cleanEnvironment"> Ja, wis alles </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

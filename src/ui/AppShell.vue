@@ -14,6 +14,9 @@ const notifications = useNotificationStore();
       PXL Cover Kit
     </router-link>
     <v-spacer />
+    <v-btn variant="text" color="white" :to="{ name: 'overview' }" prepend-icon="mdi-home">
+      Overzicht
+    </v-btn>
     <v-btn variant="text" color="white" :to="{ name: 'settings' }" prepend-icon="mdi-cog">
       Instellingen
     </v-btn>
@@ -29,15 +32,10 @@ const notifications = useNotificationStore();
 
   <v-main>
     <v-container class="py-8">
-      <v-alert
-        v-if="hasStorageWriteError"
-        type="warning"
-        variant="tonal"
-        class="mb-4"
-        closable
-      >
-        Opmerking: Opslaan in lokale browseropslag is mislukt (bijvoorbeeld door een privé-modus of volle browserlimiet). 
-        Wijzigingen worden in het tijdelijke geheugen bewaard en gaan verloren wanneer de pagina wordt vernieuwd.
+      <v-alert v-if="hasStorageWriteError" type="warning" variant="tonal" class="mb-4" closable>
+        Opmerking: Opslaan in lokale browseropslag is mislukt (bijvoorbeeld door een privé-modus of
+        volle browserlimiet). Wijzigingen worden in het tijdelijke geheugen bewaard en gaan verloren
+        wanneer de pagina wordt vernieuwd.
       </v-alert>
       <slot />
     </v-container>
@@ -45,7 +43,14 @@ const notifications = useNotificationStore();
 
   <v-footer color="background" class="d-flex justify-space-between px-6 py-3 text-caption">
     <span>PXL Cover Kit · v{{ appVersion }}</span>
-    <router-link :to="{ name: 'about' }" class="text-secondary">Over &amp; licenties</router-link>
+    <a
+      href="https://github.com/tomcoolpxl/pxl-coverkit"
+      target="_blank"
+      rel="noopener"
+      class="text-secondary text-decoration-none"
+    >
+      <v-icon size="small" class="me-1">mdi-github</v-icon>GitHub
+    </a>
   </v-footer>
 
   <!-- Global Notification Snackbar -->

@@ -6,6 +6,7 @@ import { useWizardStore } from '@/stores/wizard';
 import { useNotificationStore } from '@/stores/notifications';
 import { filterCards, uniqueProgrammeCodes } from '@/domain/filters';
 import { partTitleSuffix } from '@/domain/parts';
+import { parseAcademicYear } from '@/domain/academicYear';
 import type { CourseCard, AcademicYear } from '@/domain/types';
 import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
 import DeleteDialog from '@/features/delete/DeleteDialog.vue';
@@ -41,6 +42,44 @@ const filtered = computed<CourseCard[]>(() =>
 
 const isEmptyOverall = computed(() => cardsStore.cards.length === 0);
 const isEmptyFiltered = computed(() => !isEmptyOverall.value && filtered.value.length === 0);
+
+function academicYearStart(year: string): number {
+  try {
+    return parseAcademicYear(year).startYear;
+  } catch {
+    return 0;
+  }
+}
+
+function academicYearLabel(year: string): string {
+  try {
+    const { startYear, endYear } = parseAcademicYear(year);
+    return `${String(startYear).slice(-2)}-${String(endYear).slice(-2)}`;
+  } catch {
+    return year;
+  }
+}
+
+// Group cards under an "Academiejaar" header, newest year first, and within each
+// year the most recent exam date first.
+const groupedCards = computed(() => {
+  const groups = new Map<string, CourseCard[]>();
+  for (const card of filtered.value) {
+    const list = groups.get(card.academicYear);
+    if (list) {
+      list.push(card);
+    } else {
+      groups.set(card.academicYear, [card]);
+    }
+  }
+  return Array.from(groups.entries())
+    .map(([year, cards]) => ({
+      year,
+      label: academicYearLabel(year),
+      cards: [...cards].sort((a, b) => b.examDate.localeCompare(a.examDate)),
+    }))
+    .sort((a, b) => academicYearStart(b.year) - academicYearStart(a.year));
+});
 
 function clearFilters() {
   programmeFilter.value = null;
@@ -215,7 +254,9 @@ function handleDeleteConfirm() {
     <v-card v-if="isEmptyOverall" variant="outlined" class="pa-8 text-center">
       <v-icon size="48" color="primary" class="mb-4">mdi-file-document-outline</v-icon>
       <h2 class="text-h5 mb-2">Nog geen voorbladen</h2>
-      <p class="text-body-1 mb-4">Maak een nieuw voorblad uit de bundelde studiegidsdata.</p>
+      <p class="text-body-1 mb-4">
+        Maak een nieuw voorblad op basis van de gebundelde studiegidsdata.
+      </p>
       <div class="d-flex justify-center">
         <v-btn
           color="primary"
@@ -234,92 +275,107 @@ function handleDeleteConfirm() {
       <v-btn variant="text" color="primary" @click="clearFilters">Wis filters</v-btn>
     </v-card>
 
-    <v-row v-else dense>
-      <v-col v-for="card in filtered" :key="card.id" cols="12" sm="6" lg="4">
-        <v-card
-          variant="outlined"
-          class="pa-4 h-100 d-flex flex-column clickable-card"
-          hover
-          :to="{ name: 'card-detail', params: { id: card.id } }"
-        >
-          <div class="d-flex align-center mb-2 ga-2">
-            <v-chip size="small" color="primary" variant="tonal">{{ card.programmeCode }}</v-chip>
-            <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
-            <v-spacer />
-            <v-chip size="x-small" variant="tonal" color="secondary">{{ card.examChance }}</v-chip>
-          </div>
-          <div class="text-body-2 text-medium-emphasis">{{ card.courseCode }}</div>
-          <h3 class="text-h6 mb-1 text-truncate">
-            {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex) }}
-          </h3>
-          <div class="text-body-2 mb-3">
-            <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>
-            {{ formatExamDate(card.examDate) }}
-            <span class="text-medium-emphasis">·</span>
-            <v-icon size="x-small" class="ms-1 me-1">mdi-clock-outline</v-icon>
-            {{ card.startTime }}<span v-if="card.endTime">–{{ card.endTime }}</span>
-          </div>
-          <v-spacer />
-          <div class="d-flex align-center justify-space-between mt-2">
-            <span class="text-caption text-medium-emphasis">
-              Bijgewerkt {{ formatUpdated(card.updatedAt) }}
-            </span>
-            <div class="d-flex ga-1">
-              <v-tooltip text="Download PDF" location="top">
-                <template #activator="{ props: tipProps }">
-                  <span v-bind="tipProps">
-                    <v-btn
-                      icon="mdi-file-pdf-box"
-                      size="small"
-                      variant="text"
-                      color="primary"
-                      @click.stop.prevent="downloadCardPdf(card)"
-                    />
-                  </span>
-                </template>
-              </v-tooltip>
-              <v-tooltip text="Actualiseren" location="top">
-                <template #activator="{ props: tipProps }">
-                  <span v-bind="tipProps">
-                    <v-btn
-                      icon="mdi-autorenew"
-                      size="small"
-                      variant="text"
-                      @click.stop.prevent="openActualize(card)"
-                    />
-                  </span>
-                </template>
-              </v-tooltip>
-              <v-tooltip text="Bewerken" location="top">
-                <template #activator="{ props: tipProps }">
-                  <span v-bind="tipProps">
-                    <v-btn
-                      icon="mdi-pencil"
-                      size="small"
-                      variant="text"
-                      :to="{ name: 'card-edit', params: { id: card.id } }"
-                      @click.stop
-                    />
-                  </span>
-                </template>
-              </v-tooltip>
-              <v-tooltip text="Verwijderen" location="top">
-                <template #activator="{ props: tipProps }">
-                  <span v-bind="tipProps">
-                    <v-btn
-                      icon="mdi-delete-outline"
-                      size="small"
-                      variant="text"
-                      @click.stop.prevent="openDelete(card)"
-                    />
-                  </span>
-                </template>
-              </v-tooltip>
-            </div>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+    <template v-else>
+      <div v-for="group in groupedCards" :key="group.year" class="mb-6">
+        <div class="d-flex align-center ga-3 mb-3">
+          <h2 class="text-h6 mb-0">Academiejaar {{ group.label }}</h2>
+          <v-divider class="flex-grow-1" />
+          <span class="text-caption text-medium-emphasis">
+            {{ group.cards.length }} voorblad(en)
+          </span>
+        </div>
+        <v-row dense>
+          <v-col v-for="card in group.cards" :key="card.id" cols="12" sm="6" lg="4">
+            <v-card
+              variant="outlined"
+              class="pa-4 h-100 d-flex flex-column clickable-card"
+              hover
+              :to="{ name: 'card-detail', params: { id: card.id } }"
+            >
+              <div class="d-flex align-center mb-2 ga-2">
+                <v-chip size="small" color="primary" variant="tonal">{{
+                  card.programmeCode
+                }}</v-chip>
+                <v-chip size="small" variant="tonal">{{ card.academicYear }}</v-chip>
+                <v-spacer />
+                <v-chip size="x-small" variant="tonal" color="secondary">{{
+                  card.examChance
+                }}</v-chip>
+              </div>
+              <div class="text-body-2 text-medium-emphasis">{{ card.courseCode }}</div>
+              <h3 class="text-h6 mb-1 text-truncate">
+                {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex) }}
+              </h3>
+              <div class="text-body-2 mb-3">
+                <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>
+                {{ formatExamDate(card.examDate) }}
+                <span class="text-medium-emphasis">·</span>
+                <v-icon size="x-small" class="ms-1 me-1">mdi-clock-outline</v-icon>
+                {{ card.startTime }}<span v-if="card.endTime">–{{ card.endTime }}</span>
+              </div>
+              <v-spacer />
+              <div class="d-flex align-center justify-space-between mt-2">
+                <span class="text-caption text-medium-emphasis">
+                  Bijgewerkt {{ formatUpdated(card.updatedAt) }}
+                </span>
+                <div class="d-flex ga-1">
+                  <v-tooltip text="Download PDF" location="top">
+                    <template #activator="{ props: tipProps }">
+                      <span v-bind="tipProps">
+                        <v-btn
+                          icon="mdi-file-pdf-box"
+                          size="small"
+                          variant="text"
+                          color="primary"
+                          @click.stop.prevent="downloadCardPdf(card)"
+                        />
+                      </span>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip text="Actualiseren" location="top">
+                    <template #activator="{ props: tipProps }">
+                      <span v-bind="tipProps">
+                        <v-btn
+                          icon="mdi-autorenew"
+                          size="small"
+                          variant="text"
+                          @click.stop.prevent="openActualize(card)"
+                        />
+                      </span>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip text="Bewerken" location="top">
+                    <template #activator="{ props: tipProps }">
+                      <span v-bind="tipProps">
+                        <v-btn
+                          icon="mdi-pencil"
+                          size="small"
+                          variant="text"
+                          :to="{ name: 'card-edit', params: { id: card.id } }"
+                          @click.stop
+                        />
+                      </span>
+                    </template>
+                  </v-tooltip>
+                  <v-tooltip text="Verwijderen" location="top">
+                    <template #activator="{ props: tipProps }">
+                      <span v-bind="tipProps">
+                        <v-btn
+                          icon="mdi-delete-outline"
+                          size="small"
+                          variant="text"
+                          @click.stop.prevent="openDelete(card)"
+                        />
+                      </span>
+                    </template>
+                  </v-tooltip>
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
+    </template>
 
     <!-- Dialogs -->
     <ActualizeDialog
