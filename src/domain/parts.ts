@@ -25,3 +25,8 @@ export function clampPartIndex(partIndex: number, partsCount: number): number {
   if (partIndex > partsCount) return partsCount;
   return partIndex;
 }
+
+// Title suffix shown for multi-part covers (e.g. " - DEEL 1"). Empty for single-part.
+export function partTitleSuffix(partsCount: number, partIndex: number): string {
+  return partsCount > 1 ? ` - DEEL ${partIndex}` : '';
+}

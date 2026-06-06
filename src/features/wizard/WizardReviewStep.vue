@@ -306,7 +306,7 @@ const sourceLabel = computed(() =>
           <LecturerAutocomplete
             v-model="lecturers"
             :error-messages="errors.lecturers"
-            label="Lectoren (Enter per naam)"
+            label="Lectoren"
             multiple
           />
         </v-col>

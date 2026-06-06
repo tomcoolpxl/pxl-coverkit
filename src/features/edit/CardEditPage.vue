@@ -12,7 +12,7 @@ import { buildCourseCard } from '@/domain/cardFactory';
 import { endTime, START_TIME_PRESETS } from '@/domain/examTime';
 import { EXAM_CHANCE_OPTIONS } from '@/domain/examChance';
 import { ALLOWED_RESOURCES_PRESETS } from '@/domain/allowedResources';
-import { partWeightsTotal } from '@/domain/parts';
+import { partWeightsTotal, partTitleSuffix } from '@/domain/parts';
 import LecturerAutocomplete from '@/ui/LecturerAutocomplete.vue';
 import MultiPartEditor from '@/ui/MultiPartEditor.vue';
 import { downloadPdf } from '@/pdf/generator';
@@ -56,6 +56,7 @@ const reviewSchema = z.object({
 });
 
 const DEFAULT_TEMPLATE_ID = 'template-nl-blackboard-v1';
+const templateOptions = [{ title: 'Blackboard NL v1', value: 'template-nl-blackboard-v1' }];
 
 const initialValues = computed(() => {
   const c = card.value;
@@ -106,7 +107,6 @@ const [templateId, templateIdProps] = defineField('templateId', vuetifyConfig);
 const examChanceOptions = EXAM_CHANCE_OPTIONS;
 const startTimePresets = START_TIME_PRESETS;
 const allowedResourcesPresets = ALLOWED_RESOURCES_PRESETS;
-const templateOptions = [{ title: 'Blackboard NL v1', value: 'template-nl-blackboard-v1' }];
 
 function applyAllowedResourcesPreset(presetId: string) {
   const preset = allowedResourcesPresets.find((p) => p.id === presetId);
@@ -456,7 +456,7 @@ function formatExamDate(iso?: string): string {
                     <LecturerAutocomplete
                       v-model="lecturers"
                       :error-messages="errors.lecturers"
-                      label="Lectoren (Enter per naam)"
+                      label="Lectoren"
                       multiple
                     />
                   </v-col>
@@ -567,7 +567,9 @@ function formatExamDate(iso?: string): string {
               <div class="text-body-2 text-medium-emphasis">
                 {{ values.courseCode || 'Vakcode' }}
               </div>
-              <h3 class="text-h6 mb-1 text-truncate">{{ values.courseName || 'Vaknaam' }}</h3>
+              <h3 class="text-h6 mb-1 text-truncate">
+                {{ values.courseName || 'Vaknaam' }}{{ partTitleSuffix(partsCount, partIndex) }}
+              </h3>
               <div class="text-body-2 mb-2">
                 <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>
                 {{ formatExamDate(values.examDate) }}

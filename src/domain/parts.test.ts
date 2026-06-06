@@ -4,6 +4,7 @@ import {
   isValidPartWeights,
   resizePartWeights,
   clampPartIndex,
+  partTitleSuffix,
 } from './parts';
 
 describe('partWeightsTotal', () => {
@@ -42,5 +43,16 @@ describe('clampPartIndex', () => {
     expect(clampPartIndex(3, 2)).toBe(2);
     expect(clampPartIndex(0, 4)).toBe(1);
     expect(clampPartIndex(2, 4)).toBe(2);
+  });
+});
+
+describe('partTitleSuffix', () => {
+  it('is empty for a single-part cover', () => {
+    expect(partTitleSuffix(1, 1)).toBe('');
+  });
+
+  it('renders " - DEEL N" only when there is more than one part', () => {
+    expect(partTitleSuffix(2, 1)).toBe(' - DEEL 1');
+    expect(partTitleSuffix(3, 2)).toBe(' - DEEL 2');
   });
 });

@@ -8,11 +8,13 @@ const props = withDefaults(
     multiple?: boolean;
     label?: string;
     errorMessages?: string | string[];
+    hint?: string;
   }>(),
   {
     multiple: false,
     label: 'Lector',
     errorMessages: undefined,
+    hint: undefined,
   },
 );
 
@@ -23,6 +25,13 @@ const emit = defineEmits<{
 const lecturersStore = useLecturersStore();
 
 const items = computed(() => lecturersStore.lecturers);
+
+// In multiple mode each name is committed as a chip, so spell out the interaction:
+// type the full name (first + last, even if multi-word) and press Enter to add it.
+const effectiveHint = computed(() => {
+  if (props.hint) return props.hint;
+  return props.multiple ? 'Typ een volledige naam en druk op Enter om toe te voegen.' : undefined;
+});
 
 const value = computed({
   get() {
@@ -43,6 +52,8 @@ const value = computed({
     :error-messages="errorMessages"
     :chips="multiple"
     :closable-chips="multiple"
+    :hint="effectiveHint"
+    :persistent-hint="!!effectiveHint"
     density="comfortable"
     variant="outlined"
     hide-no-data

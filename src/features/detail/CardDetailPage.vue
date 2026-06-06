@@ -6,6 +6,7 @@ import { useNotificationStore } from '@/stores/notifications';
 import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
 import DeleteDialog from '@/features/delete/DeleteDialog.vue';
 import type { AcademicYear } from '@/domain/types';
+import { partTitleSuffix } from '@/domain/parts';
 import { downloadPdf } from '@/pdf/generator';
 
 const props = defineProps<{ id: string }>();
@@ -146,7 +147,9 @@ async function downloadCardPdf() {
       <v-col cols="12" md="8">
         <v-card variant="outlined" class="pa-6 mb-6">
           <div class="d-flex align-center mb-4 ga-2">
-            <h1 class="text-h4 font-weight-bold">{{ card.courseName }}</h1>
+            <h1 class="text-h4 font-weight-bold">
+              {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex) }}
+            </h1>
             <v-chip color="primary" variant="tonal" class="text-subtitle-2">
               {{ card.programmeCode }}
             </v-chip>

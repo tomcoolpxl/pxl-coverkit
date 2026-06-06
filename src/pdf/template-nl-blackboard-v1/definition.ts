@@ -1,5 +1,6 @@
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
 import type { CourseCard } from '@/domain/types';
+import { partTitleSuffix } from '@/domain/parts';
 import { PXL_LOGO, BLACKBOARD_SCREENSHOT } from './assets';
 import { colors } from './tokens';
 
@@ -51,7 +52,7 @@ export function renderExamCoverPdfDefinition(data: CourseCard): TDocumentDefinit
   const lecturersText = data.lecturers.join(', ');
   const durationText = formatDuration(data.durationMinutes, data.partsCount);
   const partsBreakdown = formatPartsBreakdown(data);
-  const titleSuffix = data.partsCount > 1 ? ` - DEEL ${data.partIndex}` : '';
+  const titleSuffix = partTitleSuffix(data.partsCount, data.partIndex);
 
   return {
     pageSize: 'A4',

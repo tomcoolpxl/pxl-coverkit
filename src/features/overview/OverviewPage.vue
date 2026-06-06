@@ -5,6 +5,7 @@ import { useProgrammesStore } from '@/stores/programmes';
 import { useWizardStore } from '@/stores/wizard';
 import { useNotificationStore } from '@/stores/notifications';
 import { filterCards, uniqueProgrammeCodes } from '@/domain/filters';
+import { partTitleSuffix } from '@/domain/parts';
 import type { CourseCard, AcademicYear } from '@/domain/types';
 import ActualizeDialog from '@/features/actualize/ActualizeDialog.vue';
 import DeleteDialog from '@/features/delete/DeleteDialog.vue';
@@ -248,7 +249,9 @@ function handleDeleteConfirm() {
             <v-chip size="x-small" variant="tonal" color="secondary">{{ card.examChance }}</v-chip>
           </div>
           <div class="text-body-2 text-medium-emphasis">{{ card.courseCode }}</div>
-          <h3 class="text-h6 mb-1 text-truncate">{{ card.courseName }}</h3>
+          <h3 class="text-h6 mb-1 text-truncate">
+            {{ card.courseName }}{{ partTitleSuffix(card.partsCount, card.partIndex) }}
+          </h3>
           <div class="text-body-2 mb-3">
             <v-icon size="x-small" class="me-1">mdi-calendar</v-icon>
             {{ formatExamDate(card.examDate) }}
