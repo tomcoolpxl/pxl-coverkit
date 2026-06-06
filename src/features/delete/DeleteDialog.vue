@@ -15,7 +15,7 @@ const emit = defineEmits<{
 const confirmationInput = ref('');
 const timerElapsed = ref(false);
 const secondsLeft = ref(2);
-let intervalId: any = null;
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
 const isOpen = computed({
   get() {
@@ -39,7 +39,7 @@ watch(
         secondsLeft.value--;
         if (secondsLeft.value <= 0) {
           timerElapsed.value = true;
-          clearInterval(intervalId);
+          if (intervalId !== null) clearInterval(intervalId);
           intervalId = null;
         }
       }, 1000);

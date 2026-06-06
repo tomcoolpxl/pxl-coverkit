@@ -13,8 +13,9 @@ const notifications = useNotificationStore();
 onMounted(async () => {
   try {
     await programmes.loadForYear(ACTIVE_SEED_YEAR);
-  } catch (err: any) {
-    notifications.show('Fout bij het laden van studiegids-gegevens: ' + (err.message || err), 10000);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    notifications.show('Fout bij het laden van studiegids-gegevens: ' + message, 10000);
   }
 
   // Seed observed lecturers from existing cards

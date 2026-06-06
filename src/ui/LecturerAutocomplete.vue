@@ -22,7 +22,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', val: any): void;
+  (e: 'update:modelValue', val: string | string[] | null | undefined): void;
 }>();
 
 const lecturersStore = useLecturersStore();

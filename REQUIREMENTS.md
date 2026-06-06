@@ -479,11 +479,7 @@ These questions remain open but do not block the current MVP direction:
 ### Future features
 
 - English support.
-- Additional template families.
-- Inline PDF preview.
 - Multi-part exam support.
-- Richer preset management.
-- Dedicated UI and UX design specification.
 
 ## Non-functional requirements
 

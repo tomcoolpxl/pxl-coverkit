@@ -54,3 +54,9 @@ Old examples of the manual workflow this project is to replace: in `/examples` d
 - English covers display an "EN" badge chip on the card surfaces and append `_EN` before the file extension in the downloaded PDF filename.
 - Formatting helper functions (`formatDuration`, `formatPartsBreakdown`, time separator) accept a `Language` argument to output localized details.
 
+## Code Review Outcomes & Type Safety Improvements (June 2026)
+
+- Eliminated all 6 `no-explicit-any` ESLint compiler errors across `src/App.vue`, `src/features/delete/DeleteDialog.vue`, `src/features/settings/SettingsPage.vue`, `src/ui/LecturerAutocomplete.vue`, and `src/data/migrations.test.ts` by introducing type-safe error checking, dynamic return type utilities, explicit types, and correct test assertions.
+- Adjusted the global CSS focus visible outline color to `#030203` to satisfy WCAG AA 3:1 minimum contrast standards against the light cream background.
+
+

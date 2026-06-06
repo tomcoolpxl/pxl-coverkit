@@ -11,6 +11,6 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #ae9a64;
+  outline: 2px solid #030203;
   outline-offset: 2px;
 }

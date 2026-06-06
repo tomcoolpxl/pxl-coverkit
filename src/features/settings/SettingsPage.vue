@@ -12,6 +12,7 @@ import {
   serializeExport,
 } from '@/data/importExport';
 import packageJson from '../../../package.json';
+import type { ExportedState } from '@/domain/types';
 
 const settings = useSettingsStore();
 const cards = useCardsStore();
@@ -21,7 +22,7 @@ const lecturersStore = useLecturersStore();
 const fileInput = ref<HTMLInputElement | null>(null);
 const status = ref<{ kind: 'success' | 'error'; message: string } | null>(null);
 const showConfirmImportDialog = ref(false);
-const pendingImport = ref<any>(null);
+const pendingImport = ref<ExportedState | null>(null);
 const showConfirmCleanDialog = ref(false);
 
 const cardCount = computed(() => cards.count);

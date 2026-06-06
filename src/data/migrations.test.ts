@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { migrateImported, MigrationError } from './migrations';
+import { migrateImported, MigrationError, type RawImported } from './migrations';
 import { CURRENT_SCHEMA_VERSION, type ExportedState } from '@/domain/types';
 
 const mockState: ExportedState = {
@@ -24,8 +24,8 @@ describe('migrations.ts', () => {
 
   it('should throw MigrationError on future or unsupported schema version', () => {
     const badState = { ...mockState, schemaVersion: 999 };
-    expect(() => migrateImported(badState as any)).toThrow(MigrationError);
-    expect(() => migrateImported(badState as any)).toThrow(
+    expect(() => migrateImported(badState as RawImported)).toThrow(MigrationError);
+    expect(() => migrateImported(badState as RawImported)).toThrow(
       `Geïmporteerde data heeft schemaversie 999, verwacht ${CURRENT_SCHEMA_VERSION}.`
     );
   });
